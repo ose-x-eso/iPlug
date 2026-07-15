@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
-import MyPlugCard from '@/components/feed/MyPlugCard';
+import ProfileActions from '@/components/profile/ProfileActions';
 
 export default async function ProfilePage(props) {
   const params = await props.params;
@@ -67,6 +67,12 @@ export default async function ProfilePage(props) {
               >
                 💬 Message
               </Link>
+            </div>
+          )}
+
+          {isOwner && (
+            <div className="profile-header-actions" style={{ width: '100%' }}>
+              <ProfileActions />
             </div>
           )}
         </div>

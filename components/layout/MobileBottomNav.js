@@ -35,10 +35,10 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
         )}
       </Link>
 
-      <button className="bottom-nav-item" onClick={onOpenMenu}>
+      <Link href={`/profile/${user.id}`} className={`bottom-nav-item ${pathname?.startsWith('/profile/') ? 'active' : ''}`}>
         <span className="bottom-nav-icon">👤</span>
         <span className="bottom-nav-label">Profile</span>
-      </button>
+      </Link>
     </div>
   );
 }
