@@ -78,7 +78,14 @@ export default async function PlugDetailsPage(props) {
                     {(profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div>
-                    <h4 style={{ fontSize: '1.2rem', margin: 0 }}>@{profile?.username || profile?.full_name || 'Unknown User'}</h4>
+                    <h4 style={{ fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      @{profile?.username || profile?.full_name || 'Unknown User'}
+                      {profile?.is_verified && (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                        </svg>
+                      )}
+                    </h4>
                     <p style={{ color: 'var(--text-secondary)', margin: 0 }}>iPlugg Provider</p>
                   </div>
                 </div>
