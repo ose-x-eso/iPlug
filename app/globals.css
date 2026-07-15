@@ -1240,7 +1240,7 @@ ul, ol { list-style: none; }
 
   /* Dashboard Core Layout */
   .dashboard-main {
-    padding: 5.5rem 1rem 2rem 1rem; /* Less side padding, adjusted top */
+    padding: 5.5rem 1rem 6rem 1rem; /* Extra bottom padding for Bottom Nav */
   }
 
   /* Feed Grid - Force 1 column */
@@ -1265,7 +1265,7 @@ ul, ol { list-style: none; }
 
   /* Chat Window Layout Fixes */
   .chat-window-container {
-    height: calc(100dvh - 100px) !important; /* Responsive dynamic viewport height */
+    height: calc(100dvh - 160px) !important; /* Adjusted for bottom nav */
   }
   .chat-header-content h2 {
     font-size: 1rem !important;
@@ -1290,5 +1290,84 @@ ul, ol { list-style: none; }
   .profile-header-actions {
     width: 100% !important;
     justify-content: center !important;
+  }
+
+  /* Mobile Bottom Navigation */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    display: flex !important;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.7rem;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--brand-primary);
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.4rem;
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* Center Floating Action Button */
+  .create-fab {
+    position: relative;
+    top: -15px;
+    color: white !important;
+  }
+
+  .fab-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    transition: transform 0.2s ease;
+  }
+
+  .create-fab:active .fab-icon {
+    transform: scale(0.95);
   }
 }

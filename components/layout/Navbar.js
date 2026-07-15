@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import ThemeToggle from './ThemeToggle';
 import AuthModal from '@/components/auth/AuthModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
+import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import { createClient } from '@/utils/supabase/client';
 import { logout } from '@/app/actions/auth';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
@@ -170,24 +171,14 @@ export default function Navbar() {
               
               {isMenuOpen && (
                 <div className="user-dropdown">
-                  {/* Mobile Only Dropdown Links */}
-                  <div className="mobile-only" style={{ flexDirection: 'column' }}>
-                    <Link href="/" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>🏠 Home</Link>
-                    <button className="dropdown-item" onClick={() => { setIsCreateOpen(true); setIsMenuOpen(false); }}>➕ List a Plug</button>
-                    <Link href="/inbox" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
-                      📥 Inbox {unreadCount > 0 && <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '10px', marginLeft: '5px', fontSize: '0.7rem' }}>{unreadCount}</span>}
-                    </Link>
-                    <div className="dropdown-item" onClick={(e) => e.stopPropagation()} style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      Theme
-                      <ThemeToggle />
-                    </div>
-                    <div className="dropdown-divider"></div>
-                  </div>
-
                   <div className="dropdown-item">👤 Profile <span className="coming-soon">Soon</span></div>
                   <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
                     📦 My Plugs
                   </Link>
+                  <div className="dropdown-item" onClick={(e) => e.stopPropagation()} style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    Theme
+                    <ThemeToggle />
+                  </div>
                   <div className="dropdown-item">⚙️ Settings <span className="coming-soon">Soon</span></div>
                   <div className="dropdown-divider"></div>
                   <button 
@@ -221,10 +212,18 @@ export default function Navbar() {
       />
 
       {user && (
-        <CreatePlugModal 
-          isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
-        />
+        <>
+          <CreatePlugModal 
+            isOpen={isCreateOpen}
+            onClose={() => setIsCreateOpen(false)}
+          />
+          <MobileBottomNav 
+            user={user} 
+            unreadCount={unreadCount} 
+            onOpenCreate={() => setIsCreateOpen(true)}
+            onOpenMenu={() => setIsMenuOpen(!isMenuOpen)}
+          />
+        </>
       )}
     </>
   );
