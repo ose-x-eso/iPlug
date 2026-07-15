@@ -122,6 +122,29 @@ export default async function PlugDetailsPage(props) {
               </div>
             </div>
 
+            <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0 }}>Reviews & Ratings</h3>
+                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>⭐ 4.8 (12 Reviews)</span>
+              </div>
+              
+              <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  "Great service! Very professional and highly recommended to anyone in the area."
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>S</div>
+                  <span>Sarah J.</span> • <span>2 weeks ago</span>
+                </div>
+              </div>
+              
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <button className="btn btn-secondary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }} disabled>
+                  View all 12 reviews
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       </main>

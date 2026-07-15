@@ -1344,7 +1344,7 @@ ul, ol { list-style: none; }
   }
 
   .bottom-nav-item.active {
-    color: var(--brand-primary);
+    color: #ff6b35 !important;
   }
 
   .bottom-nav-icon {
