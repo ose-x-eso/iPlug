@@ -4,10 +4,12 @@ import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { sendMessage, markMessagesAsRead } from '@/app/actions/messages';
 import Link from 'next/link';
+import { useTransition } from 'react';
 
 export default function ChatWindow({ initialMessages, currentUser, otherUser }) {
   const [messages, setMessages] = useState(initialMessages || []);
   const [isSending, setIsSending] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const messagesEndRef = useRef(null);
   const supabase = createClient();
 
@@ -104,13 +106,19 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     // Clear input immediately for better UX
     form.reset();
 
-    const result = await sendMessage(formData);
-    
-    if (result?.error) {
-      alert("Failed to send: " + result.error);
-    }
-    
-    setIsSending(false);
+    startTransition(async () => {
+      try {
+        const result = await sendMessage(formData);
+        
+        if (result?.error) {
+          alert("Failed to send: " + result.error);
+        }
+      } catch (err) {
+        console.error("Message send error:", err);
+      } finally {
+        setIsSending(false);
+      }
+    });
   };
 
   return (
@@ -160,7 +168,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                   gap: '4px',
                   justifyContent: isMine ? 'flex-end' : 'flex-start'
                 }}>
-                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
                   {isMine && (
                     <span style={{ 
                       color: msg.is_read ? '#60a5fa' : 'rgba(255,255,255,0.7)',
