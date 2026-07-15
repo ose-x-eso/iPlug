@@ -136,7 +136,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Business / Service Name</label>
-                <input type="text" name="title" required placeholder="e.g. Oluwaferanmi Electricals" />
+                <input type="text" name="title" required placeholder="e.g. Ose Web Developer" />
               </div>
 
               <div className="input-group">

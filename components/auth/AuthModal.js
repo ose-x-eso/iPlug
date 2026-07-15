@@ -104,7 +104,7 @@ export default function AuthModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Full Name</label>
-                <input type="text" name="fullName" required placeholder="Chinedu Okafor" />
+                <input type="text" name="fullName" required placeholder="Ose Web Developer" />
               </div>
               <div className="input-group">
                 <label>Phone Number</label>
