@@ -479,15 +479,15 @@ ul, ol { list-style: none; }
 }
 
 .logo-mark {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   background: var(--gradient-accent);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 800;
   box-shadow: var(--shadow-glow);
 }

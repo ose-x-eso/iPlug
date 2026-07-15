@@ -107,18 +107,18 @@ export default function Navbar() {
         </div>
         
         <div className="topbar-actions">
-          <ThemeToggle />
+          <div className="desktop-only"><ThemeToggle /></div>
           
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <button 
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm desktop-only"
                 onClick={() => setIsCreateOpen(true)}
               >
                 + List a Plug
               </button>
               
-              <Link href="/inbox" className="btn btn-secondary" style={{ textDecoration: 'none', position: 'relative' }}>
+              <Link href="/inbox" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
                 📥 Inbox
                 {unreadCount > 0 && (
                   <span style={{
@@ -141,6 +141,7 @@ export default function Navbar() {
               <div className="user-menu" style={{ position: 'relative' }}>
               <button 
                 className="user-email-btn"
+                style={{ display: 'flex', background: 'var(--bg-input)', padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-full)' }}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 {user.user_metadata?.full_name || user.email?.split('@')[0]}
@@ -151,8 +152,22 @@ export default function Navbar() {
               
               {isMenuOpen && (
                 <div className="user-dropdown">
+                  {/* Mobile Only Dropdown Links */}
+                  <div className="mobile-only" style={{ flexDirection: 'column' }}>
+                    <Link href="/" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>🏠 Home</Link>
+                    <button className="dropdown-item" onClick={() => { setIsCreateOpen(true); setIsMenuOpen(false); }}>➕ List a Plug</button>
+                    <Link href="/inbox" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit' }} onClick={() => setIsMenuOpen(false)}>
+                      📥 Inbox {unreadCount > 0 && <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '10px', marginLeft: '5px', fontSize: '0.7rem' }}>{unreadCount}</span>}
+                    </Link>
+                    <div className="dropdown-item" onClick={(e) => e.stopPropagation()} style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      Theme
+                      <ThemeToggle />
+                    </div>
+                    <div className="dropdown-divider"></div>
+                  </div>
+
                   <div className="dropdown-item">👤 Profile <span className="coming-soon">Soon</span></div>
-                  <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                  <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
                     📦 My Plugs
                   </Link>
                   <div className="dropdown-item">⚙️ Settings <span className="coming-soon">Soon</span></div>
