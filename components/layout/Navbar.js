@@ -171,7 +171,9 @@ export default function Navbar() {
               
               {isMenuOpen && (
                 <div className="user-dropdown">
-                  <div className="dropdown-item">👤 Profile <span className="coming-soon">Soon</span></div>
+                  <Link href={`/profile/${user.id}`} className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
+                    👤 Public Profile
+                  </Link>
                   <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
                     📦 My Plugs
                   </Link>
@@ -179,7 +181,9 @@ export default function Navbar() {
                     Theme
                     <ThemeToggle />
                   </div>
-                  <div className="dropdown-item">⚙️ Settings <span className="coming-soon">Soon</span></div>
+                  <Link href="/settings" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
+                    ⚙️ Settings
+                  </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     onClick={async () => {
