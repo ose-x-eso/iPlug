@@ -75,10 +75,10 @@ export default async function PlugDetailsPage(props) {
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'white' }}>
-                    {profile?.full_name?.charAt(0).toUpperCase() || 'U'}
+                    {(profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div>
-                    <h4 style={{ fontSize: '1.2rem', margin: 0 }}>{profile?.full_name || 'Unknown User'}</h4>
+                    <h4 style={{ fontSize: '1.2rem', margin: 0 }}>@{profile?.username || profile?.full_name || 'Unknown User'}</h4>
                     <p style={{ color: 'var(--text-secondary)', margin: 0 }}>iPlugg Provider</p>
                   </div>
                 </div>

@@ -120,10 +120,10 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-            {otherUser.full_name?.charAt(0).toUpperCase() || 'U'}
+            {displayName?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="chat-header-content">
-            <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)' }}>{otherUser.full_name}</h2>
+            <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)' }}>{displayName}</h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlugg Provider</p>
           </div>
         </Link>

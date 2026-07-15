@@ -40,12 +40,12 @@ export default async function ProfilePage(props) {
         {/* Profile Header */}
         <div className="profile-header-card" style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
           
-          <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: 'white', flexShrink: 0 }}>
-            {profile?.full_name?.charAt(0).toUpperCase() || 'U'}
+          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '1rem', boxShadow: 'var(--shadow-md)' }}>
+            {(profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U'}
           </div>
           
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0' }}>{profile?.full_name || 'Unknown User'}</h1>
+            <h1 style={{ fontSize: '2rem', margin: 0 }}>@{profile?.username || profile?.full_name || 'Unknown User'}</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: 0 }}>iPlugg Provider</p>
           </div>
 

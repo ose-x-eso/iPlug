@@ -103,8 +103,18 @@ export default function AuthModal({ isOpen, onClose }) {
           {!isLogin && !successMsg && (
             <>
               <div className="input-group">
-                <label>Full Name</label>
+                <label>Full Name (Private)</label>
                 <input type="text" name="fullName" required placeholder="Ose Web Developer" autoComplete="name" />
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  Only used for billing and account recovery.
+                </p>
+              </div>
+              <div className="input-group">
+                <label>Username (Public)</label>
+                <input type="text" name="username" required placeholder="ose_dev" pattern="^[a-zA-Z0-9_]{3,15}$" title="3-15 characters, letters, numbers, and underscores only" autoComplete="off" />
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  This is how you will appear to others on the platform.
+                </p>
               </div>
               <div className="input-group">
                 <label>Phone Number</label>
@@ -116,8 +126,8 @@ export default function AuthModal({ isOpen, onClose }) {
           {!successMsg && (
             <>
               <div className="input-group">
-                <label>Email Address</label>
-                <input type="email" name="email" required placeholder="you@example.com" autoComplete="email" />
+                <label>{isLogin ? 'Email or Username' : 'Email Address'}</label>
+                <input type="text" name="email" required placeholder={isLogin ? "you@example.com or ose_dev" : "you@example.com"} autoComplete="email" />
               </div>
 
               <div className="input-group">

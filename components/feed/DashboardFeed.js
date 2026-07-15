@@ -5,8 +5,8 @@ import Link from 'next/link';
 import Navbar from "@/components/layout/Navbar";
 
 export default function DashboardFeed({ user, initialPlugs = [], initialProfiles = [] }) {
-  // Use the name they signed up with, fallback to email
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User";
+  // Use username, fallback to email prefix
+  const displayName = user?.user_metadata?.username || user?.email?.split('@')[0] || "User";
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
@@ -32,7 +32,8 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
   // Filter profiles (People) if there is a search query
   const filteredProfiles = searchQuery.trim() !== '' 
     ? initialProfiles.filter(profile => 
-        profile.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (profile.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+         profile.full_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
         profile.id !== user?.id // Don't show yourself
       )
     : [];
@@ -107,11 +108,11 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                 <Link href={`/messages/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
                   <div className="feed-card" style={{ display: 'flex', alignItems: 'center', padding: '1rem', flexDirection: 'row', gap: '1rem' }}>
                     <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'white' }}>
-                      {profile.full_name?.charAt(0).toUpperCase() || 'U'}
+                      {(profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div className="feed-card-content" style={{ padding: 0 }}>
                       <div className="feed-card-header" style={{ marginBottom: 0 }}>
-                        <h3 style={{ fontSize: '1.1rem' }}>{profile.full_name}</h3>
+                        <h3 style={{ fontSize: '1.1rem' }}>@{profile.username || profile.full_name}</h3>
                       </div>
                       <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem', margin: 0 }}>Tap to message</p>
                     </div>
