@@ -181,13 +181,14 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
 
       {/* Input Area */}
       <div style={{ padding: '1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem' }} autoComplete="off">
           <input type="hidden" name="receiver_id" value={otherUser?.id} />
           <input 
             type="text" 
             name="content"
             placeholder="Type a message..." 
             disabled={isSending}
+            autoComplete="off"
             style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', outline: 'none' }}
           />
           <button 

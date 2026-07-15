@@ -124,7 +124,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
           <p>Add your service, shop, or place to the marketplace.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" autoComplete="off">
           {errorMsg && <div className="auth-error">{errorMsg}</div>}
           {successMsg && (
             <div className="auth-success" style={{ padding: '10px', background: 'var(--success-subtle)', color: 'var(--success)', borderRadius: 'var(--radius-sm)', textAlign: 'center', fontSize: 'var(--fs-sm)' }}>
@@ -136,7 +136,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Business / Service Name</label>
-                <input type="text" name="title" required placeholder="e.g. Ose Web Developer" />
+                <input type="text" name="title" required placeholder="e.g. Ose Web Developer" autoComplete="off" />
               </div>
 
               <div className="input-group">
@@ -221,6 +221,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                   placeholder="e.g. GRA Phase 2, Port Harcourt" 
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
+                  autoComplete="off"
                 />
               </div>
 

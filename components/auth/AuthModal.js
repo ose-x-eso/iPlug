@@ -92,7 +92,7 @@ export default function AuthModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" autoComplete="off">
           {errorMsg && <div className="auth-error">{errorMsg}</div>}
           {successMsg && (
             <div className="auth-success" style={{ padding: '10px', background: 'var(--success-subtle)', color: 'var(--success)', borderRadius: 'var(--radius-sm)', textAlign: 'center', fontSize: 'var(--fs-sm)' }}>
@@ -104,11 +104,11 @@ export default function AuthModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Full Name</label>
-                <input type="text" name="fullName" required placeholder="Ose Web Developer" />
+                <input type="text" name="fullName" required placeholder="Ose Web Developer" autoComplete="name" />
               </div>
               <div className="input-group">
                 <label>Phone Number</label>
-                <input type="tel" name="phoneNumber" required placeholder="+234..." />
+                <input type="tel" name="phoneNumber" required placeholder="+234..." autoComplete="tel" />
               </div>
             </>
           )}
@@ -117,12 +117,12 @@ export default function AuthModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Email Address</label>
-                <input type="email" name="email" required placeholder="you@example.com" />
+                <input type="email" name="email" required placeholder="you@example.com" autoComplete="email" />
               </div>
 
               <div className="input-group">
                 <label>Password</label>
-                <input type="password" name="password" required placeholder="••••••••" minLength="6" />
+                <input type="password" name="password" required placeholder="••••••••" minLength="6" autoComplete="current-password" />
               </div>
 
               <button type="submit" className="btn btn-primary btn-full" disabled={isLoading}>
