@@ -138,7 +138,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                       <p className="feed-card-desc">{plug.description}</p>
                       <div className="feed-card-meta">
                         <span>📍 {plug.address || 'Location unknown'}</span>
-                        <span>⭐ New Plug</span>
+                        <span>⭐ 4.8 (12 Reviews)</span>
                       </div>
                     </div>
                   </div>

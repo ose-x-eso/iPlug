@@ -31,8 +31,9 @@ export default function MyPlugCard({ plug }) {
             <h3>{plug.title}</h3>
           </div>
           <p className="feed-card-desc" style={{ flex: 1 }}>{plug.description}</p>
-          <div className="feed-card-meta">
+          <div className="feed-card-meta" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <span>📍 {plug.address || 'Location unknown'}</span>
+            <span>⭐ 4.8 (12)</span>
             <span className="category-pill active">{plug.category}</span>
           </div>
           

@@ -50,8 +50,9 @@ export default async function PlugDetailsPage(props) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{plug.title}</h1>
-                <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '1rem', alignItems: 'center' }}>
                   <span>📍 {plug.address || 'Location unknown'}</span>
+                  <span>⭐ 4.8 (12 Reviews)</span>
                   <span>🏷️ {plug.category}</span>
                 </div>
               </div>

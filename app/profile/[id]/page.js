@@ -86,7 +86,10 @@ export default async function ProfilePage(props) {
                   </div>
                   <div style={{ padding: '1.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{plug.category}</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{plug.category}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>⭐ 4.8 (12)</span>
+                      </div>
                       <span className="category-pill">{plug.pillar}</span>
                     </div>
                     <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.5rem 0' }}>{plug.title}</h3>
