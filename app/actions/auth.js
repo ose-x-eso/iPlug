@@ -16,7 +16,7 @@ export async function login(formData) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('email')
-      .eq('username', emailOrUsername)
+      .ilike('username', emailOrUsername)
       .single();
       
     if (!profile || !profile.email) {
