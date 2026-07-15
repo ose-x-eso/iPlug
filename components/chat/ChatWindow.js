@@ -168,7 +168,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                   gap: '4px',
                   justifyContent: isMine ? 'flex-end' : 'flex-start'
                 }}>
-                  {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
+                  <span suppressHydrationWarning>
+                    {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
+                  </span>
                   {isMine && (
                     <span style={{ 
                       color: msg.is_read ? '#60a5fa' : 'rgba(255,255,255,0.7)',

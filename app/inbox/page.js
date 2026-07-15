@@ -101,7 +101,7 @@ export default async function InboxPage() {
                         {conv.fullName}
                       </h4>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ color: conv.unreadCount > 0 ? 'var(--brand-primary)' : 'var(--text-tertiary)', fontSize: '0.85rem', fontWeight: conv.unreadCount > 0 ? '600' : 'normal' }}>
+                        <span suppressHydrationWarning style={{ color: conv.unreadCount > 0 ? 'var(--brand-primary)' : 'var(--text-tertiary)', fontSize: '0.85rem', fontWeight: conv.unreadCount > 0 ? '600' : 'normal' }}>
                           {new Date(conv.latestMessage.created_at).toLocaleDateString()}
                         </span>
                         {conv.unreadCount > 0 && (
