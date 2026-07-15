@@ -13,6 +13,8 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   const messagesEndRef = useRef(null);
   const supabase = createClient();
 
+  const displayName = otherUser?.username || otherUser?.full_name || otherUser?.email?.split('@')[0] || "User";
+
   // Scroll to bottom on new message
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
