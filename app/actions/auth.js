@@ -96,3 +96,65 @@ export async function logout() {
   revalidatePath('/', 'layout')
   return { success: true }
 }
+
+export async function sendPasswordResetEmail(formData) {
+  const supabase = await createClient();
+  const email = formData.get('email');
+
+  if (!email) {
+    return { error: 'Email is required' };
+  }
+
+  // The redirectTo URL must be registered in the Supabase Dashboard > Authentication > URL Configuration
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/update-password`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function updateUserPassword(formData) {
+  const supabase = await createClient();
+  const password = formData.get('password');
+
+  if (!password || password.length < 6) {
+    return { error: 'Password must be at least 6 characters' };
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password: password
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function deleteUserAccount() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'Not authenticated' };
+  }
+
+  // To delete a user, we must call a custom PostgreSQL function 'delete_user' via RPC.
+  const { error } = await supabase.rpc('delete_user');
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  // Sign out the user locally after successful deletion
+  await supabase.auth.signOut();
+  
+  revalidatePath('/', 'layout');
+  return { success: true };
+}
+

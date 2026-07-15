@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, signUp } from '@/app/actions/auth';
+import { login, signUp, sendPasswordResetEmail } from '@/app/actions/auth';
 
 export default function AuthModal({ isOpen, onClose }) {
   const router = useRouter();
@@ -10,6 +10,7 @@ export default function AuthModal({ isOpen, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -17,6 +18,7 @@ export default function AuthModal({ isOpen, onClose }) {
       setIsLogin(true);
       setErrorMsg('');
       setSuccessMsg('');
+      setIsForgotPassword(false);
     }
   }, [isOpen]);
 
@@ -26,6 +28,7 @@ export default function AuthModal({ isOpen, onClose }) {
     setIsLogin(loginState);
     setErrorMsg('');
     setSuccessMsg('');
+    setIsForgotPassword(false);
   };
 
   async function handleSubmit(e) {
@@ -37,7 +40,9 @@ export default function AuthModal({ isOpen, onClose }) {
     const formData = new FormData(e.target);
     let result;
 
-    if (isLogin) {
+    if (isForgotPassword) {
+      result = await sendPasswordResetEmail(formData);
+    } else if (isLogin) {
       result = await login(formData);
     } else {
       result = await signUp(formData);
@@ -51,9 +56,10 @@ export default function AuthModal({ isOpen, onClose }) {
       setIsLoading(false);
     } else if (result?.success) {
       setIsLoading(false);
-      if (isLogin) {
+      if (isForgotPassword) {
+        setSuccessMsg('Password reset link sent to your email.');
+      } else if (isLogin) {
         onClose();
-        // Force the Server Component (app/page.js) to re-run and show DashboardFeed
         window.location.reload();
       } else {
         setSuccessMsg('Account created! Logging you in...');
@@ -71,8 +77,8 @@ export default function AuthModal({ isOpen, onClose }) {
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-header">
-          <h2>{isLogin ? 'Welcome Back' : 'Join iPlug'}</h2>
-          <p>{isLogin ? 'Log in to find your plug.' : 'Create an account to start discovering.'}</p>
+          <h2>{isForgotPassword ? 'Reset Password' : isLogin ? 'Welcome Back' : 'Join iPlug'}</h2>
+          <p>{isForgotPassword ? 'Enter your email to receive a reset link.' : isLogin ? 'Log in to find your plug.' : 'Create an account to start discovering.'}</p>
         </div>
 
         <div className="auth-tabs">
@@ -141,12 +147,43 @@ export default function AuthModal({ isOpen, onClose }) {
               )}
 
               <div className="input-group">
-                <label>Password</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <label>Password</label>
+                  {isLogin && (
+                    <button 
+                      type="button" 
+                      onClick={() => setIsForgotPassword(true)}
+                      style={{ fontSize: 'var(--fs-xs)', color: 'var(--accent-text)', padding: 0 }}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
                 <input type="password" name="password" required placeholder="••••••••" minLength="6" autoComplete="current-password" className="input-field" />
               </div>
 
               <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '0.5rem' }}>
                 {isLoading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
+              </button>
+            </>
+          )}
+
+          {isForgotPassword && !successMsg && (
+            <>
+              <div className="input-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="you@example.com" autoComplete="email" className="input-field" />
+              </div>
+              <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '0.5rem' }}>
+                {isLoading ? 'Sending...' : 'Send Reset Link'}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setIsForgotPassword(false)}
+                className="btn btn-ghost btn-full" 
+                style={{ marginTop: '0.5rem' }}
+              >
+                Back to Login
               </button>
             </>
           )}
