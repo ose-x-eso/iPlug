@@ -56,7 +56,7 @@ function ThemeScript() {
       try {
         var theme = localStorage.getItem('iplug-theme');
         if (!theme) {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          theme = 'dark';
         }
         document.documentElement.setAttribute('data-theme', theme);
       } catch(e) {}
