@@ -158,7 +158,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                 ></textarea>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="modal-grid-2" style={{ gap: '1rem' }}>
                 <div className="input-group">
                   <label>Pillar</label>
                   <select 
@@ -234,7 +234,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                     </label>
                   ))}
                   
-                  <div style={{ display: 'flex', alignItems: 'center', marginLeft: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.5rem', width: '100%', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginRight: '0.5rem' }}>Or type your own:</span>
                     <input 
                       type="text" 
