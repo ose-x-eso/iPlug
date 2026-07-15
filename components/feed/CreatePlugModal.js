@@ -115,7 +115,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
   const COMMON_EMOJIS = ["⚡", "🔧", "✂️", "🍔", "👗", "💻", "📸", "🧹", "🛍️", "🏢"];
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div className="modal-content" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={onClose}>✕</button>
 

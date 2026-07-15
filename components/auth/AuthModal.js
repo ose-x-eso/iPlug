@@ -65,7 +65,7 @@ export default function AuthModal({ isOpen, onClose }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         
         <button className="modal-close" onClick={onClose}>✕</button>
