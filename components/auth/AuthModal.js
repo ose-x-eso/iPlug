@@ -102,40 +102,50 @@ export default function AuthModal({ isOpen, onClose }) {
 
           {!isLogin && !successMsg && (
             <>
-              <div className="input-group">
-                <label>Full Name (Private)</label>
-                <input type="text" name="fullName" required placeholder="Ose Web Developer" autoComplete="name" />
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Only used for billing and account recovery.
-                </p>
+              <div className="auth-form-grid">
+                <div className="input-group">
+                  <label>Full Name (Private)</label>
+                  <input type="text" name="fullName" required placeholder="Ose Web Developer" autoComplete="name" className="input-field" />
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    Only used for account recovery.
+                  </p>
+                </div>
+                <div className="input-group">
+                  <label>Username (Public)</label>
+                  <input type="text" name="username" required placeholder="ose_dev" pattern="^[a-zA-Z0-9_]{3,15}$" title="3-15 characters, letters, numbers, and underscores only" autoComplete="off" className="input-field" />
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    How you appear to others.
+                  </p>
+                </div>
               </div>
-              <div className="input-group">
-                <label>Username (Public)</label>
-                <input type="text" name="username" required placeholder="ose_dev" pattern="^[a-zA-Z0-9_]{3,15}$" title="3-15 characters, letters, numbers, and underscores only" autoComplete="off" />
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  This is how you will appear to others on the platform.
-                </p>
-              </div>
-              <div className="input-group">
-                <label>Phone Number</label>
-                <input type="tel" name="phoneNumber" required placeholder="+234..." autoComplete="tel" />
+              <div className="auth-form-grid">
+                <div className="input-group">
+                  <label>Phone Number</label>
+                  <input type="tel" name="phoneNumber" required placeholder="+234..." autoComplete="tel" className="input-field" />
+                </div>
+                <div className="input-group">
+                  <label>Email Address</label>
+                  <input type="email" name="email" required placeholder="you@example.com" autoComplete="email" className="input-field" />
+                </div>
               </div>
             </>
           )}
 
           {!successMsg && (
             <>
-              <div className="input-group">
-                <label>{isLogin ? 'Email or Username' : 'Email Address'}</label>
-                <input type="text" name="email" required placeholder={isLogin ? "you@example.com or ose_dev" : "you@example.com"} autoComplete="email" />
-              </div>
+              {isLogin && (
+                <div className="input-group">
+                  <label>Email or Username</label>
+                  <input type="text" name="email" required placeholder="you@example.com or ose_dev" autoComplete="email" className="input-field" />
+                </div>
+              )}
 
               <div className="input-group">
                 <label>Password</label>
-                <input type="password" name="password" required placeholder="••••••••" minLength="6" autoComplete="current-password" />
+                <input type="password" name="password" required placeholder="••••••••" minLength="6" autoComplete="current-password" className="input-field" />
               </div>
 
-              <button type="submit" className="btn btn-primary btn-full" disabled={isLoading}>
+              <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '0.5rem' }}>
                 {isLoading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
               </button>
             </>

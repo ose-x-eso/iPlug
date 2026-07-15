@@ -873,13 +873,21 @@ ul, ol { list-style: none; }
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-xl);
   width: 90%;
-  max-width: 420px;
+  max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
   padding: var(--space-xl);
   box-shadow: var(--shadow-xl);
   position: relative;
   animation: scaleIn 0.4s var(--ease-spring);
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+  }
 }
 
 .modal-close {
@@ -950,6 +958,18 @@ ul, ol { list-style: none; }
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+.auth-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+@media (min-width: 480px) {
+  .auth-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .input-group {
