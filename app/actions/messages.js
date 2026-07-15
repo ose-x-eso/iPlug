@@ -26,7 +26,6 @@ export async function sendMessage(formData) {
     return { error: error.message }
   }
 
-  revalidatePath(`/messages/${receiver_id}`)
   return { success: true }
 }
 
@@ -48,8 +47,6 @@ export async function markMessagesAsRead(sender_id) {
     return { error: error.message }
   }
 
-  // Revalidate so the Inbox badge clears
-  revalidatePath('/inbox')
   return { success: true }
 }
 

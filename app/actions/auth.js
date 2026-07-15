@@ -6,8 +6,8 @@ import { createClient } from '@/utils/supabase/server'
 export async function login(formData) {
   const supabase = await createClient()
   
-  const emailOrUsername = formData.get('email')
-  const password = formData.get('password')
+  const emailOrUsername = formData.get('email')?.toLowerCase();
+  const password = formData.get('password');
 
   let loginEmail = emailOrUsername;
 
@@ -41,11 +41,11 @@ export async function login(formData) {
 export async function signUp(formData) {
   const supabase = await createClient()
   
-  const email = formData.get('email')
+  const email = formData.get('email')?.toLowerCase();
   const password = formData.get('password')
   const fullName = formData.get('fullName')
   const phoneNumber = formData.get('phoneNumber')
-  const username = formData.get('username')
+  const username = formData.get('username')?.toLowerCase();
 
   // Check if username is already taken
   const { data: existingUser } = await supabase
@@ -75,9 +75,9 @@ export async function signUp(formData) {
     return { error: error.message || 'An unknown error occurred during sign up.' }
   }
 
-  // Ensure the username is written to the profile (in case the trigger didn't catch it)
+  // Ensure the username and email are written to the profile (in case the trigger didn't catch it)
   if (data?.user) {
-    await supabase.from('profiles').update({ username }).eq('id', data.user.id);
+    await supabase.from('profiles').update({ username, email }).eq('id', data.user.id);
   }
 
   revalidatePath('/', 'layout')
