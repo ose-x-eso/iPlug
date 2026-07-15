@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import ThemeToggle from './ThemeToggle';
 import AuthModal from '@/components/auth/AuthModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
@@ -16,6 +16,7 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const menuRef = useRef(null);
   
   // Stabilize the client instance across renders to prevent infinite useEffect loops
   const supabase = useMemo(() => createClient(), []);
@@ -84,6 +85,23 @@ export default function Navbar() {
     };
   }, [supabase, user?.id]);
 
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    }
+    
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   return (
     <>
       <nav className="landing-topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -138,7 +156,7 @@ export default function Navbar() {
                 )}
               </Link>
               
-              <div className="user-menu" style={{ position: 'relative' }}>
+              <div className="user-menu" ref={menuRef} style={{ position: 'relative' }}>
               <button 
                 className="user-email-btn"
                 style={{ display: 'flex', background: 'var(--bg-input)', padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-full)' }}
