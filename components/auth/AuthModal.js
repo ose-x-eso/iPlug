@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { login, signUp } from '@/app/actions/auth';
 
 export default function AuthModal({ isOpen, onClose }) {
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -42,14 +44,22 @@ export default function AuthModal({ isOpen, onClose }) {
     }
 
     if (result?.error) {
-      setErrorMsg(result.error);
+      const errorMessage = typeof result.error === 'string' 
+        ? result.error 
+        : (result.error?.message || JSON.stringify(result.error) || 'An unknown error occurred.');
+      setErrorMsg(errorMessage);
       setIsLoading(false);
     } else if (result?.success) {
       setIsLoading(false);
       if (isLogin) {
         onClose();
+        // Force the Server Component (app/page.js) to re-run and show DashboardFeed
+        window.location.reload();
       } else {
-        setSuccessMsg('Account created! Please check your email for the confirmation link.');
+        setSuccessMsg('Account created! Logging you in...');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       }
     }
   }

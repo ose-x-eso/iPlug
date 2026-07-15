@@ -1,4 +1,5 @@
 import "./globals.css";
+import { ThemeProvider } from "@/lib/theme";
 
 export const metadata = {
   title: "iPlugg — Find Your Plug",
@@ -38,7 +39,9 @@ export default function RootLayout({ children }) {
       <head>
         <ThemeScript />
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

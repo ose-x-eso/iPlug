@@ -15,7 +15,7 @@ export async function login(formData) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message || 'An unknown error occurred during login.' }
   }
 
   revalidatePath('/', 'layout')
@@ -43,7 +43,7 @@ export async function signUp(formData) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: error.message || 'An unknown error occurred during sign up.' }
   }
 
   // The database trigger will automatically create the profile for us!
@@ -58,7 +58,7 @@ export async function logout() {
   const { error } = await supabase.auth.signOut()
   
   if (error) {
-    return { error: error.message }
+    return { error: error.message || 'An unknown error occurred during logout.' }
   }
 
   revalidatePath('/', 'layout')
