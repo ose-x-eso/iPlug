@@ -1202,3 +1202,82 @@ ul, ol { list-style: none; }
   background: rgba(255, 107, 53, 0.2);
   border-color: var(--brand-primary);
 }
+
+/* ============================================================
+   Mobile Responsiveness Overrides
+   ============================================================ */
+
+/* Utility Classes for Mobile Hiding */
+.desktop-only { display: flex; }
+.mobile-only { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+
+  /* Navbar Adjustments */
+  .landing-topbar {
+    padding: 0 1rem;
+  }
+  .logo {
+    font-size: 1.1rem;
+    gap: 5px;
+  }
+  .topbar-actions {
+    gap: 0.5rem;
+  }
+  .btn-sm {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  /* Dashboard Core Layout */
+  .dashboard-main {
+    padding: 5.5rem 1rem 2rem 1rem; /* Less side padding, adjusted top */
+  }
+
+  /* Feed Grid - Force 1 column */
+  .feed-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* Category Pills - Allow scrolling without clipping */
+  .dashboard-categories {
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .category-pill {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  /* Chat Window Layout Fixes */
+  .chat-window-container {
+    height: calc(100dvh - 100px) !important; /* Responsive dynamic viewport height */
+  }
+  .chat-header-content h2 {
+    font-size: 1rem !important;
+  }
+  .chat-header-content p {
+    font-size: 0.75rem !important;
+  }
+  .chat-messages-area {
+    padding: 1rem !important;
+  }
+  .chat-message-bubble {
+    max-width: 85% !important;
+  }
+  
+  /* Profile Page Fixes */
+  .profile-header-card {
+    padding: 1.5rem !important;
+    gap: 1rem !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  .profile-header-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

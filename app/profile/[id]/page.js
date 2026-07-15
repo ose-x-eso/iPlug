@@ -38,7 +38,7 @@ export default async function ProfilePage(props) {
       <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '6rem 1rem 2rem 1rem' }}>
         
         {/* Profile Header */}
-        <div style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+        <div className="profile-header-card" style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
           
           <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: 'white', flexShrink: 0 }}>
             {profile?.full_name?.charAt(0).toUpperCase() || 'U'}
@@ -50,7 +50,7 @@ export default async function ProfilePage(props) {
           </div>
 
           {!isOwner && (
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="profile-header-actions" style={{ display: 'flex', gap: '1rem' }}>
               {profile?.phone_number && (
                 <a 
                   href={`tel:${profile.phone_number}`}
@@ -77,7 +77,7 @@ export default async function ProfilePage(props) {
         </h2>
 
         {plugs && plugs.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          <div className="feed-grid">
             {plugs.map((plug) => (
               <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform 0.2s, borderColor 0.2s' }}>

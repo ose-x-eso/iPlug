@@ -114,7 +114,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
       <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -122,7 +122,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-primary)' }}>
             {otherUser.full_name?.charAt(0).toUpperCase() || 'U'}
           </div>
-          <div>
+          <div className="chat-header-content">
             <h2 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--text-primary)' }}>{otherUser.full_name}</h2>
             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlugg Provider</p>
           </div>
@@ -130,7 +130,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       </div>
 
       {/* Messages Area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="chat-messages-area" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
             <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}>👋</span>
@@ -140,7 +140,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           messages.map((msg) => {
             const isMine = msg.sender_id === currentUser.id;
             return (
-              <div key={msg.id} style={{ alignSelf: isMine ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
+              <div className="chat-message-bubble" key={msg.id} style={{ alignSelf: isMine ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
                 <div style={{ 
                   background: isMine ? 'linear-gradient(45deg, var(--primary), var(--secondary))' : 'var(--bg-input)', 
                   color: isMine ? 'white' : 'var(--text-primary)',
