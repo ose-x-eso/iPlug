@@ -2,11 +2,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 
 export const metadata = {
-  title: "iPlugg — Find Your Plug",
+  title: "iPlug — Find Your Plug",
   description:
-    "iPlugg is Nigeria's hyperlocal marketplace. Find services, shops, and places near you. Chat, negotiate, and connect — like a real Nigerian market, but digital.",
+    "iPlug is Nigeria's hyperlocal marketplace. Find services, shops, and places near you. Chat, negotiate, and connect — like a real Nigerian market, but digital.",
   keywords: [
-    "iPlugg",
+    "iPlug",
     "Nigeria marketplace",
     "find services near me",
     "artisan Nigeria",
@@ -15,7 +15,7 @@ export const metadata = {
     "plumber Nigeria",
   ],
   openGraph: {
-    title: "iPlugg — Find Your Plug",
+    title: "iPlug — Find Your Plug",
     description:
       "Nigeria's hyperlocal marketplace. Find services, shops, and places near you.",
     type: "website",

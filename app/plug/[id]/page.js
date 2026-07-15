@@ -86,7 +86,7 @@ export default async function PlugDetailsPage(props) {
                         </svg>
                       )}
                     </h4>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>iPlugg Provider</p>
+                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>iPlug Provider</p>
                   </div>
                 </div>
 

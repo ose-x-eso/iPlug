@@ -1,5 +1,5 @@
 /**
- * iPlugg Categories
+ * iPlug Categories
  * Fixed list + custom option for providers
  */
 

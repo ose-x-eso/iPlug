@@ -29,7 +29,7 @@ export default async function MyPlugsPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
             <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0' }}>My Plugs</h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Manage all the services and shops you have listed on iPlugg.</p>
+            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Manage all the services and shops you have listed on iPlug.</p>
           </div>
         </div>
 

@@ -109,7 +109,7 @@ export default function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           <Link href="/" className="logo" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="logo-mark">⚡</div>
-            iPlugg
+            iPlug
           </Link>
 
           {/* Desktop Navigation Links */}

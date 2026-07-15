@@ -23,8 +23,8 @@ export default function LandingPage() {
 
           <p className="hero-subtitle">
             Need an electrician? Looking for a shop? Finding a gym?
-            Stop asking around — iPlugg connects you with services, shops,
-            and places near you in seconds.
+            Stop asking around — iPlug connects you with services, shops,
+            and independent professionals in your neighborhood instantly.
           </p>
 
           {/* Search Bar */}
@@ -68,8 +68,8 @@ export default function LandingPage() {
       {/* ---- Features Grid ---- */}
       <section className="features">
         <div className="section-header">
-          <div className="section-label">Why iPlugg</div>
-          <h2 className="section-title">Everything you need, right in your area</h2>
+          <div className="section-label">Why iPlug</div>
+          <h2 className="section-title">A marketplace that works the way you do.</h2>
           <p className="section-subtitle">
             Three pillars, one app. Find services, products, and places — all near you.
           </p>
@@ -147,15 +147,17 @@ export default function LandingPage() {
       {/* ---- CTA Section ---- */}
       <section className="cta-section">
         <h2 className="section-title">Ready to find your plug?</h2>
-        <p>Join iPlugg and never ask around again.</p>
-        <button className="btn btn-primary btn-lg">
-          Get Started — It's Free
-        </button>
+        <p>Join iPlug and never ask around again.</p>
+        <div style={{ marginTop: 'var(--space-xl)' }}>
+          <button className="btn btn-primary btn-lg">
+            Get Started — It's Free
+          </button>
+        </div>
       </section>
 
       {/* ---- Footer ---- */}
       <footer className="landing-footer">
-        © 2026 iPlugg. Built for the Global South 🌍
+        © 2026 iPlug. Built for the Global South 🌍
       </footer>
     </div>
   );

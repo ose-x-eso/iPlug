@@ -141,7 +141,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                 </svg>
               )}
             </h3>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlugg Provider</p>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlug Provider</p>
           </div>
         </Link>
       </div>

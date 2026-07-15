@@ -53,7 +53,7 @@ export default async function ProfilePage(props) {
                 </svg>
               )}
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: 0 }}>iPlugg Provider</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: 0 }}>iPlug Provider</p>
           </div>
 
           {!isOwner && (

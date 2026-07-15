@@ -71,7 +71,7 @@ export default function AuthModal({ isOpen, onClose }) {
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-header">
-          <h2>{isLogin ? 'Welcome Back' : 'Join iPlugg'}</h2>
+          <h2>{isLogin ? 'Welcome Back' : 'Join iPlug'}</h2>
           <p>{isLogin ? 'Log in to find your plug.' : 'Create an account to start discovering.'}</p>
         </div>
 
