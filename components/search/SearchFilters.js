@@ -3,9 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 
 export default function SearchFilters({ 
-  searchQuery, setSearchQuery, 
-  activeTab, setActiveTab, 
-  location, setLocation 
+  searchQuery, 
+  setSearchQuery, 
+  activeTab, 
+  setActiveTab, 
+  location, 
+  setLocation,
+  searchInputId 
 }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -104,6 +108,7 @@ export default function SearchFilters({
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <input 
+          id={searchInputId}
           type="text" 
           placeholder="Search for electricians, fresh food, gyms..." 
           className="search-input"

@@ -36,7 +36,7 @@ export default function FeedbackWidget() {
       {/* Modal Popup */}
       {isOpen && (
         <div style={{
-          background: 'var(--bg-card)',
+          background: 'var(--bg-surface)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
           padding: '1.5rem',

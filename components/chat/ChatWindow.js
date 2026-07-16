@@ -9,6 +9,7 @@ import { useTransition } from 'react';
 export default function ChatWindow({ initialMessages, currentUser, otherUser }) {
   const [messages, setMessages] = useState(initialMessages || []);
   const [isSending, setIsSending] = useState(false);
+  const [showAttachments, setShowAttachments] = useState(false);
   const [isPending, startTransition] = useTransition();
   const messagesEndRef = useRef(null);
   const supabase = createClient();
@@ -188,14 +189,15 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                     {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
                   </span>
                   {isMine && (
-                    <span style={{ 
-                      color: msg.is_read ? '#60a5fa' : 'rgba(255,255,255,0.7)',
-                      fontSize: '0.8rem',
-                      marginLeft: '2px',
-                      fontWeight: 'bold'
-                    }}>
-                      {msg.is_read ? '✓✓' : msg.is_delivered ? '✓✓' : '✓'}
-                    </span>
+                      <span style={{ 
+                        color: msg.is_read ? '#60a5fa' : 'rgba(255,255,255,0.7)',
+                        fontSize: '0.8rem',
+                        marginLeft: '2px',
+                        fontWeight: 'bold',
+                        letterSpacing: '-2px'
+                      }}>
+                        ✓✓
+                      </span>
                   )}
                 </div>
               </div>
@@ -206,9 +208,98 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       </div>
 
       {/* Input Area */}
-      <div style={{ padding: '1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem' }} autoComplete="off">
+      <div style={{ padding: '1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)', position: 'relative' }}>
+        
+        {/* Attachment Menu Popup */}
+        {showAttachments && (
+          <div style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: '1rem',
+            marginBottom: '0.5rem',
+            background: 'var(--bg-surface-raised)',
+            border: '1px solid var(--border)',
+            borderRadius: '1rem',
+            padding: '0.5rem',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '1rem',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            zIndex: 100,
+            width: '240px'
+          }}>
+            {[
+              { icon: '📷', label: 'Photo/Video', color: '#ec4899' },
+              { icon: '📍', label: 'Location', color: '#10b981' },
+              { icon: '🎤', label: 'Voice Note', color: '#f59e0b' },
+              { icon: '📞', label: 'Voice Call', color: '#3b82f6' },
+              { icon: '📄', label: 'Document', color: '#8b5cf6' },
+              { icon: '👤', label: 'Contact', color: '#6366f1' }
+            ].map((item, idx) => (
+              <div 
+                key={idx}
+                onClick={() => {
+                  alert(`${item.label} attachment is coming soon!`);
+                  setShowAttachments(false);
+                }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  borderRadius: '0.5rem',
+                  transition: 'background 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'var(--bg-input)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: item.color,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.2rem',
+                  color: 'white'
+                }}>
+                  {item.icon}
+                </div>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textAlign: 'center' }}>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }} autoComplete="off">
           <input type="hidden" name="receiver_id" value={otherUser?.id} />
+          
+          <button 
+            type="button"
+            onClick={() => setShowAttachments(!showAttachments)}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'transparent',
+              border: 'none',
+              color: showAttachments ? 'var(--primary)' : 'var(--text-secondary)',
+              fontSize: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'transform 0.2s, color 0.2s',
+              transform: showAttachments ? 'rotate(45deg)' : 'rotate(0)'
+            }}
+            title="Attach"
+          >
+            +
+          </button>
+
           <input 
             type="text" 
             name="content"

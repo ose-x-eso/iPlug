@@ -22,30 +22,38 @@ export default function AppShell({ children, initialUser }) {
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
+    const fetchBadges = async (currentUser) => {
+      if (!currentUser) return;
+      
+      markAllUnreadAsDelivered();
+      
+      const { count } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', currentUser.id)
+        .eq('is_read', false);
+      if (count !== null) setUnreadCount(count);
+
+      const { count: notifCount } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', currentUser.id)
+        .eq('is_read', false);
+      if (notifCount !== null) setUnreadNotificationsCount(notifCount);
+    };
+
     const fetchUserAndBadges = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       const currentUser = session?.user || null;
       setUser(currentUser);
-
-      if (currentUser) {
-        markAllUnreadAsDelivered();
-        const { count } = await supabase
-          .from('messages')
-          .select('*', { count: 'exact', head: true })
-          .eq('receiver_id', currentUser.id)
-          .eq('is_read', false);
-        if (count !== null) setUnreadCount(count);
-
-        const { count: notifCount } = await supabase
-          .from('notifications')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', currentUser.id)
-          .eq('is_read', false);
-        if (notifCount !== null) setUnreadNotificationsCount(notifCount);
-      }
+      fetchBadges(currentUser);
     };
     
-    if (!initialUser) fetchUserAndBadges();
+    if (!initialUser) {
+      fetchUserAndBadges();
+    } else {
+      fetchBadges(initialUser);
+    }
 
     const interval = setInterval(() => {
       markAllUnreadAsDelivered();

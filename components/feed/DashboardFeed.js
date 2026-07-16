@@ -22,18 +22,22 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
   const categories = [
     {
       title: '🛠️ Top Services & Mechanics',
+      pillar: 'services',
       items: initialPlugs.filter(p => p.pillar === 'services')
     },
     {
       title: '🛍️ Trending Shops',
+      pillar: 'shops',
       items: initialPlugs.filter(p => p.pillar === 'shops')
     },
     {
       title: '🏢 Places to Explore',
+      pillar: 'places',
       items: initialPlugs.filter(p => p.pillar === 'places')
     },
     {
       title: '🆕 Newest Arrivals',
+      pillar: 'new',
       items: initialPlugs.slice(0, 10) // First 10 (already ordered by created_at desc)
     }
   ];
@@ -68,8 +72,8 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                           onClick={() => router.push(`/plug/${plug.id}`)}
                           style={{ position: 'relative', cursor: 'pointer' }}
                         >
-                          <div className="spotify-card-img">
-                            {plug.image_url || '📦'}
+                          <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: 'var(--bg-input)' }}>
+                            {!plug.image_url?.startsWith('http') && (plug.image_url || '📦')}
                           </div>
                           <div>
                             <h3 className="spotify-card-title">{plug.title}</h3>
@@ -111,9 +115,11 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                   if (cat.items.length === 0) return null;
                   return (
                     <section className="spotify-section" key={idx}>
-                      <h2 className="spotify-section-title">
-                        {cat.title}
-                      </h2>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem' }}>
+                        <h2 className="spotify-section-title" style={{ marginBottom: 0 }}>
+                          {cat.title}
+                        </h2>
+                      </div>
                       <div className="spotify-carousel">
                         {cat.items.map(plug => (
                           <div 
@@ -122,8 +128,8 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                             onClick={() => router.push(`/plug/${plug.id}`)}
                             style={{ position: 'relative', cursor: 'pointer' }}
                           >
-                            <div className="spotify-card-img">
-                              {plug.image_url || '📦'}
+                            <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: 'var(--bg-input)' }}>
+                              {!plug.image_url?.startsWith('http') && (plug.image_url || '📦')}
                             </div>
                             <div>
                               <h3 className="spotify-card-title">{plug.title}</h3>
@@ -158,6 +164,25 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                             )}
                           </div>
                         ))}
+                        {cat.pillar && (
+                          <div 
+                            className="spotify-card"
+                            onClick={() => router.push(`/category/${cat.pillar}`)}
+                            style={{ 
+                              display: 'flex', 
+                              flexDirection: 'column', 
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              cursor: 'pointer',
+                              background: 'var(--bg-input)',
+                              border: '2px dashed var(--border)',
+                              opacity: 0.8
+                            }}
+                          >
+                            <div style={{ fontSize: '2.5rem', color: 'var(--text-muted)' }}>•••</div>
+                            <div style={{ marginTop: '0.5rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Explore More</div>
+                          </div>
+                        )}
                       </div>
                     </section>
                   );

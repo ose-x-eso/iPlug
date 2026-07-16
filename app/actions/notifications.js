@@ -80,3 +80,17 @@ export async function markNotificationsAsRead() {
     
   revalidatePath('/', 'layout');
 }
+
+export async function markNotificationAsRead(id) {
+  const supabase = await getSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', id)
+    .eq('user_id', user.id);
+    
+  revalidatePath('/', 'layout');
+}

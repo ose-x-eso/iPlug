@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppShell from "@/components/layout/AppShell";
 import SearchFilters from "@/components/search/SearchFilters";
@@ -9,6 +9,28 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [location, setLocation] = useState('');
+  const [showSearchFab, setShowSearchFab] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show FAB if scrolled past 150px
+      setShowSearchFab(window.scrollY > 150);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSearch = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Try to focus the search input after a short delay to allow scrolling
+    setTimeout(() => {
+      const searchInput = document.getElementById('main-search-input');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }, 500);
+  };
 
   // Filter plugs based on search, tab, and location
   const filteredPlugs = initialPlugs.filter((plug) => {
@@ -56,6 +78,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
           </header>
 
           <SearchFilters 
+            searchInputId="main-search-input"
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             activeTab={activeTab}
@@ -81,8 +104,21 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                 {filteredProfiles.map(profile => (
                   <Link href={`/messages/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
                     <div className="feed-card" style={{ display: 'flex', alignItems: 'center', padding: '1rem', flexDirection: 'row', gap: '1rem' }}>
-                      <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'var(--gradient-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'white' }}>
-                        {(profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U'}
+                      <div style={{ 
+                        width: '50px', 
+                        height: '50px', 
+                        borderRadius: '50%', 
+                        background: 'var(--gradient-accent)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        fontSize: '1.5rem', 
+                        color: 'white',
+                        backgroundImage: profile.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}>
+                        {!profile.avatar_url?.startsWith('http') && ((profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U')}
                       </div>
                       <div className="feed-card-content" style={{ padding: 0 }}>
                         <div className="feed-card-header" style={{ marginBottom: 0 }}>
@@ -110,8 +146,13 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                 {filteredPlugs.map(plug => (
                   <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none' }}>
                     <div className="feed-card">
-                      <div className="feed-card-image" style={{ background: 'var(--bg-surface-raised)' }}>
-                        <span style={{ fontSize: '3rem' }}>{plug.image_url || '📦'}</span>
+                      <div className="feed-card-image" style={{ 
+                        background: 'var(--bg-surface-raised)',
+                        backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                      }}>
+                        {!plug.image_url?.startsWith('http') && <span style={{ fontSize: '3rem' }}>{plug.image_url || '📦'}</span>}
                       </div>
                       <div className="feed-card-content">
                         <div className="feed-card-header">
@@ -128,6 +169,38 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
               </>
             )}
           </section>
+
+          {showSearchFab && (
+            <button 
+              onClick={scrollToSearch}
+              style={{
+                position: 'fixed',
+                bottom: '80px', // Above the mobile bottom nav
+                right: '20px',
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: 'var(--primary)',
+                color: 'white',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(255, 59, 48, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 100,
+                transition: 'transform 0.2s',
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              aria-label="Search"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          )}
         </main>
       </div>
     </AppShell>

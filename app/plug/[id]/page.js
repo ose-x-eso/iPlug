@@ -4,6 +4,7 @@ import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import BackButton from '@/components/layout/BackButton';
 import RecentlyViewedTracker from '@/components/feed/RecentlyViewedTracker';
+import PlugDetailActions from '@/components/feed/PlugDetailActions';
 
 export default async function PlugDetailsPage(props) {
   const params = await props.params;
@@ -53,8 +54,17 @@ export default async function PlugDetailsPage(props) {
 
         <div className="plug-details-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)' }}>
           
-          <div className="plug-header-bg" style={{ height: '200px', background: 'linear-gradient(45deg, #1A1A2E, #16213E)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: '6rem' }}>{plug.image_url || '📦'}</span>
+          <div className="plug-header-bg" style={{ 
+            height: '250px', 
+            background: 'var(--bg-input)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'linear-gradient(45deg, #1A1A2E, #16213E)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}>
+            {!plug.image_url?.startsWith('http') && <span style={{ fontSize: '6rem' }}>{plug.image_url || '📦'}</span>}
           </div>
 
           <div className="plug-details-content" style={{ padding: '2rem' }}>
@@ -99,8 +109,21 @@ export default async function PlugDetailsPage(props) {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'white' }}>
-                    {(profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U'}
+                  <div style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%', 
+                    background: 'linear-gradient(45deg, var(--primary), var(--secondary))', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '1.5rem', 
+                    color: 'white',
+                    backgroundImage: profile?.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}>
+                    {!profile?.avatar_url?.startsWith('http') && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -149,9 +172,7 @@ export default async function PlugDetailsPage(props) {
                     </Link>
                   </div>
                 ) : (
-                  <div style={{ padding: '0.5rem 1rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-sm)', color: 'var(--text-secondary)' }}>
-                    This is your plug
-                  </div>
+                  <PlugDetailActions plug={plug} />
                 )}
                 
               </div>
@@ -164,14 +185,29 @@ export default async function PlugDetailsPage(props) {
               </div>
               
               <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                  To read all reviews and ratings, visit {profile.username || profile.full_name}'s profile.
-                </p>
-                <Link href={`/profile/${profile.id}`}>
-                  <button className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
-                    View Profile
-                  </button>
-                </Link>
+                {isOwner ? (
+                  <>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                      To manage your reviews and see all ratings, visit your dashboard.
+                    </p>
+                    <Link href={`/profile/${profile.id}`}>
+                      <button className="btn btn-secondary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
+                        View Dashboard
+                      </button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                      To read all reviews and ratings, visit {profile.username || profile.full_name}'s profile.
+                    </p>
+                    <Link href={`/profile/${profile.id}`}>
+                      <button className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
+                        View Profile
+                      </button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 

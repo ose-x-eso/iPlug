@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Bell, X } from 'lucide-react';
-import { getNotifications, markNotificationsAsRead } from '@/app/actions/notifications';
+import { getNotifications, markNotificationAsRead } from '@/app/actions/notifications';
 import './layout.css';
 
 export default function NotificationsDropdown({ unreadCount }) {
@@ -34,9 +34,6 @@ export default function NotificationsDropdown({ unreadCount }) {
         try {
           const data = await getNotifications();
           setNotifications(data.slice(0, 5)); // Show top 5
-          if (unreadCount > 0) {
-            await markNotificationsAsRead();
-          }
         } catch (error) {
           console.error("Failed to fetch notifications:", error);
         } finally {
@@ -108,11 +105,30 @@ export default function NotificationsDropdown({ unreadCount }) {
               </div>
             ) : (
               notifications.map((notif) => (
-                <div key={notif.id} style={{ 
-                  padding: '1rem', 
-                  borderBottom: '1px solid var(--border)',
-                  background: notif.is_read ? 'transparent' : 'var(--bg-input)'
-                }}>
+                <div 
+                  key={notif.id} 
+                  onClick={async () => {
+                    setIsOpen(false);
+                    if (!notif.is_read) {
+                      await markNotificationAsRead(notif.id);
+                      setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, is_read: true } : n));
+                    }
+                    if (notif.type === 'NEW_MESSAGE') {
+                      router.push('/inbox');
+                    } else {
+                      router.push('/notifications');
+                    }
+                  }}
+                  style={{ 
+                    padding: '1rem', 
+                    borderBottom: '1px solid var(--border)',
+                    background: notif.is_read ? 'transparent' : 'var(--bg-input)',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseOver={(e) => { if (notif.is_read) e.currentTarget.style.background = 'var(--bg-input)' }}
+                  onMouseOut={(e) => { if (notif.is_read) e.currentTarget.style.background = 'transparent' }}
+                >
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                     <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{notif.type}</h4>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
