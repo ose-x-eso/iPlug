@@ -40,12 +40,17 @@ export default function AuthModal({ isOpen, onClose }) {
     const formData = new FormData(e.target);
     let result;
 
-    if (isForgotPassword) {
-      result = await sendPasswordResetEmail(formData);
-    } else if (isLogin) {
-      result = await login(formData);
-    } else {
-      result = await signUp(formData);
+    try {
+      if (isForgotPassword) {
+        result = await sendPasswordResetEmail(formData);
+      } else if (isLogin) {
+        result = await login(formData);
+      } else {
+        result = await signUp(formData);
+      }
+    } catch (err) {
+      console.error('Action error:', err);
+      result = { error: err?.message || String(err) || 'An unexpected error occurred.' };
     }
 
     if (result?.error) {
@@ -81,22 +86,24 @@ export default function AuthModal({ isOpen, onClose }) {
           <p>{isForgotPassword ? 'Enter your email to receive a reset link.' : isLogin ? 'Log in to find your plug.' : 'Create an account to start discovering.'}</p>
         </div>
 
-        <div className="auth-tabs">
-          <button 
-            type="button"
-            className={`auth-tab ${isLogin ? 'active' : ''}`}
-            onClick={() => handleTabSwitch(true)}
-          >
-            Log In
-          </button>
-          <button 
-            type="button"
-            className={`auth-tab ${!isLogin ? 'active' : ''}`}
-            onClick={() => handleTabSwitch(false)}
-          >
-            Sign Up
-          </button>
-        </div>
+        {!isForgotPassword && (
+          <div className="auth-tabs">
+            <button 
+              type="button"
+              className={`auth-tab ${isLogin ? 'active' : ''}`}
+              onClick={() => handleTabSwitch(true)}
+            >
+              Log In
+            </button>
+            <button 
+              type="button"
+              className={`auth-tab ${!isLogin ? 'active' : ''}`}
+              onClick={() => handleTabSwitch(false)}
+            >
+              Sign Up
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="auth-form" autoComplete="off">
           {errorMsg && <div className="auth-error">{errorMsg}</div>}
@@ -137,7 +144,7 @@ export default function AuthModal({ isOpen, onClose }) {
             </>
           )}
 
-          {!successMsg && (
+          {!successMsg && !isForgotPassword && (
             <>
               {isLogin && (
                 <div className="input-group">

@@ -39,49 +39,54 @@ export async function login(formData) {
 }
 
 export async function signUp(formData) {
-  const supabase = await createClient()
-  
-  const email = formData.get('email')?.toLowerCase();
-  const password = formData.get('password')
-  const fullName = formData.get('fullName')
-  const phoneNumber = formData.get('phoneNumber')
-  const username = formData.get('username')?.toLowerCase();
+  try {
+    const supabase = await createClient()
+    
+    const email = formData.get('email')?.toLowerCase();
+    const password = formData.get('password')
+    const fullName = formData.get('fullName')
+    const phoneNumber = formData.get('phoneNumber')
+    const username = formData.get('username')?.toLowerCase();
 
-  // Check if username is already taken
-  const { data: existingUser } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('username', username)
-    .single();
+    // Check if username is already taken
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('username', username)
+      .single();
 
-  if (existingUser) {
-    return { error: 'That username is already taken. Please choose another.' }
-  }
-
-  // 1. Sign up the user and pass metadata for the trigger
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        phone_number: phoneNumber,
-        username: username,
-      }
+    if (existingUser) {
+      return { error: 'That username is already taken. Please choose another.' }
     }
-  })
 
-  if (error) {
-    return { error: error.message || 'An unknown error occurred during sign up.' }
+    // 1. Sign up the user and pass metadata for the trigger
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          phone_number: phoneNumber,
+          username: username,
+        }
+      }
+    })
+
+    if (error) {
+      return { error: error.message || 'An unknown error occurred during sign up.' }
+    }
+
+    // Ensure the username and email are written to the profile (in case the trigger didn't catch it)
+    if (data?.user) {
+      await supabase.from('profiles').update({ username, email }).eq('id', data.user.id);
+    }
+
+    revalidatePath('/', 'layout')
+    return { success: true }
+  } catch (err) {
+    console.error('Sign up error:', err);
+    return { error: err?.message || 'An unexpected error occurred during sign up.' };
   }
-
-  // Ensure the username and email are written to the profile (in case the trigger didn't catch it)
-  if (data?.user) {
-    await supabase.from('profiles').update({ username, email }).eq('id', data.user.id);
-  }
-
-  revalidatePath('/', 'layout')
-  return { success: true }
 }
 
 export async function logout() {
@@ -105,9 +110,9 @@ export async function sendPasswordResetEmail(formData) {
     return { error: 'Email is required' };
   }
 
-  // The redirectTo URL must be registered in the Supabase Dashboard > Authentication > URL Configuration
+  // The redirectTo URL must go through the callback route to exchange the code for a session cookie
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/update-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?next=/auth/update-password`,
   });
 
   if (error) {
