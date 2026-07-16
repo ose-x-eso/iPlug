@@ -77,9 +77,19 @@ export async function signUp(formData) {
       return { error: error.message || 'An unknown error occurred during sign up.' }
     }
 
-    // Ensure the username and email are written to the profile (in case the trigger didn't catch it)
     if (data?.user) {
-      await supabase.from('profiles').update({ username, email }).eq('id', data.user.id);
+      // Supabase fake signs up users if the email already exists to prevent enumeration.
+      if (data.user.identities && data.user.identities.length === 0) {
+        return { error: 'This email is already registered. Please log in.' };
+      }
+      
+      // If session is null, email confirmation is required!
+      if (!data.session) {
+        return { success: true, requireConfirmation: true };
+      }
+
+      // If we have a session, we can safely upsert
+      await supabase.from('profiles').upsert({ id: data.user.id, username, email, full_name: fullName, phone_number: phoneNumber });
       
       // Send Welcome Notification
       await createNotification(

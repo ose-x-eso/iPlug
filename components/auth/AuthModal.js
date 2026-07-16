@@ -80,10 +80,14 @@ export default function AuthModal({ isOpen, onClose }) {
         onClose();
         window.location.reload();
       } else {
-        setSuccessMsg('Account created! Logging you in...');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        if (result.requireConfirmation) {
+          setSuccessMsg('Account created! Please check your email to confirm your account.');
+        } else {
+          setSuccessMsg('Account created! Logging you in...');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
       }
     }
   }
