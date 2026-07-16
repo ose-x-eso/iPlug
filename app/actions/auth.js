@@ -60,6 +60,19 @@ export async function signUp(formData) {
       return { error: 'That username is already taken. Please choose another.' }
     }
 
+    // Check if phone number is already taken
+    if (phoneNumber) {
+      const { data: existingPhone } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('phone_number', phoneNumber)
+        .single();
+        
+      if (existingPhone) {
+        return { error: 'That phone number is already registered. Please use another.' }
+      }
+    }
+
     // 1. Sign up the user and pass metadata for the trigger
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -74,7 +87,13 @@ export async function signUp(formData) {
     })
 
     if (error) {
-      return { error: error.message || 'An unknown error occurred during sign up.' }
+      console.error('Supabase auth signUp error object:', error);
+      console.error('Supabase auth signUp error.message:', error.message);
+      let errorMessage = error.message;
+      if (typeof errorMessage === 'object' || errorMessage === '{}') {
+        errorMessage = 'Database error during sign up. Please try again.';
+      }
+      return { error: errorMessage || 'An unknown error occurred during sign up.' }
     }
 
     if (data?.user) {
@@ -103,7 +122,11 @@ export async function signUp(formData) {
     return { success: true }
   } catch (err) {
     console.error('Sign up error:', err);
-    return { error: err?.message || 'An unexpected error occurred during sign up.' };
+    let errorMessage = err?.message;
+    if (typeof errorMessage === 'object' || errorMessage === '{}') {
+      errorMessage = 'An unexpected database error occurred during sign up.';
+    }
+    return { error: errorMessage || 'An unexpected error occurred during sign up.' };
   }
 }
 
