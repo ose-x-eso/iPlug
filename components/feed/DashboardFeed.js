@@ -1,162 +1,177 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Navbar from "@/components/layout/Navbar";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import AppShell from "@/components/layout/AppShell";
+import EditPlugModal from './EditPlugModal';
 
 export default function DashboardFeed({ user, initialPlugs = [], initialProfiles = [] }) {
-  // Use username, fallback to email prefix
-  const displayName = user?.user_metadata?.username || user?.email?.split('@')[0] || "User";
+  const router = useRouter();
+  const [recentPlugs, setRecentPlugs] = useState([]);
+  const [editingPlug, setEditingPlug] = useState(null);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('iplug_recent_plugs');
+      if (stored) {
+        setRecentPlugs(JSON.parse(stored));
+      }
+    } catch (e) {}
+  }, []);
 
-  // Filter plugs based on search query and active tab
-  const filteredPlugs = initialPlugs.filter((plug) => {
-    // 1. Tab Filter
-    if (activeTab !== 'all' && plug.pillar !== activeTab) return false;
-
-    // 2. Search Filter (match title, description, or category)
-    if (searchQuery.trim() !== '') {
-      const q = searchQuery.toLowerCase();
-      const matchTitle = plug.title?.toLowerCase().includes(q);
-      const matchDesc = plug.description?.toLowerCase().includes(q);
-      const matchCat = plug.category?.toLowerCase().includes(q);
-      
-      if (!matchTitle && !matchDesc && !matchCat) return false;
+  const categories = [
+    {
+      title: '🛠️ Top Services & Mechanics',
+      items: initialPlugs.filter(p => p.pillar === 'services')
+    },
+    {
+      title: '🛍️ Trending Shops',
+      items: initialPlugs.filter(p => p.pillar === 'shops')
+    },
+    {
+      title: '🏢 Places to Explore',
+      items: initialPlugs.filter(p => p.pillar === 'places')
+    },
+    {
+      title: '🆕 Newest Arrivals',
+      items: initialPlugs.slice(0, 10) // First 10 (already ordered by created_at desc)
     }
-
-    return true;
-  });
-
-  // Filter profiles (People) if there is a search query
-  const filteredProfiles = searchQuery.trim() !== '' 
-    ? initialProfiles.filter(profile => 
-        (profile.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         profile.full_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        profile.id !== user?.id // Don't show yourself
-      )
-    : [];
+  ];
 
   return (
-    <div className="dashboard-container">
-      <Navbar user={user} />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
       
       <main className="dashboard-main">
-        <header className="dashboard-header">
-          <h1>Welcome back, <span className="gradient-text">{displayName}</span></h1>
-          <p>What are you looking for today?</p>
-        </header>
+        {/* Header removed as requested */}
 
-        <div className="search-bar dashboard-search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input 
-            type="text" 
-            placeholder="Search for electricians, fresh food, gyms..." 
-            className="search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        <section className="dashboard-categories">
-          <div 
-            className={`category-pill ${activeTab === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveTab('all')}
-          >All</div>
-          <div 
-            className={`category-pill ${activeTab === 'services' ? 'active' : ''}`}
-            onClick={() => setActiveTab('services')}
-          >🛠️ Services</div>
-          <div 
-            className={`category-pill ${activeTab === 'shops' ? 'active' : ''}`}
-            onClick={() => setActiveTab('shops')}
-          >🛍️ Shops</div>
-          <div 
-            className={`category-pill ${activeTab === 'places' ? 'active' : ''}`}
-            onClick={() => setActiveTab('places')}
-          >🏢 Places</div>
-        </section>
-
-        <section className="feed-grid">
-          {filteredPlugs.length === 0 && filteredProfiles.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
-              {initialPlugs.length === 0 ? (
-                <>
-                  <h3>No plugs found</h3>
-                  <p>Be the first to list a service or shop in your area!</p>
-                </>
-              ) : (
-                <>
-                  <h3>No matches found</h3>
-                  <p>Try adjusting your search or filters to find what you're looking for.</p>
-                </>
-              )}
-            </div>
-          ) : (
-            <>
-              {filteredProfiles.length > 0 && (
-                <div style={{ gridColumn: '1 / -1', marginBottom: '1rem', marginTop: '1rem' }}>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>People</h3>
-                </div>
-              )}
-              {filteredProfiles.map(profile => (
-                <Link href={`/messages/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
-                  <div className="feed-card" style={{ display: 'flex', alignItems: 'center', padding: '1rem', flexDirection: 'row', gap: '1rem' }}>
-                    <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', color: 'white' }}>
-                      {(profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                    <div className="feed-card-content" style={{ padding: 0 }}>
-                      <div className="feed-card-header" style={{ marginBottom: 0 }}>
-                        <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                          @{profile.username || profile.full_name}
-                          {profile.is_verified && (
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                            </svg>
+        {/* Spotify-style Horizontal Rows (Default View) */}
+          <div>
+            {initialPlugs.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
+                <h3>No plugs found</h3>
+                <p>Be the first to list a service or shop in your area!</p>
+              </div>
+            ) : (
+              <>
+                {recentPlugs.length > 0 && (
+                  <section className="spotify-section">
+                    <h2 className="spotify-section-title">
+                      🕒 Jump back in
+                    </h2>
+                    <div className="spotify-carousel">
+                      {recentPlugs.map(plug => (
+                        <div 
+                          key={plug.id} 
+                          className="spotify-card"
+                          onClick={() => router.push(`/plug/${plug.id}`)}
+                          style={{ position: 'relative', cursor: 'pointer' }}
+                        >
+                          <div className="spotify-card-img">
+                            {plug.image_url || '📦'}
+                          </div>
+                          <div>
+                            <h3 className="spotify-card-title">{plug.title}</h3>
+                            <p className="spotify-card-subtitle">{plug.category || 'Recently viewed'}</p>
+                          </div>
+                          {user && user.id === plug.provider_id && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingPlug(plug);
+                              }}
+                              style={{
+                                position: 'absolute',
+                                top: '0.5rem',
+                                right: '0.5rem',
+                                background: 'rgba(0,0,0,0.6)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '28px',
+                                height: '28px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                              }}
+                              title="Edit Plug"
+                            >
+                              ✏️
+                            </button>
                           )}
-                        </h3>
-                      </div>
-                      <p style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem', margin: 0 }}>Tap to message</p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </Link>
-              ))}
-
-              {filteredPlugs.length > 0 && filteredProfiles.length > 0 && (
-                <div style={{ gridColumn: '1 / -1', marginBottom: '1rem', marginTop: '2rem' }}>
-                  <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>Plugs</h3>
-                </div>
-              )}
-              
-              {filteredPlugs.map(plug => (
-                <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none' }}>
-                  <div className="feed-card">
-                    <div className="feed-card-image" style={{ background: 'linear-gradient(45deg, #1A1A2E, #16213E)' }}>
-                      <span style={{ fontSize: '3rem' }}>{plug.image_url || '📦'}</span>
-                    </div>
-                    <div className="feed-card-content">
-                      <div className="feed-card-header">
-                        <h3>{plug.title}</h3>
+                  </section>
+                )}
+                {categories.map((cat, idx) => {
+                  if (cat.items.length === 0) return null;
+                  return (
+                    <section className="spotify-section" key={idx}>
+                      <h2 className="spotify-section-title">
+                        {cat.title}
+                      </h2>
+                      <div className="spotify-carousel">
+                        {cat.items.map(plug => (
+                          <div 
+                            key={plug.id} 
+                            className="spotify-card"
+                            onClick={() => router.push(`/plug/${plug.id}`)}
+                            style={{ position: 'relative', cursor: 'pointer' }}
+                          >
+                            <div className="spotify-card-img">
+                              {plug.image_url || '📦'}
+                            </div>
+                            <div>
+                              <h3 className="spotify-card-title">{plug.title}</h3>
+                              <p className="spotify-card-subtitle">{plug.category || plug.address || 'Local Plug'}</p>
+                            </div>
+                            {user && user.id === plug.provider_id && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingPlug(plug);
+                                }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '0.5rem',
+                                  right: '0.5rem',
+                                  background: 'rgba(0,0,0,0.6)',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '50%',
+                                  width: '28px',
+                                  height: '28px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  fontSize: '14px'
+                                }}
+                                title="Edit Plug"
+                              >
+                                ✏️
+                              </button>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                      <p className="feed-card-desc">{plug.description}</p>
-                      <div className="feed-card-meta">
-                        <span>📍 {plug.address || 'Location unknown'}</span>
-                        <span>⭐ 4.8 (12 Reviews)</span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </>
-          )}
-        </section>
+                    </section>
+                  );
+                })}
+              </>
+            )}
+          </div>
       </main>
-
-    </div>
+        <EditPlugModal 
+          isOpen={!!editingPlug} 
+          onClose={() => setEditingPlug(null)} 
+          plug={editingPlug} 
+        />
+      </div>
+    </AppShell>
   );
 }

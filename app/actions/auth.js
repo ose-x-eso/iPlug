@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { createNotification } from './notifications'
 
 export async function login(formData) {
   const supabase = await createClient()
@@ -79,6 +80,13 @@ export async function signUp(formData) {
     // Ensure the username and email are written to the profile (in case the trigger didn't catch it)
     if (data?.user) {
       await supabase.from('profiles').update({ username, email }).eq('id', data.user.id);
+      
+      // Send Welcome Notification
+      await createNotification(
+        data.user.id,
+        'Welcome',
+        'Welcome to iPlug! Start exploring services and shops around you.'
+      );
     }
 
     revalidatePath('/', 'layout')

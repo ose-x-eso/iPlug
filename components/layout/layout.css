@@ -1,0 +1,213 @@
+/* ============================================================
+   AppShell Layout
+   ============================================================ */
+
+.app-shell {
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  background: var(--bg-page);
+}
+
+.app-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 70px); /* Space for mobile tab bar */
+}
+
+/* ============================================================
+   Desktop Sidebar
+   ============================================================ */
+
+.desktop-sidebar {
+  display: none;
+  width: 260px;
+  flex-shrink: 0;
+  flex-direction: column;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg-surface);
+  z-index: 50;
+}
+
+.sidebar-header {
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-xl);
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  overflow-y: auto;
+}
+
+.sidebar-footer {
+  padding: var(--space-lg) var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.nav-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.nav-item:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-heading);
+}
+
+.nav-item.active {
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+}
+
+.nav-item.text-danger {
+  color: var(--danger);
+}
+.nav-item.text-danger:hover {
+  background: var(--danger-subtle);
+}
+
+.new-plug-btn {
+  margin-bottom: var(--space-md);
+}
+
+/* ============================================================
+   Mobile Tab Bar
+   ============================================================ */
+
+.mobile-tab-bar {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(70px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--bg-nav);
+  border-top: 1px solid var(--border);
+  z-index: 50;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-muted);
+  height: 100%;
+  transition: color var(--transition-fast);
+}
+
+.tab-item.active {
+  color: var(--text-heading);
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tab-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transform: translateY(-15px);
+}
+
+.action-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-glow);
+  transition: transform var(--transition-fast);
+}
+
+.tab-action-btn:active .action-circle {
+  transform: scale(0.92);
+}
+
+/* ============================================================
+   Feedback Widget
+   ============================================================ */
+
+.feedback-widget-container {
+  position: fixed;
+  bottom: calc(2rem + 70px + env(safe-area-inset-bottom, 0px));
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+/* ============================================================
+   Media Queries
+   ============================================================ */
+
+@media (min-width: 768px) {
+  .mobile-tab-bar,
+  .mobile-top-nav {
+    display: none !important;
+  }
+  
+  .desktop-sidebar {
+    display: flex;
+  }
+  
+  .app-main-content {
+    padding-bottom: 0;
+  }
+  
+  .feedback-widget-container {
+    bottom: 2rem;
+    right: 2rem;
+  }
+}

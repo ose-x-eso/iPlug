@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
+import AppShell from '@/components/layout/AppShell';
 import MyPlugCard from '@/components/feed/MyPlugCard';
 
 export default async function MyPlugsPage() {
@@ -21,10 +21,10 @@ export default async function MyPlugsPage() {
     .order('created_at', { ascending: false });
 
   return (
-    <div className="dashboard-container">
-      <Navbar user={user} />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
       
-      <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '6rem 1rem 2rem 1rem' }}>
+      <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem 1rem' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
@@ -49,6 +49,7 @@ export default async function MyPlugsPage() {
         </section>
 
       </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

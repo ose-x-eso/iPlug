@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signUp, sendPasswordResetEmail } from '@/app/actions/auth';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AuthModal({ isOpen, onClose }) {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function AuthModal({ isOpen, onClose }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -19,6 +21,7 @@ export default function AuthModal({ isOpen, onClose }) {
       setErrorMsg('');
       setSuccessMsg('');
       setIsForgotPassword(false);
+      setShowPassword(false);
     }
   }, [isOpen]);
 
@@ -54,9 +57,19 @@ export default function AuthModal({ isOpen, onClose }) {
     }
 
     if (result?.error) {
-      const errorMessage = typeof result.error === 'string' 
-        ? result.error 
-        : (result.error?.message || JSON.stringify(result.error) || 'An unknown error occurred.');
+      let errorMessage = 'An unknown error occurred.';
+      if (typeof result.error === 'string') {
+        errorMessage = result.error;
+      } else if (result.error?.message) {
+        errorMessage = result.error.message;
+      } else {
+        const stringified = JSON.stringify(result.error);
+        if (stringified !== '{}' && stringified !== '""') {
+          errorMessage = stringified;
+        } else if (result.error?.name === 'AuthApiError') {
+          errorMessage = 'Authentication failed. Please check your details.';
+        }
+      }
       setErrorMsg(errorMessage);
       setIsLoading(false);
     } else if (result?.success) {
@@ -166,7 +179,37 @@ export default function AuthModal({ isOpen, onClose }) {
                     </button>
                   )}
                 </div>
-                <input type="password" name="password" required placeholder="••••••••" minLength="6" autoComplete="current-password" className="input-field" />
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    name="password" 
+                    required 
+                    placeholder="••••••••" 
+                    minLength="6" 
+                    autoComplete="current-password" 
+                    className="input-field" 
+                    style={{ paddingRight: '2.5rem' }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '0.75rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
               <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '0.5rem' }}>

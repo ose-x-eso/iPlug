@@ -1,7 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
+import AppShell from '@/components/layout/AppShell';
+import BackButton from '@/components/layout/BackButton';
+import RecentlyViewedTracker from '@/components/feed/RecentlyViewedTracker';
 
 export default async function PlugDetailsPage(props) {
   const params = await props.params;
@@ -28,17 +30,26 @@ export default async function PlugDetailsPage(props) {
     .eq('id', plug.provider_id)
     .single();
 
+  // Fetch reviews for the provider
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('rating')
+    .eq('provider_id', plug.provider_id);
+
+  const averageRating = reviews?.length > 0 
+    ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1)
+    : 'New';
+
   const isOwner = user?.id === plug.provider_id;
 
   return (
-    <div className="dashboard-container">
-      <Navbar user={user} />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
+      <RecentlyViewedTracker plug={plug} />
       
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '6rem 1rem 2rem 1rem' }}>
+      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
         
-        <Link href="/" style={{ color: 'var(--text-primary)', fontWeight: '500', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', background: 'var(--bg-card)', padding: '0.5rem 1rem', borderRadius: '20px', border: '1px solid var(--border)' }}>
-          <span>←</span> Back to Feed
-        </Link>
+        <BackButton />
 
         <div className="plug-details-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)' }}>
           
@@ -52,7 +63,7 @@ export default async function PlugDetailsPage(props) {
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{plug.title}</h1>
                 <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '1rem', alignItems: 'center' }}>
                   <span>📍 {plug.address || 'Location unknown'}</span>
-                  <span>⭐ 4.8 (12 Reviews)</span>
+                  <span>⭐ {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
                   <span>🏷️ {plug.category}</span>
                 </div>
               </div>
@@ -66,6 +77,20 @@ export default async function PlugDetailsPage(props) {
               <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>
                 {plug.description}
               </p>
+              
+              {plug.portfolio_url && (
+                <div style={{ marginTop: '1.5rem' }}>
+                  <a 
+                    href={plug.portfolio_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="btn btn-secondary"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.5rem 1rem' }}
+                  >
+                    🔗 View Portfolio / Website
+                  </a>
+                </div>
+              )}
             </div>
 
             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
@@ -79,7 +104,7 @@ export default async function PlugDetailsPage(props) {
                   </div>
                   <div>
                     <h4 style={{ fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      @{profile?.username || profile?.full_name || 'Unknown User'}
+                      {profile?.username || profile?.full_name || 'Unknown User'}
                       {profile?.is_verified && (
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
                           <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
@@ -91,9 +116,9 @@ export default async function PlugDetailsPage(props) {
                 </div>
 
                 {!isOwner ? (
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    {/* Call Button - native phone dialer */}
-                    {profile?.phone_number ? (
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                    {/* Call Button - Only show if phone number is provided */}
+                    {profile?.phone_number && (
                       <a 
                         href={`tel:${profile.phone_number}`}
                         className="btn btn-secondary"
@@ -101,17 +126,20 @@ export default async function PlugDetailsPage(props) {
                       >
                         📞 Call
                       </a>
-                    ) : (
-                      <span 
-                        className="btn btn-secondary"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', opacity: 0.5, cursor: 'not-allowed' }}
-                        title="This provider did not provide a phone number"
-                      >
-                        📞 Call
-                      </span>
                     )}
 
-                    {/* Message Button - links to the chat system we will build in Step 8 */}
+                    {/* Email Button - As an alternative contact method */}
+                    {profile?.email && (
+                      <a 
+                        href={`mailto:${profile.email}`}
+                        className="btn btn-secondary"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+                      >
+                        📧 Email
+                      </a>
+                    )}
+
+                    {/* Message Button - links to the chat system we built */}
                     <Link 
                       href={`/messages/${plug.provider_id}`}
                       className="btn btn-primary"
@@ -132,29 +160,25 @@ export default async function PlugDetailsPage(props) {
             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0 }}>Reviews & Ratings</h3>
-                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>⭐ 4.8 (12 Reviews)</span>
+                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>⭐ {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
               </div>
               
               <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontStyle: 'italic' }}>
-                  "Great service! Very professional and highly recommended to anyone in the area."
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                  To read all reviews and ratings, visit {profile.username || profile.full_name}'s profile.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>S</div>
-                  <span>Sarah J.</span> • <span>2 weeks ago</span>
-                </div>
-              </div>
-              
-              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                <button className="btn btn-secondary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }} disabled>
-                  View all 12 reviews
-                </button>
+                <Link href={`/profile/${profile.id}`}>
+                  <button className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
+                    View Profile
+                  </button>
+                </Link>
               </div>
             </div>
 
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

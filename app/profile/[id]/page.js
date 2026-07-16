@@ -1,8 +1,11 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
+import AppShell from '@/components/layout/AppShell';
 import ProfileActions from '@/components/profile/ProfileActions';
+import ProfileTabs from '@/components/profile/ProfileTabs';
+import ProfileViewTracker from '@/components/profile/ProfileViewTracker';
+import ReferralTracker from '@/components/profile/ReferralTracker';
 
 export default async function ProfilePage(props) {
   const params = await props.params;
@@ -29,100 +32,122 @@ export default async function ProfilePage(props) {
     .eq('provider_id', params.id)
     .order('created_at', { ascending: false });
 
+  // Fetch recommendations
+  const { data: recommendations } = await supabase
+    .from('recommendations')
+    .select('*, profiles:recommender_id(id, username, full_name, email)')
+    .eq('provider_id', params.id)
+    .order('created_at', { ascending: false });
+
+  // Fetch reviews
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('*, reviewer:profiles!reviewer_id(id, username, full_name, avatar_url)')
+    .eq('provider_id', params.id)
+    .order('created_at', { ascending: false });
+
   const isOwner = user?.id === profile.id;
+  const viewerName = user?.user_metadata?.username || user?.email?.split('@')[0];
+
+  // Derive joined year from created_at, or default to current year if undefined
+  const joinedDate = profile.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
+
+  // Calculate Average Rating
+  const averageRating = reviews?.length > 0 
+    ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1)
+    : 'New';
 
   return (
-    <div className="dashboard-container">
-      <Navbar />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
+      <ProfileViewTracker profileId={profile.id} viewerId={user?.id} viewerName={viewerName} />
+      <ReferralTracker profileId={profile.id} />
       
-      <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '6rem 1rem 2rem 1rem' }}>
+      <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 0 2rem 0' }}>
         
-        {/* Profile Header */}
-        <div className="profile-header-card" style={{ background: 'var(--bg-card)', padding: '3rem 2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+        {/* Cover Banner */}
+        <div style={{ 
+          height: '250px', 
+          background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--primary), var(--secondary))', 
+          width: '100%', 
+          position: 'relative' 
+        }}>
+          {/* A soft overlay to make it look premium */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }}></div>
+        </div>
+
+        {/* Profile Info Container */}
+        <div style={{ padding: '0 2rem', position: 'relative', marginTop: '-60px' }}>
           
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', marginBottom: '1rem', boxShadow: 'var(--shadow-md)' }}>
-            {(profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U'}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+            {/* Avatar */}
+            <div style={{ 
+              width: '120px', 
+              height: '120px', 
+              borderRadius: '50%', 
+              background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover no-repeat` : 'var(--bg-card)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '4rem', 
+              color: 'var(--text-primary)', 
+              border: '4px solid var(--bg-page)',
+              boxShadow: 'var(--shadow-lg)',
+              zIndex: 10
+            }}>
+              {!profile?.avatar_url && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+            </div>
+
+            {/* Actions Bar (Desktop alignment) */}
+            <div style={{ display: 'flex', gap: '1rem', zIndex: 10 }}>
+              <ProfileActions profile={profile} isOwner={isOwner} profileId={profile.id} user={user} />
+            </div>
           </div>
-          
-          <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: '2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              @{profile?.username || profile?.full_name || 'Unknown User'}
+
+          {/* Bio & Details */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {profile?.username || profile?.full_name || 'Unknown User'}
               {profile?.is_verified && (
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
                   <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
                 </svg>
               )}
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', margin: 0 }}>iPlug Provider</p>
+            <p style={{ color: 'var(--primary)', fontWeight: '600', margin: '0 0 1rem 0' }}>{profile?.title || 'iPlug Provider'}</p>
+
+            <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                📅 Member since {joinedDate}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                📦 {plugs?.length || 0} Plugs
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                ⭐ {averageRating === 'New' ? 'New' : `${averageRating} Average Rating`}
+              </span>
+            </div>
+
+            <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--text-primary)', maxWidth: '800px', whiteSpace: 'pre-wrap' }}>
+              {profile?.bio || "This provider hasn't written a bio yet. Check out their plugs and reviews to learn more about what they offer!"}
+            </p>
           </div>
 
-          {!isOwner && (
-            <div className="profile-header-actions" style={{ display: 'flex', gap: '1rem' }}>
-              {profile?.phone_number && (
-                <a 
-                  href={`tel:${profile.phone_number}`}
-                  className="btn btn-secondary"
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-                >
-                  📞 Call
-                </a>
-              )}
-              <Link 
-                href={`/messages/${profile.id}`}
-                className="btn btn-primary"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-              >
-                💬 Message
-              </Link>
-            </div>
-          )}
+          {/* Interactive Tabs */}
+          <ProfileTabs 
+            profile={profile}
+            plugs={plugs || []} 
+            profileId={profile.id} 
+            isOwner={isOwner} 
+            isPremium={profile?.is_premium}
+            user={user} 
+            recommendations={recommendations || []}
+            reviews={reviews || []}
+          />
 
-          {isOwner && (
-            <div className="profile-header-actions" style={{ width: '100%' }}>
-              <ProfileActions />
-            </div>
-          )}
         </div>
-
-        {/* User's Plugs Section */}
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span>📦</span> Listed Plugs
-        </h2>
-
-        {plugs && plugs.length > 0 ? (
-          <div className="feed-grid">
-            {plugs.map((plug) => (
-              <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform 0.2s, borderColor 0.2s' }}>
-                  <div style={{ height: '150px', background: 'linear-gradient(45deg, #1A1A2E, #16213E)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>
-                    {plug.image_url || '📦'}
-                  </div>
-                  <div style={{ padding: '1.5rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{plug.category}</span>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>⭐ 4.8 (12)</span>
-                      </div>
-                      <span className="category-pill">{plug.pillar}</span>
-                    </div>
-                    <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.5rem 0' }}>{plug.title}</h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {plug.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', margin: 0 }}>No plugs listed yet!</h3>
-            <p style={{ color: 'var(--text-secondary)' }}>This provider hasn't listed any services or shops.</p>
-          </div>
-        )}
-
       </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

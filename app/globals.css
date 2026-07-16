@@ -136,65 +136,67 @@
    ============================================================ */
 
 [data-theme="dark"] {
-  /* 60% — Dark Greige */
-  --bg-base: #161412;
-  --bg-page: #11100E;
+  /* 60% — Ultra Premium Dark (Vercel/Lovable style) */
+  --bg-base: #09090B;
+  --bg-page: #000000;
 
-  /* 30% — Warm dark surfaces */
-  --bg-surface: #1F1C19;
-  --bg-surface-hover: #28241F;
-  --bg-surface-raised: #242019;
-  --bg-nav: rgba(22, 20, 18, 0.92);
-  --bg-input: #1F1C19;
-  --bg-input-focus: #28241F;
-  --bg-section-alt: #1A1815;
+  /* 30% — Sleek dark surfaces */
+  --bg-surface: #121214;
+  --bg-surface-hover: #18181B;
+  --bg-surface-raised: #1C1C20;
+  --bg-nav: rgba(9, 9, 11, 0.75);
+  --bg-input: #121214;
+  --bg-input-focus: #18181B;
+  --bg-section-alt: #0C0C0E;
 
-  --accent-flat: #FF7B45;
-  --accent-text: #FF8F5E;
-  --accent-subtle: rgba(255, 123, 69, 0.08);
-  --accent-medium: rgba(255, 123, 69, 0.16);
+  /* Vibrant Accent - Electric Orange / Coral */
+  --accent-flat: #FF5722;
+  --accent-text: #FF7043;
+  --accent-subtle: rgba(255, 87, 34, 0.1);
+  --accent-medium: rgba(255, 87, 34, 0.2);
 
-  /* Warm-tinted text */
-  --text-heading: #F0EDE8;
-  --text-body: #B8B3AB;
-  --text-muted: #847E75;
-  --text-faint: #5C5750;
+  /* Crisp, high-contrast text */
+  --text-heading: #FFFFFF;
+  --text-body: #A1A1AA;
+  --text-muted: #71717A;
+  --text-faint: #52525B;
   --text-on-accent: #FFFFFF;
 
-  /* Warm borders */
-  --border: #2E2A25;
-  --border-strong: #3D3832;
-  --border-accent: rgba(255, 123, 69, 0.25);
-  --divider: #242019;
+  /* Subtle sleek borders */
+  --border: #27272A;
+  --border-strong: #3F3F46;
+  --border-accent: rgba(255, 87, 34, 0.3);
+  --divider: #18181B;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.45);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 4px 30px rgba(255, 107, 53, 0.25);
-  --shadow-glow-lg: 0 8px 50px rgba(255, 107, 53, 0.3);
+  /* Premium glowing shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.8);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 4px 30px rgba(255, 87, 34, 0.15);
+  --shadow-glow-lg: 0 8px 50px rgba(255, 87, 34, 0.25);
 
-  --success: #34D399;
-  --success-subtle: rgba(52, 211, 153, 0.1);
-  --warning: #FBBF24;
-  --warning-subtle: rgba(251, 191, 36, 0.1);
-  --danger: #F87171;
-  --danger-subtle: rgba(248, 113, 113, 0.1);
-  --star: #FBBF24;
+  --success: #10B981;
+  --success-subtle: rgba(16, 185, 129, 0.15);
+  --warning: #F59E0B;
+  --warning-subtle: rgba(245, 158, 11, 0.15);
+  --danger: #EF4444;
+  --danger-subtle: rgba(239, 68, 68, 0.15);
+  --star: #F59E0B;
 
-  --pill-bg: #1F1C19;
-  --pill-bg-active: #F0EDE8;
-  --pill-text: #847E75;
-  --pill-text-active: #161412;
-  --pill-border: #2E2A25;
+  --pill-bg: #18181B;
+  --pill-bg-active: #FAFAFA;
+  --pill-text: #A1A1AA;
+  --pill-text-active: #09090B;
+  --pill-border: #27272A;
 
-  --badge-bg: rgba(255, 123, 69, 0.12);
-  --badge-text: #FF8F5E;
+  --badge-bg: rgba(255, 87, 34, 0.15);
+  --badge-text: #FF7043;
 
-  --chat-received-bg: #1F1C19;
+  --chat-received-bg: #18181B;
 
-  --overlay: rgba(0, 0, 0, 0.6);
+  --overlay: rgba(0, 0, 0, 0.8);
 }
 
 /* ============================================================
@@ -441,6 +443,19 @@ ul, ol { list-style: none; }
 .delay-4 { animation-delay: 400ms; }
 .delay-5 { animation-delay: 500ms; }
 
+/* ============================================================
+   Layout Padding Fixes for Mobile Tab Bar
+   ============================================================ */
+.dashboard-main {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px) !important;
+}
+
+@media (min-width: 768px) {
+  .dashboard-main {
+    padding-bottom: 2rem !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
@@ -451,6 +466,21 @@ ul, ol { list-style: none; }
 
 .container { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-lg); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+/* ---- Glassmorphism ---- */
+.glass {
+  background: var(--bg-nav);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+.glass-panel {
+  background: var(--bg-nav);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
 
 /* ---- Gradient Text ---- */
 .gradient-text {
@@ -864,7 +894,7 @@ ul, ol { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   animation: fadeIn 0.3s var(--ease-out);
 }
 
@@ -883,17 +913,34 @@ ul, ol { list-style: none; }
 }
 
 @media (max-width: 480px) {
+  .modal-overlay {
+    align-items: flex-end;
+  }
   .modal-content {
-    width: 95%;
-    padding: var(--space-md);
-    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: none;
+    padding: var(--space-lg) var(--space-md) calc(90px + env(safe-area-inset-bottom));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    margin: 0;
+    animation: slideUp 0.4s var(--ease-spring);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
   }
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 .modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 10;
+  margin-top: -1rem;
+  margin-right: -1rem;
   width: 32px;
   height: 32px;
   display: flex;
@@ -1095,7 +1142,7 @@ ul, ol { list-style: none; }
 .dashboard-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 8rem 2rem 4rem 2rem; /* Increased top padding to account for fixed navbar */
+  padding: 5.5rem 2rem 4rem 2rem; /* Adjusted top padding */
 }
 
 .dashboard-header {
@@ -1406,5 +1453,305 @@ ul, ol { list-style: none; }
 
   .create-fab:active .fab-icon {
     transform: scale(0.95);
+  }
+}
+
+/* ============================================================
+   Layout Padding Fixes for Mobile Tab Bar
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   Create Plug Modal Additions
+   ============================================================ */
+.emoji-picker-label {
+  cursor: pointer;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  transition: all 0.2s;
+}
+
+.emoji-picker-label input[type="radio"]:checked + span {
+  filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.8));
+}
+
+.emoji-picker-label:has(input[type="radio"]:checked) {
+  background: rgba(255, 107, 53, 0.2);
+  border-color: var(--brand-primary);
+}
+
+/* ============================================================
+   Mobile Responsiveness Overrides
+   ============================================================ */
+
+/* Utility Classes for Mobile Hiding */
+.desktop-only { display: flex; }
+.mobile-only { display: none; }
+
+.modal-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+
+  /* Navbar Adjustments */
+  .landing-topbar {
+    padding: 0 1rem;
+  }
+  .logo {
+    font-size: 1.1rem;
+    gap: 5px;
+  }
+  .topbar-actions {
+    gap: 0.5rem;
+  }
+  .btn-sm {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  /* Dashboard Core Layout */
+  .dashboard-main {
+    padding: 5.5rem 1rem 6rem 1rem; /* Extra bottom padding for Bottom Nav */
+  }
+
+  /* Feed Grid - Force 1 column */
+  .feed-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .modal-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Category Pills - Allow scrolling without clipping */
+  .dashboard-categories {
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .category-pill {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  /* Chat Window Layout Fixes */
+  .chat-window-container {
+    height: calc(100dvh - 160px) !important; /* Adjusted for bottom nav */
+  }
+  .chat-header-content h2 {
+    font-size: 1rem !important;
+  }
+  .chat-header-content p {
+    font-size: 0.75rem !important;
+  }
+  .chat-messages-area {
+    padding: 1rem !important;
+  }
+  .chat-message-bubble {
+    max-width: 85% !important;
+  }
+  
+  /* Profile Page Fixes */
+  .profile-header-card {
+    padding: 1.5rem !important;
+    gap: 1rem !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  .profile-header-actions {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Mobile Bottom Navigation */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    display: flex !important;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.7rem;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .bottom-nav-item.active {
+    color: #ff6b35 !important;
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.4rem;
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    background: #ef4444;
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* Center Floating Action Button */
+  .create-fab {
+    position: relative;
+    top: -15px;
+    color: white !important;
+  }
+
+  .fab-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    transition: transform 0.2s ease;
+  }
+
+  .create-fab:active .fab-icon {
+    transform: scale(0.95);
+  }
+}
+
+/* ============================================================
+   Layout Padding Fixes for Mobile Tab Bar
+   ============================================================ */
+.dashboard-main {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px) !important;
+}
+
+@media (min-width: 768px) {
+  .dashboard-main {
+    padding-bottom: 2rem !important;
+  }
+}
+
+/* ============================================================
+   Spotify-Style Feed Layout
+   ============================================================ */
+
+.spotify-section {
+  margin-bottom: 3rem;
+}
+
+.spotify-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spotify-carousel {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+}
+.spotify-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.spotify-card {
+  flex: 0 0 auto;
+  width: 180px;
+  scroll-snap-align: start;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.spotify-card:hover {
+  transform: translateY(-4px);
+  opacity: 0.9;
+}
+
+.spotify-card-img {
+  width: 180px;
+  height: 180px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.spotify-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.spotify-card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .spotify-card {
+    width: 140px;
+  }
+  .spotify-card-img {
+    width: 140px;
+    height: 140px;
+    font-size: 3rem;
   }
 }

@@ -136,7 +136,7 @@ export default function CreatePlugModal({ isOpen, onClose }) {
             <>
               <div className="input-group">
                 <label>Business / Service Name</label>
-                <input type="text" name="title" required placeholder="e.g. Ose Web Developer" autoComplete="off" />
+                <input type="text" name="title" required placeholder="e.g. Ose Web Developer" autoComplete="off" className="input-field" />
               </div>
 
               <div className="input-group">
@@ -222,6 +222,18 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   autoComplete="off"
+                  className="input-field"
+                />
+              </div>
+
+              <div className="input-group">
+                <label>Portfolio / Website Link (Optional)</label>
+                <input 
+                  type="url" 
+                  name="portfolio_url" 
+                  placeholder="https://your-portfolio.com" 
+                  autoComplete="off"
+                  className="input-field"
                 />
               </div>
 

@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
+import AppShell from '@/components/layout/AppShell';
 import ChatWindow from '@/components/chat/ChatWindow';
 
 export default async function MessagesPage(props) {
@@ -36,10 +36,19 @@ export default async function MessagesPage(props) {
     .order('created_at', { ascending: true });
 
   return (
-    <div className="dashboard-container">
-      <Navbar />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
       
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '6rem 1rem 1rem 1rem' }}>
+      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
+        <div style={{ marginBottom: '1rem' }}>
+          <Link href="/inbox" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Inbox
+          </Link>
+        </div>
         
         {/* Render the Client Component for Realtime Chat */}
         <ChatWindow 
@@ -48,6 +57,7 @@ export default async function MessagesPage(props) {
           otherUser={chatUser} 
         />
       </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

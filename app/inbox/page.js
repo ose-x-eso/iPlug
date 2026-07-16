@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '@/components/layout/Navbar';
+import AppShell from '@/components/layout/AppShell';
 
 export default async function InboxPage() {
   const supabase = await createClient();
@@ -57,10 +57,10 @@ export default async function InboxPage() {
   });
 
   return (
-    <div className="dashboard-container">
-      <Navbar user={user} />
+    <AppShell initialUser={user}>
+      <div className="dashboard-container">
       
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '6rem 1rem 2rem 1rem' }}>
+      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem 1rem 2rem 1rem' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Inbox</h1>
@@ -130,6 +130,7 @@ export default async function InboxPage() {
           )}
         </div>
       </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

@@ -15,9 +15,16 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
 
   const displayName = otherUser?.username || otherUser?.full_name || otherUser?.email?.split('@')[0] || "User";
 
-  // Scroll to bottom on new message
+  const isInitialLoad = useRef(true);
+
+  // Scroll to bottom
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ 
+      behavior: isInitialLoad.current ? 'auto' : 'smooth' 
+    });
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+    }
   };
 
   useEffect(() => {

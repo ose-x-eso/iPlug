@@ -177,13 +177,13 @@ export default function Navbar() {
                   <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
                     📦 My Plugs
                   </Link>
+                  <Link href="/settings" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
+                    ⚙️ Settings
+                  </Link>
                   <div className="dropdown-item" onClick={(e) => e.stopPropagation()} style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     Theme
                     <ThemeToggle />
                   </div>
-                  <Link href="/settings" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
-                    ⚙️ Settings
-                  </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     onClick={async () => {

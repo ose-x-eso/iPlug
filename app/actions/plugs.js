@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import { broadcastNotification } from './notifications'
 
 export async function createPlug(formData) {
   const supabase = await createClient()
@@ -18,6 +19,7 @@ export async function createPlug(formData) {
   const category = formData.get('category')
   const address = formData.get('address')
   const icon = formData.get('icon') // Using emoji as MVP image
+  const portfolio_url = formData.get('portfolio_url')
 
   const { data, error } = await supabase
     .from('plugs')
@@ -29,12 +31,23 @@ export async function createPlug(formData) {
       category,
       address,
       image_url: icon, // Repurposing image_url for the emoji
+      portfolio_url: portfolio_url || null,
     })
     .select()
 
   if (error) {
     console.error('Error creating plug:', error)
     return { error: error.message }
+  }
+
+  // Check if user is premium
+  const { data: profile } = await supabase.from('profiles').select('is_premium').eq('id', user.id).single();
+  if (profile?.is_premium) {
+    await broadcastNotification(
+      'New Premium Plug',
+      `A premium provider just listed: ${title}. Check it out!`,
+      user.id
+    );
   }
 
   // Refresh the feed
