@@ -9,7 +9,6 @@ export default function MobileTabBar({ user, unreadCount, unreadNotificationsCou
   const pathname = usePathname();
 
   const navLinks = [
-    { name: 'Map', href: '/map', icon: MapPin },
     { name: 'Home', href: '/', icon: Home },
     { name: 'Search', href: '/search', icon: Search },
     user 

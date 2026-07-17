@@ -27,17 +27,13 @@ export default function MobileTopNav({ unreadNotificationsCount }) {
       zIndex: 40
     }}>
       <Link href="/" style={{ textDecoration: 'none' }}>
-        <span style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: '900', 
-          color: 'var(--brand-primary)',
-          letterSpacing: '-0.5px'
-        }}>
-          iPlugg
-        </span>
+        <Logo size={24} showText={true} />
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <Link href="/map" style={{ color: 'var(--text-secondary)' }} title="Map">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+        </Link>
         <Link href="/my-plugs" style={{ color: 'var(--text-secondary)' }}>
           <Package size={20} />
         </Link>

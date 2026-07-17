@@ -138,7 +138,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
-      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-card)', zIndex: 10 }}>
+      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', zIndex: 10 }}>
         <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-primary)' }}>
             {displayName?.charAt(0).toUpperCase() || 'U'}
@@ -155,6 +155,16 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlug Provider</p>
           </div>
         </Link>
+        
+        {/* Call Icons */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', color: 'var(--primary)' }}>
+          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => alert("Voice call coming soon!")}>
+            <Phone size={20} />
+          </button>
+          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => alert("Video call coming soon!")}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          </button>
+        </div>
       </div>
 
       {/* Messages Area */}
@@ -233,11 +243,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           }}>
             {[
               { icon: '📷', label: 'Photo/Video', color: '#ec4899' },
-              { icon: '<MapPin size={16} className="inline-icon" />', label: 'Location', color: '#10b981' },
-              { icon: '🎤', label: 'Voice Note', color: '#f59e0b' },
-              { icon: '<Phone size={16} className="inline-icon" />', label: 'Voice Call', color: '#3b82f6' },
+              { icon: <MapPin size={16} className="inline-icon" />, label: 'Location', color: '#10b981' },
               { icon: '📄', label: 'Document', color: '#8b5cf6' },
-              { icon: '<User size={16} className="inline-icon" />', label: 'Contact', color: '#6366f1' }
+              { icon: <User size={16} className="inline-icon" />, label: 'Contact', color: '#6366f1' }
             ].map((item, idx) => (
               <div 
                 key={idx}
@@ -303,20 +311,33 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             +
           </button>
 
-          <input 
-            type="text" 
-            name="content"
-            placeholder="Type a message..." 
-            disabled={isSending}
-            autoComplete="off"
-            style={{ flex: 1, padding: '0.75rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)', outline: 'none' }}
-          />
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', padding: '0 0.5rem 0 1rem' }}>
+            <input 
+              type="text" 
+              name="content"
+              placeholder="Type a message..." 
+              disabled={isSending}
+              autoComplete="off"
+              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none' }}
+            />
+            
+            {/* Camera inside input bar */}
+            <button type="button" onClick={() => alert("Camera coming soon!")} style={{ padding: '0.5rem', color: 'var(--text-secondary)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            </button>
+          </div>
+          
+          {/* Microphone next to Send / in input bar area */}
+          <button type="button" onClick={() => alert("Voice note coming soon!")} style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: 'var(--bg-input)', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+          </button>
+
           <button 
             type="submit" 
             disabled={isSending}
-            style={{ padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--primary)', color: 'white', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer' }}
+            style={{ padding: '0.75rem 1.25rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--primary)', color: 'white', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center' }}
           >
-            Send
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </button>
         </form>
       </div>

@@ -35,16 +35,9 @@ export default function DesktopSidebar({ user, unreadCount, unreadNotificationsC
   return (
     <aside className="desktop-sidebar glass">
       <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ 
-            fontSize: '1.5rem', 
-            fontWeight: '900', 
-            color: 'var(--brand-primary)',
-            letterSpacing: '-0.5px'
-          }}>
-            iPlugg
-          </span>
-        </Link>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Logo size={28} showText={true} />
+          </Link>
       </div>
 
       <nav className="sidebar-nav">

@@ -9,6 +9,9 @@ export default function BackButton({ label = 'Back' }) {
     <button 
       onClick={() => router.back()} 
       style={{ 
+        position: 'sticky',
+        top: '70px', /* Just below the top nav */
+        zIndex: 40,
         color: 'var(--text-primary)', 
         fontWeight: '500', 
         display: 'inline-flex', 
@@ -20,7 +23,8 @@ export default function BackButton({ label = 'Back' }) {
         borderRadius: '20px', 
         border: '1px solid var(--border)',
         cursor: 'pointer',
-        fontSize: '1rem'
+        fontSize: '1rem',
+        boxShadow: 'var(--shadow-sm)'
       }}
     >
       <span>←</span> {label}
