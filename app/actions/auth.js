@@ -36,6 +36,8 @@ export async function login(formData) {
     if (error) {
       return { error: String(error.message || 'Invalid login credentials') };
     }
+    
+    revalidatePath('/', 'page');
     return { success: true };
   } catch (err) {
     console.error("Login server action exception:", err);
