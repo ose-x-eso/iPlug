@@ -263,7 +263,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                 {plugs.map((plug) => (
                   <div 
                     key={plug.id} 
-                    style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer', position: 'relative' }}
+                    style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer', position: 'relative', width: '100%', minWidth: 0 }}
                     onClick={() => router.push(`/plug/${plug.id}`)}
                   >
                     <div className="feed-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform 0.2s, borderColor 0.2s' }}>
@@ -288,7 +288,15 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                           <span className="category-pill">{plug.pillar}</span>
                         </div>
                         <h3 style={{ fontSize: '1.2rem', margin: '0 0 0.5rem 0' }}>{plug.title}</h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <p style={{ 
+                          color: 'var(--text-secondary)', 
+                          fontSize: '0.9rem', 
+                          margin: 0, 
+                          overflow: 'hidden', 
+                          display: '-webkit-box', 
+                          WebkitLineClamp: 2, 
+                          WebkitBoxOrient: 'vertical' 
+                        }}>
                           {plug.description}
                         </p>
                       </div>
