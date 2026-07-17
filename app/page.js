@@ -19,7 +19,11 @@ export default async function Home() {
         .from('profiles')
         .select('*');
 
-      return <DashboardFeed user={user} initialPlugs={plugs || []} initialProfiles={profiles || []} />;
+      const safeUser = JSON.parse(JSON.stringify(user));
+      const safePlugs = JSON.parse(JSON.stringify(plugs || []));
+      const safeProfiles = JSON.parse(JSON.stringify(profiles || []));
+
+      return <DashboardFeed user={safeUser} initialPlugs={safePlugs} initialProfiles={safeProfiles} />;
     }
 
     return <LandingPage />;
