@@ -122,9 +122,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation Links */}
           <div className="desktop-only" style={{ gap: '1.5rem', alignItems: 'center' }}>
-            <Link href="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: '500', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Home size={16} className="inline-icon" /> Home
-            </Link>
+
             {user && (
               <Link href="/my-plugs" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: '500', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <Package size={16} className="inline-icon" /> My Plugs

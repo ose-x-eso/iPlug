@@ -56,7 +56,8 @@ export default function AuthModal({ isOpen, onClose }) {
       }
     } catch (err) {
       console.error('Action error:', err);
-      result = { error: err?.message || String(err) || 'An unexpected error occurred.' };
+      const digestInfo = err?.digest ? ` (Digest: ${err.digest})` : '';
+      result = { error: (err?.message || String(err)) + digestInfo || 'An unexpected error occurred.' };
     }
 
     if (result?.error) {

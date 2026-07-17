@@ -244,7 +244,7 @@
 }
 
 .bento-item p {
-  color: var(--text-muted);
+  color: var(--text-body);
   line-height: 1.5;
   font-size: 0.95rem;
 }
