@@ -258,6 +258,9 @@
 .bento-large {
   grid-column: span 2;
 }
+.bento-large .bento-content {
+  max-width: 50%;
+}
 
 .bento-wide {
   grid-column: span 2;
