@@ -3,12 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { broadcastNotification } from './notifications'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-
-const supabaseAdmin = createAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
 
 export async function createPlug(formData) {
   const supabase = await createClient()
@@ -33,7 +27,7 @@ export async function createPlug(formData) {
   if (imageFile && imageFile.size > 0) {
     const fileExt = imageFile.name.split('.').pop();
     const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('plugs')
       .upload(fileName, imageFile, {
         contentType: imageFile.type,
@@ -46,7 +40,7 @@ export async function createPlug(formData) {
     }
     
     // Get the public URL
-    const { data: publicUrlData } = supabaseAdmin.storage.from('plugs').getPublicUrl(fileName);
+    const { data: publicUrlData } = supabase.storage.from('plugs').getPublicUrl(fileName);
     imageUrl = publicUrlData.publicUrl;
   }
 
@@ -120,7 +114,7 @@ export async function updatePlug(plugId, formData) {
   if (imageFile && imageFile.size > 0) {
     const fileExt = imageFile.name.split('.').pop();
     const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('plugs')
       .upload(fileName, imageFile, {
         contentType: imageFile.type,
@@ -132,7 +126,7 @@ export async function updatePlug(plugId, formData) {
       return { error: 'Failed to upload new image.' };
     }
     
-    const { data: publicUrlData } = supabaseAdmin.storage.from('plugs').getPublicUrl(fileName);
+    const { data: publicUrlData } = supabase.storage.from('plugs').getPublicUrl(fileName);
     updateData.image_url = publicUrlData.publicUrl;
   }
 

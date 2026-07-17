@@ -27,7 +27,14 @@ export default function MobileTopNav({ unreadNotificationsCount }) {
       zIndex: 40
     }}>
       <Link href="/" style={{ textDecoration: 'none' }}>
-        <Logo size={24} showText={true} />
+        <span style={{ 
+          fontSize: '1.25rem', 
+          fontWeight: '900', 
+          color: 'var(--brand-primary)',
+          letterSpacing: '-0.5px'
+        }}>
+          iPlugg
+        </span>
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

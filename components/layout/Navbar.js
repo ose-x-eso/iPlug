@@ -118,7 +118,16 @@ export default function Navbar() {
     <>
       <nav className="landing-topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Logo size={28} showText={true} />
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '900', 
+              color: 'var(--brand-primary)',
+              letterSpacing: '-0.5px'
+            }}>
+              iPlugg
+            </span>
+          </Link>
 
           {/* Desktop Navigation Links */}
           <div className="desktop-only" style={{ gap: '1.5rem', alignItems: 'center' }}>
