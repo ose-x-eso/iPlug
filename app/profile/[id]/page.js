@@ -235,25 +235,32 @@ export default async function ProfilePage(props) {
 
             {/* Stats Grid */}
             <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-evenly', 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(3, 1fr)', 
               width: '100%', 
               padding: '1rem 0', 
               borderTop: '1px solid var(--border)', 
               borderBottom: '1px solid var(--border)',
-              marginBottom: '1.5rem'
+              marginBottom: '1.5rem',
+              gap: '0.5rem'
             }}>
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{plugs?.length || 0}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}><Package size={14} style={{verticalAlign: 'middle', marginRight: '4px'}}/>Plugs</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                  <Package size={14} /> Plugs
+                </div>
               </div>
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{averageRating === 'New' ? '—' : averageRating}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}><Star size={14} style={{verticalAlign: 'middle', marginRight: '4px'}}/>Rating</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                  <Star size={14} /> Rating
+                </div>
               </div>
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{joinedDate}</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}><Calendar size={14} style={{verticalAlign: 'middle', marginRight: '4px'}}/>Joined</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+                  <Calendar size={14} /> Joined
+                </div>
               </div>
             </div>
 
