@@ -15,7 +15,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
     try {
       const stored = localStorage.getItem('iplug_recent_plugs');
       if (stored) {
-        setRecentPlugs(JSON.parse(stored));
+        setTimeout(() => setRecentPlugs(JSON.parse(stored)), 0);
       }
     } catch (e) {}
   }, []);

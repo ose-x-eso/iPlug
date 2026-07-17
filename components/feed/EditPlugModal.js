@@ -15,15 +15,17 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
   
   // Update categories when pillar changes
   useEffect(() => {
-    setCategories(getCategoriesByPillar(pillar));
+    setTimeout(() => setCategories(getCategoriesByPillar(pillar)), 0);
   }, [pillar]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setErrorMsg('');
-      setSuccessMsg('');
-      setIsLoading(false);
+      setTimeout(() => {
+        setErrorMsg('');
+        setSuccessMsg('');
+        setIsLoading(false);
+      }, 0);
     } else {
       setPillar(plug?.pillar || 'services');
     }
