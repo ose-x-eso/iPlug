@@ -17,16 +17,18 @@ export default function CreatePlugModal({ isOpen, onClose }) {
   
   // Update categories when pillar changes
   useEffect(() => {
-    setCategories(getCategoriesByPillar(pillar));
+    setTimeout(() => setCategories(getCategoriesByPillar(pillar)), 0);
   }, [pillar]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setErrorMsg('');
-      setSuccessMsg('');
-      setIsLoading(false);
-      setPillar('services');
+      setTimeout(() => {
+        setErrorMsg('');
+        setSuccessMsg('');
+        setIsLoading(false);
+        setPillar('services');
+      }, 0);
     }
   }, [isOpen]);
 

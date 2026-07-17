@@ -27,7 +27,7 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
         setIsLoading(false);
       }, 0);
     } else {
-      setPillar(plug?.pillar || 'services');
+      setTimeout(() => setPillar(plug?.pillar || 'services'), 0);
     }
   }, [isOpen, plug]);
 

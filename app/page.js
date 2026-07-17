@@ -5,28 +5,33 @@ import DashboardFeed from '@/components/feed/DashboardFeed';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
+  let user = null;
+  let plugs = [];
+  let profiles = [];
+  let error = null;
+
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    user = currentUser;
 
-    // If the user is logged in, show them the internal marketplace
     if (user) {
-      const { data: plugs } = await supabase
+      const { data: userPlugs } = await supabase
         .from('plugs')
         .select('*')
         .order('created_at', { ascending: false });
+      plugs = userPlugs || [];
 
-      // Fetch all profiles so we can search for people
-      const { data: profiles } = await supabase
+      const { data: allProfiles } = await supabase
         .from('profiles')
         .select('*');
-
-      return <DashboardFeed user={user} initialPlugs={plugs || []} initialProfiles={profiles || []} />;
+      profiles = allProfiles || [];
     }
+  } catch (err) {
+    error = err;
+  }
 
-    // Otherwise, show the public landing page
-    return <LandingPage />;
-  } catch (error) {
+  if (error) {
     return (
       <div style={{ padding: '2rem', color: 'red', background: '#fdd' }}>
         <h2>Home Page Server Error</h2>
@@ -35,4 +40,10 @@ export default async function Home() {
       </div>
     );
   }
+
+  if (user) {
+    return <DashboardFeed user={user} initialPlugs={plugs} initialProfiles={profiles} />;
+  }
+
+  return <LandingPage />;
 }

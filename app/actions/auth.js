@@ -6,39 +6,40 @@ import { createNotification } from './notifications'
 
 export async function login(formData) {
   try {
-    const supabase = await createClient()
+    const supabase = await createClient();
     
-    const emailOrUsername = formData.get('email')?.toLowerCase();
+    const rawEmail = formData.get('email');
+    const emailOrUsername = rawEmail ? String(rawEmail).toLowerCase() : '';
     const password = formData.get('password');
 
     let loginEmail = emailOrUsername;
 
     // If it's not an email, assume it's a username and look up the email
-    if (!emailOrUsername.includes('@')) {
-      const { data: profile } = await supabase
+    if (emailOrUsername && !emailOrUsername.includes('@')) {
+      const { data: profile, error: profileErr } = await supabase
         .from('profiles')
         .select('email')
         .ilike('username', emailOrUsername)
-        .single();
+        .maybeSingle();
         
-      if (!profile || !profile.email) {
-        return { error: 'Username not found.' }
+      if (profileErr || !profile || !profile.email) {
+        return { error: 'Username not found.' };
       }
       loginEmail = profile.email;
     }
 
     const { error } = await supabase.auth.signInWithPassword({
       email: loginEmail,
-      password,
-    })
+      password: String(password),
+    });
 
     if (error) {
-      return { error: error.message || 'An unknown error occurred during login.' }
+      return { error: String(error.message || 'Invalid login credentials') };
     }
-    return { success: true }
+    return { success: true };
   } catch (err) {
-    console.error("Login error:", err);
-    return { error: err.message || String(err) }
+    console.error("Login server action exception:", err);
+    return { error: 'A server error occurred: ' + (err?.message || 'Unknown') };
   }
 }
 

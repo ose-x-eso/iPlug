@@ -18,11 +18,13 @@ export default function AuthModal({ isOpen, onClose }) {
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setIsLogin(true);
-      setErrorMsg('');
-      setSuccessMsg('');
-      setIsForgotPassword(false);
-      setShowPassword(false);
+      setTimeout(() => {
+        setIsLogin(true);
+        setErrorMsg('');
+        setSuccessMsg('');
+        setIsForgotPassword(false);
+        setShowPassword(false);
+      }, 0);
     }
   }, [isOpen]);
 

@@ -93,11 +93,13 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       markMessagesAsRead(otherUser.id);
       
       // Update local state so they appear read immediately
-      setMessages((prev) => 
-        prev.map((msg) => 
-          msg.receiver_id === currentUser.id ? { ...msg, is_read: true } : msg
-        )
-      );
+      setTimeout(() => {
+        setMessages((prev) => 
+          prev.map((msg) => 
+            msg.receiver_id === currentUser.id ? { ...msg, is_read: true } : msg
+          )
+        );
+      }, 0);
     }
   }, [messages, currentUser.id, otherUser.id]);
 
