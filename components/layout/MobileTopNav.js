@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NotificationsDropdown from './NotificationsDropdown';
+import { Settings, Package } from 'lucide-react';
+import Logo from './Logo';
 import './layout.css';
 
 export default function MobileTopNav({ unreadNotificationsCount }) {
@@ -24,12 +26,19 @@ export default function MobileTopNav({ unreadNotificationsCount }) {
       top: 0,
       zIndex: 40
     }}>
-      <Link href="/" className="logo" style={{ textDecoration: 'none' }}>
-        <div className="logo-mark" style={{ width: '32px', height: '32px', fontSize: '1rem' }}>iP</div>
-        <span style={{ fontSize: '1.25rem' }}>iPlug</span>
+      <Link href="/" style={{ textDecoration: 'none' }}>
+        <Logo size={24} showText={true} />
       </Link>
 
-      <NotificationsDropdown unreadCount={unreadNotificationsCount} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <Link href="/my-plugs" style={{ color: 'var(--text-secondary)' }}>
+          <Package size={20} />
+        </Link>
+        <Link href="/settings" style={{ color: 'var(--text-secondary)' }}>
+          <Settings size={20} />
+        </Link>
+        <NotificationsDropdown unreadCount={unreadNotificationsCount} />
+      </div>
     </header>
   );
 }

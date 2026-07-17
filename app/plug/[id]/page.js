@@ -5,6 +5,7 @@ import AppShell from '@/components/layout/AppShell';
 import BackButton from '@/components/layout/BackButton';
 import RecentlyViewedTracker from '@/components/feed/RecentlyViewedTracker';
 import PlugDetailActions from '@/components/feed/PlugDetailActions';
+import { Package, MapPin, Star, Tag, LinkIcon, Phone, Mail, MessageSquare } from 'lucide-react';
 
 export default async function PlugDetailsPage(props) {
   const params = await props.params;
@@ -64,7 +65,7 @@ export default async function PlugDetailsPage(props) {
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}>
-            {!plug.image_url?.startsWith('http') && <span style={{ fontSize: '6rem' }}>{plug.image_url || '📦'}</span>}
+            {!plug.image_url?.startsWith('http') && <div style={{ color: 'var(--text-muted)' }}><Package size={64} /></div>}
           </div>
 
           <div className="plug-details-content" style={{ padding: '2rem' }}>
@@ -72,9 +73,9 @@ export default async function PlugDetailsPage(props) {
               <div>
                 <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{plug.title}</h1>
                 <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '1rem', alignItems: 'center' }}>
-                  <span>📍 {plug.address || 'Location unknown'}</span>
-                  <span>⭐ {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
-                  <span>🏷️ {plug.category}</span>
+                  <span><MapPin size={16} className="inline-icon" /> {plug.address || 'Location unknown'}</span>
+                  <span><Star size={16} className="inline-icon" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
+                  <span><Tag size={16} className="inline-icon" /> {plug.category}</span>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -97,7 +98,7 @@ export default async function PlugDetailsPage(props) {
                     className="btn btn-secondary"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.5rem 1rem' }}
                   >
-                    🔗 View Portfolio / Website
+                    <LinkIcon size={16} className="inline-icon" /> View Portfolio / Website
                   </a>
                 </div>
               )}
@@ -147,7 +148,7 @@ export default async function PlugDetailsPage(props) {
                         className="btn btn-secondary"
                         style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
                       >
-                        📞 Call
+                        <Phone size={16} className="inline-icon" /> Call
                       </a>
                     )}
 
@@ -158,7 +159,7 @@ export default async function PlugDetailsPage(props) {
                         className="btn btn-secondary"
                         style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
                       >
-                        📧 Email
+                        <Mail size={16} className="inline-icon" /> Email
                       </a>
                     )}
 
@@ -168,7 +169,7 @@ export default async function PlugDetailsPage(props) {
                       className="btn btn-primary"
                       style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
                     >
-                      💬 Message
+                      <MessageSquare size={16} className="inline-icon" /> Message
                     </Link>
                   </div>
                 ) : (
@@ -181,7 +182,7 @@ export default async function PlugDetailsPage(props) {
             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0 }}>Reviews & Ratings</h3>
-                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>⭐ {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
+                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}><Star size={16} className="inline-icon" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
               </div>
               
               <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>

@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/client';
 import { sendMessage, markMessagesAsRead } from '@/app/actions/messages';
 import Link from 'next/link';
 import { useTransition } from 'react';
+import { Hand, MapPin, Phone, User } from 'lucide-react';
 
 export default function ChatWindow({ initialMessages, currentUser, otherUser }) {
   const [messages, setMessages] = useState(initialMessages || []);
@@ -158,7 +159,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       <div className="chat-messages-area" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}>👋</span>
+            <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}><Hand size={16} className="inline-icon" /></span>
             <p>Send a message to start the conversation!</p>
           </div>
         ) : (
@@ -230,11 +231,11 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           }}>
             {[
               { icon: '📷', label: 'Photo/Video', color: '#ec4899' },
-              { icon: '📍', label: 'Location', color: '#10b981' },
+              { icon: '<MapPin size={16} className="inline-icon" />', label: 'Location', color: '#10b981' },
               { icon: '🎤', label: 'Voice Note', color: '#f59e0b' },
-              { icon: '📞', label: 'Voice Call', color: '#3b82f6' },
+              { icon: '<Phone size={16} className="inline-icon" />', label: 'Voice Call', color: '#3b82f6' },
               { icon: '📄', label: 'Document', color: '#8b5cf6' },
-              { icon: '👤', label: 'Contact', color: '#6366f1' }
+              { icon: '<User size={16} className="inline-icon" />', label: 'Contact', color: '#6366f1' }
             ].map((item, idx) => (
               <div 
                 key={idx}

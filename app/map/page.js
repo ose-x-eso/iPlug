@@ -11,10 +11,8 @@ export default async function MapPage() {
     
   return (
     <AppShell initialUser={user}>
-      <div className="dashboard-container" style={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <main style={{ flex: 1, position: 'relative' }}>
-          <MapClientWrapper initialPlugs={plugs || []} />
-        </main>
+      <div style={{ flex: 1, minHeight: 'calc(100dvh - 70px)', position: 'relative', overflow: 'hidden' }}>
+        <MapClientWrapper initialPlugs={plugs || []} />
       </div>
     </AppShell>
   );

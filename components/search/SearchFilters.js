@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { MapPin, Wrench, ShoppingBag, Building, Ticket } from 'lucide-react';
 
 export default function SearchFilters({ 
   searchQuery, 
@@ -224,7 +225,7 @@ export default function SearchFilters({
                 onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-input)'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
-                <span style={{ color: 'var(--text-muted)' }}>📍</span>
+                <span style={{ color: 'var(--text-muted)' }}><MapPin size={16} className="inline-icon" /></span>
                 <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {suggestion}
                 </span>
@@ -242,15 +243,19 @@ export default function SearchFilters({
         <div 
           className={`category-pill ${activeTab === 'services' ? 'active' : ''}`}
           onClick={() => setActiveTab('services')}
-        >🛠️ Services</div>
+        ><Wrench size={16} className="inline-icon" /> Services</div>
         <div 
           className={`category-pill ${activeTab === 'shops' ? 'active' : ''}`}
           onClick={() => setActiveTab('shops')}
-        >🛍️ Shops</div>
+        ><ShoppingBag size={16} className="inline-icon" /> Shops</div>
         <div 
           className={`category-pill ${activeTab === 'places' ? 'active' : ''}`}
           onClick={() => setActiveTab('places')}
-        >🏢 Places</div>
+        ><Building size={16} className="inline-icon" /> Places</div>
+        <div 
+          className={`category-pill ${activeTab === 'events' ? 'active' : ''}`}
+          onClick={() => setActiveTab('events')}
+        ><Ticket size={16} className="inline-icon" /> Events</div>
       </section>
     </div>
   );

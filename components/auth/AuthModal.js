@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signUp, sendPasswordResetEmail } from '@/app/actions/auth';
 import { Eye, EyeOff } from 'lucide-react';
+import Logo from '../layout/Logo';
 
 export default function AuthModal({ isOpen, onClose }) {
   const router = useRouter();
@@ -99,6 +100,9 @@ export default function AuthModal({ isOpen, onClose }) {
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-header">
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <Logo size={40} showText={false} />
+          </div>
           <h2>{isForgotPassword ? 'Reset Password' : isLogin ? 'Welcome Back' : 'Join iPlug'}</h2>
           <p>{isForgotPassword ? 'Enter your email to receive a reset link.' : isLogin ? 'Log in to find your plug.' : 'Create an account to start discovering.'}</p>
         </div>

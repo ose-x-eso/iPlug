@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { deletePlug } from '@/app/actions/plugs';
 import EditPlugModal from './EditPlugModal';
+import { MapPin, Pencil, Package } from 'lucide-react';
 
 export default function MyPlugCard({ plug }) {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -17,14 +18,19 @@ export default function MyPlugCard({ plug }) {
       alert(result.error);
       setIsDeleting(false);
     }
-    // If successful, Next.js revalidates the path and the card will disappear
   };
 
   return (
     <>
       <div className="feed-card" style={{ display: 'flex', flexDirection: 'column' }}>
         <div className="feed-card-image" style={{ background: 'linear-gradient(45deg, #1A1A2E, #16213E)', height: '150px' }}>
-          <span style={{ fontSize: '3rem' }}>{plug.image_url || '📦'}</span>
+          {plug.image_url?.startsWith('http') ? (
+            <img src={plug.image_url} alt={plug.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+              <Package size={48} color="var(--text-muted)" />
+            </div>
+          )}
         </div>
         <div className="feed-card-content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div className="feed-card-header">
@@ -32,7 +38,7 @@ export default function MyPlugCard({ plug }) {
           </div>
           <p className="feed-card-desc" style={{ flex: 1 }}>{plug.description}</p>
           <div className="feed-card-meta" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span>📍 {plug.address || 'Location unknown'}</span>
+            <span><MapPin size={16} className="inline-icon" /> {plug.address || 'Location unknown'}</span>
             <span className="category-pill active">{plug.category}</span>
           </div>
           
@@ -43,7 +49,7 @@ export default function MyPlugCard({ plug }) {
               onClick={() => setIsEditOpen(true)}
               disabled={isDeleting}
             >
-              ✏️ Edit
+              <Pencil size={16} className="inline-icon" /> Edit
             </button>
             <button 
               className="btn btn-secondary" 
@@ -51,17 +57,19 @@ export default function MyPlugCard({ plug }) {
               onClick={handleDelete}
               disabled={isDeleting}
             >
-              {isDeleting ? 'Deleting...' : '🗑️ Delete'}
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         </div>
       </div>
 
-      <EditPlugModal 
-        isOpen={isEditOpen} 
-        onClose={() => setIsEditOpen(false)} 
-        plug={plug} 
-      />
+      {isEditOpen && (
+        <EditPlugModal 
+          isOpen={isEditOpen} 
+          onClose={() => setIsEditOpen(false)} 
+          plug={plug}
+        />
+      )}
     </>
   );
 }

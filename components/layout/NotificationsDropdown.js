@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, X } from 'lucide-react';
+import { Bell, X, Mailbox } from 'lucide-react';
 import { getNotifications, markNotificationAsRead } from '@/app/actions/notifications';
 import './layout.css';
 
@@ -100,7 +100,7 @@ export default function NotificationsDropdown({ unreadCount }) {
               <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>
             ) : notifications.length === 0 ? (
               <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}>📭</span>
+                <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}><Mailbox size={16} className="inline-icon" /></span>
                 No new notifications
               </div>
             ) : (

@@ -1142,7 +1142,7 @@ ul, ol { list-style: none; }
 .dashboard-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 5.5rem 2rem 4rem 2rem; /* Adjusted top padding */
+  padding: 1rem 1rem 4rem 1rem;
 }
 
 .dashboard-header {
@@ -1390,7 +1390,7 @@ ul, ol { list-style: none; }
     display: flex !important;
     justify-content: space-around;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -1755,3 +1755,4 @@ ul, ol { list-style: none; }
     font-size: 3rem;
   }
 }
+

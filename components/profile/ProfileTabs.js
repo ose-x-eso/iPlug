@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import EditPlugModal from '../feed/EditPlugModal';
 import { submitReview } from '@/app/actions/reviews';
+import { Package, Pencil, Mailbox, Star, Clock, Camera, Handshake, LinkIcon } from 'lucide-react';
 
 function renderTextWithLinks(text) {
   if (!text) return null;
@@ -135,98 +136,118 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
       {/* Tab Navigation */}
       <div className="profile-tabs" style={{ 
         display: 'flex', 
-        borderBottom: '1px solid var(--border)', 
         marginBottom: '2rem',
         overflowX: 'auto',
         scrollbarWidth: 'none',
-        gap: '2rem'
+        gap: '0.75rem',
+        padding: '0.25rem'
       }}>
         <button 
           onClick={() => setActiveTab('plugs')}
           style={{
-            background: 'none',
+            background: activeTab === 'plugs' ? 'var(--primary)' : 'var(--bg-input)',
             border: 'none',
-            padding: '1rem 0',
-            fontSize: '1.1rem',
-            fontWeight: activeTab === 'plugs' ? 'bold' : '500',
-            color: activeTab === 'plugs' ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === 'plugs' ? '3px solid var(--primary)' : '3px solid transparent',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '100px',
+            fontSize: '0.95rem',
+            fontWeight: '600',
+            color: activeTab === 'plugs' ? 'white' : 'var(--text-secondary)',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            whiteSpace: 'nowrap'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            boxShadow: activeTab === 'plugs' ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none'
           }}
         >
-          📦 Plugs ({plugs.length})
+          <Package size={16} /> Plugs ({plugs.length})
         </button>
         <button 
           onClick={() => setActiveTab('reviews')}
           style={{
-            background: 'none',
+            background: activeTab === 'reviews' ? 'var(--primary)' : 'var(--bg-input)',
             border: 'none',
-            padding: '1rem 0',
-            fontSize: '1.1rem',
-            fontWeight: activeTab === 'reviews' ? 'bold' : '500',
-            color: activeTab === 'reviews' ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === 'reviews' ? '3px solid var(--primary)' : '3px solid transparent',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '100px',
+            fontSize: '0.95rem',
+            fontWeight: '600',
+            color: activeTab === 'reviews' ? 'white' : 'var(--text-secondary)',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            whiteSpace: 'nowrap'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            boxShadow: activeTab === 'reviews' ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none'
           }}
         >
-          ⭐ Reviews {reviews.length > 0 ? `(${reviews.length})` : ''}
+          <Star size={16} /> Reviews {reviews.length > 0 ? `(${reviews.length})` : ''}
         </button>
         <button 
           onClick={() => setActiveTab('photos')}
           style={{
-            background: 'none',
+            background: activeTab === 'photos' ? 'var(--primary)' : 'var(--bg-input)',
             border: 'none',
-            padding: '1rem 0',
-            fontSize: '1.1rem',
-            fontWeight: activeTab === 'photos' ? 'bold' : '500',
-            color: activeTab === 'photos' ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === 'photos' ? '3px solid var(--primary)' : '3px solid transparent',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '100px',
+            fontSize: '0.95rem',
+            fontWeight: '600',
+            color: activeTab === 'photos' ? 'white' : 'var(--text-secondary)',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            whiteSpace: 'nowrap'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            boxShadow: activeTab === 'photos' ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none'
           }}
         >
-          📸 Photos {photos.length > 0 ? `(${photos.length})` : ''}
+          <Camera size={16} /> Photos {photos.length > 0 ? `(${photos.length})` : ''}
         </button>
         {isOwner && (
           <button 
             onClick={() => setActiveTab('recommendations')}
             style={{
-              background: 'none',
+              background: activeTab === 'recommendations' ? 'var(--primary)' : 'var(--bg-input)',
               border: 'none',
-              padding: '1rem 0',
-              fontSize: '1.1rem',
-              fontWeight: activeTab === 'recommendations' ? 'bold' : '500',
-              color: activeTab === 'recommendations' ? 'var(--text-primary)' : 'var(--text-muted)',
-              borderBottom: activeTab === 'recommendations' ? '3px solid var(--primary)' : '3px solid transparent',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '100px',
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              color: activeTab === 'recommendations' ? 'white' : 'var(--text-secondary)',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              whiteSpace: 'nowrap'
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              boxShadow: activeTab === 'recommendations' ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none'
             }}
           >
-            🤝 Recommendations ({recommendations.length})
+            <Handshake size={16} /> Recommendations ({recommendations.length})
           </button>
         )}
         <button 
           onClick={() => setActiveTab('portfolio')}
           style={{
-            background: 'none',
+            background: activeTab === 'portfolio' ? 'var(--primary)' : 'var(--bg-input)',
             border: 'none',
-            padding: '1rem 0',
-            fontSize: '1.1rem',
-            fontWeight: activeTab === 'portfolio' ? 'bold' : '500',
-            color: activeTab === 'portfolio' ? 'var(--text-primary)' : 'var(--text-muted)',
-            borderBottom: activeTab === 'portfolio' ? '3px solid var(--primary)' : '3px solid transparent',
+            padding: '0.75rem 1.5rem',
+            borderRadius: '100px',
+            fontSize: '0.95rem',
+            fontWeight: '600',
+            color: activeTab === 'portfolio' ? 'white' : 'var(--text-secondary)',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            whiteSpace: 'nowrap'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            boxShadow: activeTab === 'portfolio' ? '0 4px 12px rgba(255, 107, 53, 0.3)' : 'none'
           }}
         >
-          🔗 Portfolio / Links
+          <LinkIcon size={16} /> Portfolio / Links
         </button>
       </div>
 
@@ -245,8 +266,19 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                     onClick={() => router.push(`/plug/${plug.id}`)}
                   >
                     <div className="feed-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform 0.2s, borderColor 0.2s' }}>
-                      <div style={{ height: '150px', background: 'linear-gradient(45deg, #1A1A2E, #16213E)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>
-                        {plug.image_url || '📦'}
+                      <div style={{ 
+                        height: '150px', 
+                        backgroundImage: plug.image_url ? `url(${plug.image_url})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundColor: 'var(--bg-input)',
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        fontSize: '4rem',
+                        color: 'var(--text-muted)'
+                      }}>
+                        {!plug.image_url && <Package size={48} />}
                       </div>
                       <div style={{ padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
@@ -285,7 +317,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                         }}
                         title="Edit Plug"
                       >
-                        ✏️
+                        <Pencil size={16} className="inline-icon" />
                       </button>
                     )}
                   </div>
@@ -293,7 +325,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
               </div>
             ) : (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Mailbox size={16} className="inline-icon" /></span>
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', margin: 0 }}>No plugs listed yet!</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>This provider hasn't listed any services or shops.</p>
               </div>
@@ -308,7 +340,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
                 <span style={{ fontSize: '4rem', fontWeight: 'bold', color: 'var(--text-primary)', lineHeight: '1' }}>{averageRating}</span>
                 <div style={{ fontSize: '1.5rem', marginTop: '0.5rem', color: '#fbbf24' }}>
-                  {'⭐'.repeat(Math.round(averageRating))}
+                  {'<Star size={16} className="inline-icon" />'.repeat(Math.round(averageRating))}
                 </div>
                 <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Based on {reviews.length} reviews</p>
               </div>
@@ -331,11 +363,11 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                       className="input-field"
                       style={{ width: '100px' }}
                     >
-                      <option value="5">⭐⭐⭐⭐⭐ 5</option>
-                      <option value="4">⭐⭐⭐⭐ 4</option>
-                      <option value="3">⭐⭐⭐ 3</option>
-                      <option value="2">⭐⭐ 2</option>
-                      <option value="1">⭐ 1</option>
+                      <option value="5">5 Stars</option>
+                      <option value="4">4 Stars</option>
+                      <option value="3">3 Stars</option>
+                      <option value="2">2 Stars</option>
+                      <option value="1">1 Star</option>
                     </select>
                   </div>
                   <div style={{ marginBottom: '1rem' }}>
@@ -375,9 +407,14 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                         </span>
                       </div>
                     </div>
-                    <span style={{ color: '#fbbf24' }}>
-                      {'⭐'.repeat(review.rating)}
-                    </span>
+                    <div style={{ display: 'flex', gap: '0.15rem', color: '#fbbf24' }}>
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} size={14} fill="currentColor" color="currentColor" />
+                      ))}
+                      {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                        <Star key={i + 5} size={14} color="currentColor" opacity={0.3} />
+                      ))}
+                    </div>
                   </div>
                   <p style={{ color: 'var(--text-primary)', margin: 0, lineHeight: '1.5' }}>
                     {review.message}
@@ -448,7 +485,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                   />
                   <span style={{ color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     {isUploadingPhoto ? (
-                      <span>⏳</span>
+                      <span><Clock size={16} className="inline-icon" /></span>
                     ) : (
                       <>
                         <span style={{ fontSize: '2rem' }}>+</span>
@@ -461,7 +498,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
               
               {photos.length === 0 && !isOwner && (
                 <div style={{ gridColumn: '1 / -1', padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-                  <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📸</span>
+                  <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Camera size={16} className="inline-icon" /></span>
                   <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', margin: 0 }}>No photos yet</h3>
                   <p style={{ color: 'var(--text-secondary)' }}>This provider hasn't uploaded any photos.</p>
                 </div>
@@ -475,7 +512,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
           <div className="recommendations-section">
             {recommendations.length === 0 ? (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>🤝</span>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Handshake size={16} className="inline-icon" /></span>
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', margin: 0 }}>No recommendations yet</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>When clients recommend you, they'll show up here privately.</p>
               </div>
@@ -508,7 +545,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
             
             {!isPremium && recommendations.some(r => r.is_anonymous === false) && (
               <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255, 107, 53, 0.1)', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--brand-primary)', fontWeight: '500' }}>
-                ⭐ Upgrade to Premium to see who referred you!
+                <Star size={16} className="inline-icon" /> Upgrade to Premium to see who referred you!
               </div>
             )}
           </div>
@@ -519,7 +556,7 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
           <div className="portfolio-section">
             {!profile?.portfolio_url ? (
               <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>🔗</span>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><LinkIcon size={16} className="inline-icon" /></span>
                 <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', margin: 0 }}>No portfolio links yet</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>{isOwner ? "Add your website or external documents in 'Edit Profile'." : "This provider hasn't added any external links."}</p>
               </div>

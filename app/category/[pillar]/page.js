@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { notFound } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import BackButton from '@/components/layout/BackButton';
+import { Package, Wrench, ShoppingBag, Building, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function CategoryPage(props) {
@@ -34,10 +35,10 @@ export default async function CategoryPage(props) {
   }
 
   const titles = {
-    'services': '🛠️ Top Services & Mechanics',
-    'shops': '🛍️ Trending Shops',
-    'places': '🏢 Places to Explore',
-    'new': '🆕 Newest Arrivals'
+    'services': <><Wrench size={16} className="inline-icon" /> Top Services &amp; Mechanics</>,
+    'shops': <><ShoppingBag size={16} className="inline-icon" /> Trending Shops</>,
+    'places': <><Building size={16} className="inline-icon" /> Places to Explore</>,
+    'new': <><Sparkles size={16} className="inline-icon" /> Newest Arrivals</>
   };
 
   return (
@@ -64,7 +65,7 @@ export default async function CategoryPage(props) {
                       backgroundSize: 'cover',
                       backgroundPosition: 'center'
                     }}>
-                      {!plug.image_url?.startsWith('http') && <span style={{ fontSize: '4rem' }}>{plug.image_url || '📦'}</span>}
+                      {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
                     </div>
                     <div style={{ padding: '1rem' }}>
                       <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem' }}>{plug.title}</h3>

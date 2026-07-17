@@ -37,21 +37,9 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
     setErrorMsg('');
     setSuccessMsg('');
 
-    const form = e.target;
-    
-    const customIcon = form.custom_icon?.value;
-    const finalIcon = (customIcon && customIcon.trim() !== '') ? customIcon.trim() : form.icon?.value;
+    const formData = new FormData(e.target);
 
-    const updateData = {
-      title: form.title.value,
-      description: form.description.value,
-      pillar: form.pillar.value,
-      category: form.category.value,
-      address: form.address.value,
-      ...(finalIcon && { image_url: finalIcon })
-    };
-
-    const result = await updatePlug(plug.id, updateData);
+    const result = await updatePlug(plug.id, formData);
 
     if (result?.error) {
       setErrorMsg(result.error);
@@ -92,9 +80,6 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
     fontFamily: 'inherit',
     cursor: 'pointer'
   };
-
-  // Common Emojis for the icon picker
-  const COMMON_EMOJIS = ["⚡", "🔧", "✂️", "🍔", "👗", "💻", "📸", "🧹", "🛍️", "🏢"];
 
   return (
     <div className="modal-overlay">
@@ -150,7 +135,7 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
                     style={selectStyle}
                   >
                     {Object.entries(PILLARS).map(([key, p]) => (
-                      <option key={key} value={key}>{p.icon} {p.label}</option>
+                      <option key={key} value={key}>{p.label}</option>
                     ))}
                   </select>
                 </div>
@@ -184,36 +169,20 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
               </div>
 
               <div className="input-group">
-                <label>Choose an Icon (Emoji)</label>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-                  {COMMON_EMOJIS.map(emoji => (
-                    <label key={emoji} className="emoji-picker-label">
-                      <input type="radio" name="icon" value={emoji} defaultChecked={plug.image_url === emoji || (!COMMON_EMOJIS.includes(plug.image_url) && emoji === "⚡")} style={{ display: 'none' }} />
-                      <span style={{ fontSize: '1.5rem' }}>{emoji}</span>
-                    </label>
-                  ))}
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.5rem', width: '100%', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginRight: '0.5rem' }}>Or type your own:</span>
-                    <input 
-                      type="text" 
-                      name="custom_icon" 
-                      defaultValue={plug.image_url && !COMMON_EMOJIS.includes(plug.image_url) ? plug.image_url : ''}
-                      placeholder="e.g. 🐶" 
-                      maxLength={5}
-                      style={{ 
-                        padding: '0.5rem', 
-                        borderRadius: 'var(--radius-sm)', 
-                        border: '1px solid var(--border)', 
-                        background: 'var(--bg-input)',
-                        color: 'var(--text-primary)',
-                        width: '80px',
-                        textAlign: 'center',
-                        fontSize: '1.2rem'
-                      }} 
-                    />
+                <label>Cover Image (Optional)</label>
+                {plug.image_url && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <img src={plug.image_url} alt="Current" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
                   </div>
-                </div>
+                )}
+                <input 
+                  type="file" 
+                  name="image_file" 
+                  accept="image/*"
+                  className="input-field"
+                  style={{ padding: '0.5rem' }}
+                />
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Leave blank to keep your current image.</p>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>

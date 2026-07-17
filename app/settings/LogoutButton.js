@@ -1,6 +1,7 @@
 'use client';
 
 import { logout } from '@/app/actions/auth';
+import { LogOut } from 'lucide-react';
 
 export default function LogoutButton() {
   const handleLogout = async () => {
@@ -24,7 +25,7 @@ export default function LogoutButton() {
         fontSize: '1.1rem'
       }}
     >
-      🚪 Logout
+      <LogOut size={16} className="inline-icon" /> Logout
     </button>
   );
 }

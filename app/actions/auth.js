@@ -165,12 +165,33 @@ export async function sendPasswordResetEmail(formData) {
 
 export async function updateUserPassword(formData) {
   const supabase = await createClient();
+  const currentPassword = formData.get('currentPassword');
   const password = formData.get('password');
 
-  if (!password || password.length < 6) {
-    return { error: 'Password must be at least 6 characters' };
+  if (!currentPassword) {
+    return { error: 'Current password is required' };
   }
 
+  if (!password || password.length < 6) {
+    return { error: 'New password must be at least 6 characters' };
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !user.email) {
+    return { error: 'You must be logged in to do this.' };
+  }
+
+  // Verify current password by attempting to sign in
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+
+  if (signInError) {
+    return { error: 'Incorrect current password.' };
+  }
+
+  // Update to new password
   const { error } = await supabase.auth.updateUser({
     password: password
   });
@@ -203,4 +224,3 @@ export async function deleteUserAccount() {
   revalidatePath('/', 'layout');
   return { success: true };
 }
-

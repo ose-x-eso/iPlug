@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import EditProfileModal from '@/components/profile/EditProfileModal';
+import { Pencil } from 'lucide-react';
 
 export default function EditProfileSettings({ profile }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -21,7 +22,7 @@ export default function EditProfileSettings({ profile }) {
           fontSize: '1.1rem'
         }}
       >
-        ✏️ Edit Public Profile (Bio, Photos, Portfolio)
+        <Pencil size={16} className="inline-icon" /> Edit Public Profile
       </button>
 
       <EditProfileModal 

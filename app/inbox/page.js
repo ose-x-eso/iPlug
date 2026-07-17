@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
+import { Mailbox } from 'lucide-react';
 
 export default async function InboxPage() {
   const supabase = await createClient();
@@ -69,7 +70,7 @@ export default async function InboxPage() {
         <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
           {conversations.length === 0 ? (
             <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
+              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Mailbox size={16} className="inline-icon" /></span>
               <h3 style={{ margin: '0 0 0.5rem 0' }}>No messages yet</h3>
               <p style={{ margin: 0 }}>When you contact a plug or someone contacts you, it will appear here.</p>
             </div>

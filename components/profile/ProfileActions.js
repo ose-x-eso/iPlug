@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { createRecommendation } from '@/app/actions/recommendations';
+import { Phone, MessageSquare, Handshake } from 'lucide-react';
 
 export default function ProfileActions({ profile, isOwner, profileId, user }) {
   const handleShare = async () => {
@@ -43,7 +44,7 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
                 fontWeight: '500', boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s ease'
               }}
             >
-              📞 Call
+              <Phone size={16} className="inline-icon" /> Call
             </a>
           )}
           <Link 
@@ -51,32 +52,19 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
             className="btn btn-primary"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
           >
-            💬 Message
+            <MessageSquare size={16} className="inline-icon" /> Message
           </Link>
           <button 
             onClick={handleShare}
             className="btn btn-secondary"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            🤝 Recommend & Share
+            <Handshake size={16} className="inline-icon" /> Recommend & Share
           </button>
         </div>
       </>
     );
   }
 
-  return (
-    <>
-      <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'center' }}>
-        <Link 
-          href="/settings"
-          className="btn btn-secondary"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-        >
-          ⚙️ Settings
-        </Link>
-      </div>
-
-    </>
-  );
+  return null;
 }

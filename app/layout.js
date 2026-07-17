@@ -33,6 +33,8 @@ export const viewport = {
   ],
 };
 
+import DeviceSimulatorWrapper from '@/components/layout/DeviceSimulatorWrapper';
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -40,7 +42,11 @@ export default function RootLayout({ children }) {
         <ThemeScript />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <DeviceSimulatorWrapper>
+            {children}
+          </DeviceSimulatorWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

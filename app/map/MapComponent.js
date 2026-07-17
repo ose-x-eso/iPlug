@@ -59,32 +59,43 @@ export default function MapComponent({ initialPlugs }) {
   }, [initialPlugs, position]);
 
   useEffect(() => {
+    let timeoutId;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (loc) => {
+          clearTimeout(timeoutId);
           setPosition([loc.coords.latitude, loc.coords.longitude]);
         },
         (err) => {
-          console.error("Geolocation error:", err);
+          console.warn("Geolocation warning:", err.message);
+          clearTimeout(timeoutId);
           // Default center if user denies location
           setPosition([37.7749, -122.4194]); // SF
-        }
+        },
+        { timeout: 3000 }
       );
+      
+      // Fallback if geolocation hangs
+      timeoutId = setTimeout(() => {
+        if (!position) setPosition([37.7749, -122.4194]);
+      }, 3000);
     } else {
       setPosition([37.7749, -122.4194]); // SF
     }
+    
+    return () => clearTimeout(timeoutId);
   }, []);
 
   if (!position) {
     return (
-      <div style={{ height: '100%', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-page)', color: 'var(--text-secondary)' }}>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-page)', color: 'var(--text-secondary)' }}>
         <p>Locating you...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <div style={{ position: 'absolute', inset: 0 }}>
       <MapContainer 
         center={position} 
         zoom={13} 

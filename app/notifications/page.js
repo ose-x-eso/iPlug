@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import MarkAsRead from './MarkAsRead';
+import { Bell } from 'lucide-react';
 
 export default async function NotificationsPage() {
   const supabase = await createClient();
@@ -37,7 +38,7 @@ export default async function NotificationsPage() {
         <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
           {!notifications || notifications.length === 0 ? (
             <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>🔔</span>
+              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Bell size={16} className="inline-icon" /></span>
               <h3 style={{ margin: '0 0 0.5rem 0' }}>All caught up!</h3>
               <p style={{ margin: 0 }}>You have no notifications right now.</p>
             </div>
@@ -60,7 +61,7 @@ export default async function NotificationsPage() {
                   className="hover:bg-input"
                 >
                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0 }}>
-                    🔔
+                    <Bell size={16} className="inline-icon" />
                   </div>
                   
                   <div style={{ flex: 1 }}>

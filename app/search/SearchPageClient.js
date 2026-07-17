@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppShell from "@/components/layout/AppShell";
 import SearchFilters from "@/components/search/SearchFilters";
+import { Mailbox, MapPin, Package } from 'lucide-react';
 
 export default function SearchPageClient({ user, initialPlugs = [], initialProfiles = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,7 +91,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
           <section className="feed-grid">
             {filteredPlugs.length === 0 && filteredProfiles.length === 0 ? (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📭</span>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Mailbox size={16} className="inline-icon" /></span>
                 <h3>No matches found</h3>
                 <p>Try adjusting your search or filters to find what you're looking for.</p>
               </div>
@@ -102,7 +103,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                   </div>
                 )}
                 {filteredProfiles.map(profile => (
-                  <Link href={`/messages/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
+                  <Link href={`/profile/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
                     <div className="feed-card" style={{ display: 'flex', alignItems: 'center', padding: '1rem', flexDirection: 'row', gap: '1rem' }}>
                       <div style={{ 
                         width: '50px', 
@@ -131,7 +132,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                             )}
                           </h3>
                         </div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Tap to message</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Tap to view profile</p>
                       </div>
                     </div>
                   </Link>
@@ -152,7 +153,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                       }}>
-                        {!plug.image_url?.startsWith('http') && <span style={{ fontSize: '3rem' }}>{plug.image_url || '📦'}</span>}
+                        {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
                       </div>
                       <div className="feed-card-content">
                         <div className="feed-card-header">
@@ -160,7 +161,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                         </div>
                         <p className="feed-card-desc">{plug.description}</p>
                         <div className="feed-card-meta">
-                          <span>📍 {plug.address || 'Location unknown'}</span>
+                          <span><MapPin size={16} className="inline-icon" /> {plug.address || 'Location unknown'}</span>
                         </div>
                       </div>
                     </div>

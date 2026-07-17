@@ -3,6 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { broadcastNotification } from './notifications'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+
+const supabaseAdmin = createAdminClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+)
 
 export async function createPlug(formData) {
   const supabase = await createClient()
@@ -18,8 +24,31 @@ export async function createPlug(formData) {
   const pillar = formData.get('pillar')
   const category = formData.get('category')
   const address = formData.get('address')
-  const icon = formData.get('icon') // Using emoji as MVP image
   const portfolio_url = formData.get('portfolio_url')
+  
+  let imageUrl = formData.get('icon') // fallback MVP emoji
+
+  // Handle new native file upload
+  const imageFile = formData.get('image_file');
+  if (imageFile && imageFile.size > 0) {
+    const fileExt = imageFile.name.split('.').pop();
+    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from('plugs')
+      .upload(fileName, imageFile, {
+        contentType: imageFile.type,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError);
+      return { error: 'Failed to upload image. Please try again.' };
+    }
+    
+    // Get the public URL
+    const { data: publicUrlData } = supabaseAdmin.storage.from('plugs').getPublicUrl(fileName);
+    imageUrl = publicUrlData.publicUrl;
+  }
 
   const { data, error } = await supabase
     .from('plugs')
@@ -30,7 +59,7 @@ export async function createPlug(formData) {
       pillar,
       category,
       address,
-      image_url: icon, // Repurposing image_url for the emoji
+      image_url: imageUrl, 
       portfolio_url: portfolio_url || null,
     })
     .select()
@@ -73,11 +102,39 @@ export async function deletePlug(plugId) {
   return { success: true }
 }
 
-export async function updatePlug(plugId, updateData) {
+export async function updatePlug(plugId, formData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
   if (!user) return { error: 'Not authenticated' }
+
+  let updateData = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    pillar: formData.get('pillar'),
+    category: formData.get('category'),
+    address: formData.get('address'),
+  };
+
+  const imageFile = formData.get('image_file');
+  if (imageFile && imageFile.size > 0) {
+    const fileExt = imageFile.name.split('.').pop();
+    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from('plugs')
+      .upload(fileName, imageFile, {
+        contentType: imageFile.type,
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error("Error uploading image:", uploadError);
+      return { error: 'Failed to upload new image.' };
+    }
+    
+    const { data: publicUrlData } = supabaseAdmin.storage.from('plugs').getPublicUrl(fileName);
+    updateData.image_url = publicUrlData.publicUrl;
+  }
 
   const { error } = await supabase
     .from('plugs')

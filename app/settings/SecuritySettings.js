@@ -20,6 +20,9 @@ export default function SecuritySettings() {
     setPasswordSuccess('');
 
     const formData = new FormData(e.target);
+    const currentPassword = formData.get('currentPassword');
+    
+    // Call server action that verifies current password then updates
     const result = await updateUserPassword(formData);
 
     if (result?.error) {
@@ -65,6 +68,16 @@ export default function SecuritySettings() {
             </div>
           )}
           <div className="input-group">
+            <label>Current Password</label>
+            <input 
+              type="password" 
+              name="currentPassword" 
+              required 
+              placeholder="••••••••" 
+              className="input-field" 
+            />
+          </div>
+          <div className="input-group">
             <label>New Password</label>
             <input 
               type="password" 
@@ -75,9 +88,14 @@ export default function SecuritySettings() {
               className="input-field" 
             />
           </div>
-          <button type="submit" className="btn btn-secondary" disabled={passwordLoading} style={{ width: 'fit-content' }}>
-            {passwordLoading ? 'Updating...' : 'Update Password'}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button type="submit" className="btn btn-secondary" disabled={passwordLoading} style={{ width: 'fit-content' }}>
+              {passwordLoading ? 'Updating...' : 'Update Password'}
+            </button>
+            <a href="/forgot-password" style={{ color: 'var(--primary)', fontSize: '0.9rem', textDecoration: 'none' }}>
+              Forgot password?
+            </a>
+          </div>
         </form>
       </div>
 

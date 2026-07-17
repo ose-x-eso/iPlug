@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/layout/AppShell';
 import MyPlugCard from '@/components/feed/MyPlugCard';
+import { Package } from 'lucide-react';
 
 export default async function MyPlugsPage() {
   const supabase = await createClient();
@@ -36,7 +37,7 @@ export default async function MyPlugsPage() {
         <section className="feed-grid">
           {!plugs || plugs.length === 0 ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 2rem', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem' }}>📦</span>
+              <span style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem' }}><Package size={16} className="inline-icon" /></span>
               <h3 style={{ margin: '0 0 0.5rem 0' }}>You haven't listed any plugs yet!</h3>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Start reaching customers in your area by listing your first service or shop.</p>
               {/* Note: In a full app, we would put a button here that opens the CreatePlugModal via state */}

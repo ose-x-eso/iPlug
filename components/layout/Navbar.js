@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { Menu, Zap, Home, Package, MessageSquare, User, Settings, LogOut, Inbox } from 'lucide-react';
+import Logo from './Logo';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import ThemeToggle from './ThemeToggle';
 import AuthModal from '@/components/auth/AuthModal';
+import DownloadAppModal from '@/components/landing/DownloadAppModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import { createClient } from '@/utils/supabase/client';
@@ -13,6 +16,7 @@ import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/
 
 export default function Navbar() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,8 +84,14 @@ export default function Navbar() {
         .subscribe();
     }
 
+    // Listen for custom event to open auth modal
+    const handleOpenAuth = () => setIsAuthOpen(true);
+    window.addEventListener('open-auth-modal', handleOpenAuth);
+
     return () => {
+      clearInterval(interval);
       authSub.unsubscribe();
+      window.removeEventListener('open-auth-modal', handleOpenAuth);
       if (messageSub) supabase.removeChannel(messageSub);
     };
   }, [supabase, user?.id]);
@@ -93,13 +103,14 @@ export default function Navbar() {
         setIsMenuOpen(false);
       }
     }
-    
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    
+
+    const openAuthModal = () => setIsAuthOpen(true);
+    window.addEventListener('open-auth-modal', openAuthModal);
+
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener('open-auth-modal', openAuthModal);
     };
   }, [isMenuOpen]);
 
@@ -107,19 +118,16 @@ export default function Navbar() {
     <>
       <nav className="landing-topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Link href="/" className="logo" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="logo-mark">⚡</div>
-            iPlug
-          </Link>
+          <Logo size={28} showText={true} />
 
           {/* Desktop Navigation Links */}
           <div className="desktop-only" style={{ gap: '1.5rem', alignItems: 'center' }}>
             <Link href="/" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: '500', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🏠 Home
+              <Home size={16} className="inline-icon" /> Home
             </Link>
             {user && (
               <Link href="/my-plugs" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: '500', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                📦 My Plugs
+                <Package size={16} className="inline-icon" /> My Plugs
               </Link>
             )}
           </div>
@@ -138,7 +146,7 @@ export default function Navbar() {
               </button>
               
               <Link href="/inbox" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
-                📥 Inbox
+                <Inbox size={16} className="inline-icon" /> Inbox
                 {unreadCount > 0 && (
                   <span style={{
                     position: 'absolute',
@@ -172,13 +180,13 @@ export default function Navbar() {
               {isMenuOpen && (
                 <div className="user-dropdown">
                   <Link href={`/profile/${user.id}`} className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
-                    👤 Public Profile
+                    <User size={16} className="inline-icon" /> Public Profile
                   </Link>
                   <Link href="/my-plugs" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
-                    📦 My Plugs
+                    <Package size={16} className="inline-icon" /> My Plugs
                   </Link>
                   <Link href="/settings" className="dropdown-item" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }} onClick={() => setIsMenuOpen(false)}>
-                    ⚙️ Settings
+                    <Settings size={16} className="inline-icon" /> Settings
                   </Link>
                   <div className="dropdown-item" onClick={(e) => e.stopPropagation()} style={{ padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     Theme
@@ -202,13 +210,22 @@ export default function Navbar() {
           ) : (
             <button 
               className="btn btn-primary btn-sm"
-              onClick={() => setIsAuthOpen(true)}
+              onClick={() => setIsDownloadOpen(true)}
             >
               Get Started
             </button>
           )}
         </div>
       </nav>
+
+      <DownloadAppModal 
+        isOpen={isDownloadOpen} 
+        onClose={() => setIsDownloadOpen(false)} 
+        onContinueWeb={() => {
+          setIsDownloadOpen(false);
+          setIsAuthOpen(true);
+        }}
+      />
 
       <AuthModal 
         isOpen={isAuthOpen} 

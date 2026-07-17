@@ -179,7 +179,7 @@
 
 .feedback-widget-container {
   position: fixed;
-  bottom: calc(2rem + 70px + env(safe-area-inset-bottom, 0px));
+  bottom: 90px;
   right: 1rem;
   z-index: 9999;
   display: flex;
@@ -210,4 +210,9 @@
     bottom: 2rem;
     right: 2rem;
   }
+}
+
+.simulator-active .feedback-widget-container {
+  bottom: 90px !important;
+  right: 1rem !important;
 }

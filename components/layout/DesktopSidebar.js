@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, MessageSquare, PlusCircle, LogIn, MapPin, Bell } from 'lucide-react';
+import { Home, Search, MessageSquare, PlusCircle, LogIn, MapPin, Bell, Settings, Package } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
+import Logo from './Logo';
 import './layout.css';
 
 export default function DesktopSidebar({ user, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenAuth }) {
@@ -27,14 +28,15 @@ export default function DesktopSidebar({ user, unreadCount, unreadNotificationsC
     { name: 'Search', href: '/search', icon: Search, reqAuth: false },
     { name: 'Notifications', href: '/notifications', icon: Bell, badge: unreadNotificationsCount, reqAuth: true },
     { name: 'Inbox', href: '/inbox', icon: MessageSquare, badge: unreadCount, reqAuth: true },
+    { name: 'My Plugs', href: '/my-plugs', icon: Package, reqAuth: true },
+    { name: 'Settings', href: '/settings', icon: Settings, reqAuth: true },
   ];
 
   return (
     <aside className="desktop-sidebar glass">
       <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" className="logo">
-          <div className="logo-mark">iP</div>
-          iPlug
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Logo size={28} showText={true} />
         </Link>
       </div>
 
