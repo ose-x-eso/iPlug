@@ -23,13 +23,7 @@ export default async function Home() {
       const safePlugs = JSON.parse(JSON.stringify(plugs || []));
       const safeProfiles = JSON.parse(JSON.stringify(profiles || []));
 
-      return (
-        <div style={{ padding: '4rem', textAlign: 'center', color: '#fff', minHeight: '100vh', background: '#000' }}>
-          <h1>Login Successful!</h1>
-          <p>If you see this, it means DashboardFeed was the cause of the Vercel crash.</p>
-          <a href="/inbox" style={{ color: '#ff4d4d', textDecoration: 'underline' }}>Go to Inbox</a>
-        </div>
-      );
+      return <DashboardFeed user={safeUser} initialPlugs={safePlugs} initialProfiles={safeProfiles} />;
     }
 
     return <LandingPage />;

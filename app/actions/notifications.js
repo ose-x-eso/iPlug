@@ -7,8 +7,8 @@ import { revalidatePath } from 'next/cache';
 async function getSupabase() {
   const cookieStore = await cookies();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://rkmpegyazjazhlyltuzh.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrbXBlZ3lhemphemhseWx0dXpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNjAzMzgsImV4cCI6MjA5OTYzNjMzOH0.H5j_Log6R75FLXVRxJy7o-8B6hokZ28AdGElavgO-Sw',
     {
       cookies: {
         get(name) { return cookieStore.get(name)?.value; },
