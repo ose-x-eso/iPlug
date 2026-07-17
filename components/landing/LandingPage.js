@@ -107,7 +107,7 @@ export default function LandingPage() {
           </motion.h1>
 
           <motion.p variants={itemVariants} className="hero-subtitle">
-            Whether you're a startup expanding your reach, a freelancer offering digital skills, or a local artisan growing your daily hustle — iPlug bridges the gap. Discover everyday services, find talented professionals, and connect with your city's pulse, instantly.
+            Whether you&apos;re a startup expanding your reach, a freelancer offering digital skills, or a local artisan growing your daily hustle — iPlug bridges the gap. Discover everyday services, find talented professionals, and connect with your city&apos;s pulse, instantly.
           </motion.p>
 
           <motion.div variants={itemVariants} className="hero-actions" style={{ marginTop: '1.5rem' }}>

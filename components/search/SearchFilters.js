@@ -24,7 +24,9 @@ export default function SearchFilters({
   useEffect(() => {
     try {
       const stored = localStorage.getItem('iplug_search_history');
-      if (stored) setRecentSearches(JSON.parse(stored));
+      if (stored) {
+        setTimeout(() => setRecentSearches(JSON.parse(stored)), 0);
+      }
     } catch (e) {}
   }, []);
 

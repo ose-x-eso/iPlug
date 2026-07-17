@@ -31,11 +31,6 @@ export default function DeviceSimulatorWrapper({ children }) {
     handleResize();
     window.addEventListener('resize', handleResize);
     
-    // Load preference
-    const savedMode = localStorage.getItem('iplug_simulator_mode');
-    if (savedMode === 'true') {
-      setIsSimulatorMode(true);
-    }
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 

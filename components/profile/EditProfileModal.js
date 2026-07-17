@@ -13,8 +13,10 @@ export default function EditProfileModal({ isOpen, onClose, profile }) {
 
   useEffect(() => {
     if (!isOpen) {
-      setErrorMsg('');
-      setSuccessMsg('');
+      setTimeout(() => {
+        setErrorMsg('');
+        setSuccessMsg('');
+      }, 0);
     }
   }, [isOpen]);
 
