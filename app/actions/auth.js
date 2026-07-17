@@ -35,8 +35,6 @@ export async function login(formData) {
     if (error) {
       return { error: error.message || 'An unknown error occurred during login.' }
     }
-
-    revalidatePath('/', 'layout')
     return { success: true }
   } catch (err) {
     console.error("Login error:", err);
