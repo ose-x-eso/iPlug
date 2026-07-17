@@ -7,6 +7,7 @@ import ProfileTabs from '@/components/profile/ProfileTabs';
 import ProfileViewTracker from '@/components/profile/ProfileViewTracker';
 import ReferralTracker from '@/components/profile/ReferralTracker';
 import BioSection from '@/components/profile/BioSection';
+import BackButton from '@/components/layout/BackButton';
 import { Package, Star, Calendar } from 'lucide-react';
 
 export default async function ProfilePage(props) {
@@ -165,12 +166,16 @@ export default async function ProfilePage(props) {
 
         {/* MOBILE LAYOUT */}
         <main className="dashboard-main mobile-profile-main mobile-only" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '90px', flexDirection: 'column' }}>
+          <div style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%' }}>
+            <BackButton label="Back" />
+          </div>
           {/* Cover Photo / Header */}
           <div style={{ 
             height: '180px', 
             background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--primary), var(--secondary))', 
             width: '100%', 
-            position: 'relative' 
+            position: 'relative',
+            marginTop: '-60px' /* Pull up to hide behind glass back button if desired, but we want it below */
           }}>
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%)' }}></div>
             {isOwner && (

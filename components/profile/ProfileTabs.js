@@ -269,17 +269,16 @@ export default function ProfileTabs({ profile, plugs = [], recommendations = [],
                     <div className="feed-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'transform 0.2s, borderColor 0.2s' }}>
                       <div style={{ 
                         height: '150px', 
-                        backgroundImage: plug.image_url ? `url(${plug.image_url})` : 'none',
+                        backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'linear-gradient(45deg, #1A1A2E, #16213E)',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        backgroundColor: 'var(--bg-input)',
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         fontSize: '4rem',
-                        color: 'var(--text-muted)'
+                        color: 'rgba(255,255,255,0.2)'
                       }}>
-                        {!plug.image_url && <Package size={48} />}
+                        {!plug.image_url?.startsWith('http') && <Package size={48} />}
                       </div>
                       <div style={{ padding: '1.5rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>

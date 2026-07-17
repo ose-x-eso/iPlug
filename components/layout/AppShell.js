@@ -122,6 +122,12 @@ export default function AppShell({ children, initialUser }) {
       
       <main className="app-main-content">
         <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />
+        
+        {/* Desktop Hint Banner for Mobile */}
+        <div className="mobile-only" style={{ background: 'linear-gradient(90deg, #FF6B35, #FF3D71)', color: 'white', padding: '8px 16px', fontSize: '0.8rem', textAlign: 'center', fontWeight: '500', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+          <span role="img" aria-label="desktop">💻</span> For the best experience, please view this app on a desktop or larger screen.
+        </div>
+
         {children}
       </main>
       

@@ -33,7 +33,7 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
   if (!isOwner) {
     return (
       <>
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'center', width: '100%' }}>
           {profile?.phone_number && (
             <a 
               href={`tel:${profile.phone_number}`}
@@ -41,7 +41,8 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                 background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)',
                 padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-full)', textDecoration: 'none',
-                fontWeight: '500', boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s ease'
+                fontWeight: '500', boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s ease',
+                flex: '1 1 auto', minWidth: '100px'
               }}
             >
               <Phone size={16} className="inline-icon" /> Call
@@ -50,14 +51,14 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
           <Link 
             href={`/messages/${profileId}`}
             className="btn btn-primary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', flex: '1 1 auto', minWidth: '100px' }}
           >
             <MessageSquare size={16} className="inline-icon" /> Message
           </Link>
           <button 
             onClick={handleShare}
             className="btn btn-secondary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flex: '1 1 auto', minWidth: '150px' }}
           >
             <Handshake size={16} className="inline-icon" /> Recommend & Share
           </button>

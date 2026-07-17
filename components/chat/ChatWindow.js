@@ -138,31 +138,62 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
-      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', zIndex: 10 }}>
-        <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-            {displayName?.charAt(0).toUpperCase() || 'U'}
-          </div>
-          <div>
-            <h3 style={{ margin: 0, fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-primary)' }}>
-              {displayName}
-              {otherUser?.is_verified && (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                </svg>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        padding: '0.75rem 1rem', 
+        borderBottom: '1px solid var(--border)', 
+        background: 'rgba(18, 18, 20, 0.8)', 
+        backdropFilter: 'blur(12px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button 
+            onClick={() => window.history.back()} 
+            style={{ 
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-primary)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              marginLeft: '-0.5rem'
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </button>
+
+          <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ 
+              width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold'
+            }}>
+              {otherUser.avatar_url ? (
+                <img src={otherUser.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                displayName.charAt(0).toUpperCase()
               )}
-            </h3>
-            <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>iPlug Provider</p>
-          </div>
-        </Link>
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                {displayName}
+              </h3>
+            </div>
+          </Link>
+        </div>
         
         {/* Call Icons */}
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', color: 'var(--primary)' }}>
-          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => alert("Voice call coming soon!")}>
-            <Phone size={20} />
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-primary)' }}>
+          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Video call coming soon!")}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
           </button>
-          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => alert("Video call coming soon!")}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Voice call coming soon!")}>
+            <Phone size={22} />
           </button>
         </div>
       </div>

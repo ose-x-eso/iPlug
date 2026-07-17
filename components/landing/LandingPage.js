@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from "@/components/layout/Navbar";
 import { PILLARS, getCategoriesByPillar } from "@/utils/categories";
 import { Globe, Search, MessageSquare, Star, CheckCircle2, ChevronRight, Zap, ChevronDown, Ticket } from 'lucide-react';
@@ -9,7 +9,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import DownloadAppModal from './DownloadAppModal';
-import './landing.css'; 
+import './landing.css';
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop"
+];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -70,6 +78,14 @@ function FAQAccordion({ faq }) {
 export default function LandingPage() {
   const router = useRouter();
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="landing">
@@ -88,7 +104,21 @@ export default function LandingPage() {
       {/* ---- Hero Section ---- */}
       <section className="hero">
         <div className="hero-background">
-          <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop" alt="Abstract Background" className="hero-bg-img" />
+          {HERO_IMAGES.map((imgSrc, index) => (
+            <motion.img 
+              key={imgSrc}
+              src={imgSrc} 
+              alt={`Hero Background ${index + 1}`} 
+              className="hero-bg-img"
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ 
+                opacity: index === currentSlide ? 0.6 : 0, 
+                scale: index === currentSlide ? 1 : 1.05 
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: index === currentSlide ? 1 : 0 }}
+            />
+          ))}
           <div className="hero-overlay"></div>
         </div>
 

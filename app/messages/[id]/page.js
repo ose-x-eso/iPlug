@@ -40,15 +40,7 @@ export default async function MessagesPage(props) {
       <div className="dashboard-container">
       
       <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
-        <div style={{ marginBottom: '1rem' }}>
-          <Link href="/inbox" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '500' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Inbox
-          </Link>
-        </div>
+        {/* Header removed: ChatWindow has its own WhatsApp-style header with back button */}
         
         {/* Render the Client Component for Realtime Chat */}
         <ChatWindow 
