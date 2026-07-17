@@ -5,38 +5,43 @@ import { createClient } from '@/utils/supabase/server'
 import { createNotification } from './notifications'
 
 export async function login(formData) {
-  const supabase = await createClient()
-  
-  const emailOrUsername = formData.get('email')?.toLowerCase();
-  const password = formData.get('password');
+  try {
+    const supabase = await createClient()
+    
+    const emailOrUsername = formData.get('email')?.toLowerCase();
+    const password = formData.get('password');
 
-  let loginEmail = emailOrUsername;
+    let loginEmail = emailOrUsername;
 
-  // If it's not an email, assume it's a username and look up the email
-  if (!emailOrUsername.includes('@')) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('email')
-      .ilike('username', emailOrUsername)
-      .single();
-      
-    if (!profile || !profile.email) {
-      return { error: 'Username not found.' }
+    // If it's not an email, assume it's a username and look up the email
+    if (!emailOrUsername.includes('@')) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .ilike('username', emailOrUsername)
+        .single();
+        
+      if (!profile || !profile.email) {
+        return { error: 'Username not found.' }
+      }
+      loginEmail = profile.email;
     }
-    loginEmail = profile.email;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginEmail,
+      password,
+    })
+
+    if (error) {
+      return { error: error.message || 'An unknown error occurred during login.' }
+    }
+
+    revalidatePath('/', 'layout')
+    return { success: true }
+  } catch (err) {
+    console.error("Login error:", err);
+    return { error: err.message || String(err) }
   }
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email: loginEmail,
-    password,
-  })
-
-  if (error) {
-    return { error: error.message || 'An unknown error occurred during login.' }
-  }
-
-  revalidatePath('/', 'layout')
-  return { success: true }
 }
 
 export async function signUp(formData) {
