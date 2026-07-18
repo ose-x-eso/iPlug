@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppShell from "@/components/layout/AppShell";
 import EditPlugModal from './EditPlugModal';
-import { Mailbox, Pencil, Package, Wrench, ShoppingBag, Building, Sparkles } from 'lucide-react';
+import { Mailbox, Pencil, Package, Wrench, ShoppingBag, Building, Sparkles, Megaphone, MapPin, Globe, AlertCircle } from 'lucide-react';
 
 export default function DashboardFeed({ user, initialPlugs = [], initialProfiles = [] }) {
   const router = useRouter();
   const [recentPlugs, setRecentPlugs] = useState([]);
   const [editingPlug, setEditingPlug] = useState(null);
+  const [globalMode, setGlobalMode] = useState(false);
 
   useEffect(() => {
     try {
@@ -20,26 +21,34 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
     } catch (e) {}
   }, []);
 
+  // Filter plugs based on Global Mode toggle (Demo MVP Logic)
+  const displayPlugs = globalMode ? initialPlugs : initialPlugs.slice(0, Math.max(1, Math.floor(initialPlugs.length * 0.5))); // Mocking geographic radius limitation
+
   const categories = [
+    {
+      title: <><Megaphone size={16} className="inline-icon" color="#FF3D71" /> Civic Broadcasts</>,
+      pillar: 'civic',
+      items: displayPlugs.filter(p => p.pillar === 'civic')
+    },
     {
       title: <><Wrench size={16} className="inline-icon" /> Top Services &amp; Mechanics</>,
       pillar: 'services',
-      items: initialPlugs.filter(p => p.pillar === 'services')
+      items: displayPlugs.filter(p => p.pillar === 'services')
     },
     {
       title: <><ShoppingBag size={16} className="inline-icon" /> Trending Shops</>,
       pillar: 'shops',
-      items: initialPlugs.filter(p => p.pillar === 'shops')
+      items: displayPlugs.filter(p => p.pillar === 'shops')
     },
     {
       title: <><Building size={16} className="inline-icon" /> Places to Explore</>,
       pillar: 'places',
-      items: initialPlugs.filter(p => p.pillar === 'places')
+      items: displayPlugs.filter(p => p.pillar === 'places')
     },
     {
       title: <><Sparkles size={16} className="inline-icon" /> Newest Arrivals</>,
       pillar: 'new',
-      items: initialPlugs.slice(0, 10) // First 10 (already ordered by created_at desc)
+      items: displayPlugs.slice(0, 10)
     }
   ];
 
@@ -48,7 +57,24 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
       <div className="dashboard-container">
       
       <main className="dashboard-main">
-        {/* Header removed as requested */}
+        
+        {/* Global/Local Mode Toggle */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '100px', padding: '0.25rem', display: 'flex', gap: '0.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+            <button 
+              onClick={() => setGlobalMode(false)}
+              style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: !globalMode ? 'var(--text-primary)' : 'transparent', color: !globalMode ? 'var(--bg-default)' : 'var(--text-muted)', border: 'none', borderRadius: '100px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+            >
+              <MapPin size={16} /> Local Mode
+            </button>
+            <button 
+              onClick={() => setGlobalMode(true)}
+              style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: globalMode ? 'var(--text-primary)' : 'transparent', color: globalMode ? 'var(--bg-default)' : 'var(--text-muted)', border: 'none', borderRadius: '100px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
+            >
+              <Globe size={16} /> Global Mode
+            </button>
+          </div>
+        </div>
 
         {/* Spotify-style Horizontal Rows (Default View) */}
           <div>
@@ -138,19 +164,29 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                       </div>
                       <div className="spotify-carousel">
                         {cat.items.map(plug => (
-                          <div 
-                            key={plug.id} 
-                            className="spotify-card"
-                            onClick={() => router.push(`/plug/${plug.id}`)}
-                            style={{ position: 'relative', cursor: 'pointer' }}
-                          >
-                            <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: 'var(--bg-input)' }}>
-                              {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
-                            </div>
-                            <div>
-                              <h3 className="spotify-card-title">{plug.title}</h3>
-                              <p className="spotify-card-subtitle">{plug.category || plug.address || 'Local Plug'}</p>
-                            </div>
+                            <div 
+                              key={plug.id} 
+                              className="spotify-card"
+                              onClick={() => router.push(`/plug/${plug.id}`)}
+                              style={{ 
+                                position: 'relative', 
+                                cursor: 'pointer',
+                                border: plug.pillar === 'civic' ? '1px solid var(--accent-red, #FF3D71)' : undefined,
+                                background: plug.pillar === 'civic' ? 'rgba(255, 61, 113, 0.05)' : undefined
+                              }}
+                            >
+                              <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: plug.pillar === 'civic' ? '#FF3D71' : 'var(--bg-input)' }}>
+                                {!plug.image_url?.startsWith('http') && (
+                                  plug.pillar === 'civic' ? <AlertCircle size={48} color="#fff" /> : <Package size={48} color="var(--text-muted)" />
+                                )}
+                              </div>
+                              <div>
+                                {plug.pillar === 'civic' && (
+                                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#FF3D71', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Official Broadcast</div>
+                                )}
+                                <h3 className="spotify-card-title">{plug.title}</h3>
+                                <p className="spotify-card-subtitle">{plug.category || plug.address || 'Local Plug'}</p>
+                              </div>
                             {user && user.id === plug.provider_id && (
                               <button
                                 onClick={(e) => {

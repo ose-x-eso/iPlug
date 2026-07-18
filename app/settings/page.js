@@ -7,6 +7,7 @@ import BackButton from '@/components/layout/BackButton';
 import LogoutButton from './LogoutButton';
 import EditProfileSettings from './EditProfileSettings';
 import ThemeToggle from '@/components/layout/ThemeToggle';
+import DemoSettings from './DemoSettings';
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -48,6 +49,8 @@ export default async function SettingsPage() {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Update your bio, title, portfolio links, and photos.</p>
           <EditProfileSettings profile={profile} />
         </div>
+
+        <DemoSettings />
 
         <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
           <SecuritySettings />

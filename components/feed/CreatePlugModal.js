@@ -15,6 +15,17 @@ export default function CreatePlugModal({ isOpen, onClose }) {
   const [categories, setCategories] = useState([]);
   const [address, setAddress] = useState('');
   
+  // Verification state
+  const [isCivicVerified, setIsCivicVerified] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        setIsCivicVerified(localStorage.getItem('iplug_civic_verified') === 'true');
+      } catch (e) {}
+    }
+  }, [isOpen]);
+  
   // Update categories when pillar changes
   useEffect(() => {
     setTimeout(() => setCategories(getCategoriesByPillar(pillar)), 0);
@@ -120,8 +131,8 @@ export default function CreatePlugModal({ isOpen, onClose }) {
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-header">
-          <h2>List Your Plug</h2>
-          <p>Add your service, shop, or place to the marketplace.</p>
+          <h2>{pillar === 'civic' ? 'Post Civic Broadcast' : 'List Your Plug'}</h2>
+          <p>{pillar === 'civic' ? 'Send official alerts or announcements to the community.' : 'Add your service, shop, or place to the marketplace.'}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form" autoComplete="off">
@@ -167,9 +178,10 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                     onChange={(e) => setPillar(e.target.value)}
                     style={selectStyle}
                   >
-                    {Object.entries(PILLARS).map(([key, p]) => (
-                      <option key={key} value={key}>{p.label}</option>
-                    ))}
+                    {Object.entries(PILLARS).map(([key, p]) => {
+                      if (key === 'civic' && !isCivicVerified) return null;
+                      return <option key={key} value={key}>{p.label}</option>;
+                    })}
                   </select>
                 </div>
 
@@ -248,9 +260,9 @@ export default function CreatePlugModal({ isOpen, onClose }) {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary btn-full mt-lg" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Create Plug'}
-              </button>
+                  <button type="submit" disabled={isLoading} className="btn btn-primary" style={{ flex: 1, padding: '0.75rem', fontSize: '1rem' }}>
+                    {isLoading ? 'Processing...' : pillar === 'civic' ? 'Post Broadcast' : 'List Plug'}
+                  </button>
             </>
           )}
         </form>

@@ -183,6 +183,11 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 {displayName}
               </h3>
+              {!otherUser.ghost_mode && (
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '2px' }}>
+                  <MapPin size={12} /> {otherUser.distance_str || '2.4 miles away'}
+                </p>
+              )}
             </div>
           </Link>
         </div>

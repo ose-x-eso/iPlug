@@ -179,7 +179,8 @@ export default async function PlugDetailsPage(props) {
               </div>
             </div>
 
-            <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
+            {plug.pillar !== 'civic' && (
+              <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0 }}>Reviews & Ratings</h3>
                 <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}><Star size={16} className="inline-icon" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
@@ -211,6 +212,7 @@ export default async function PlugDetailsPage(props) {
                 )}
               </div>
             </div>
+            )}
 
           </div>
         </div>
