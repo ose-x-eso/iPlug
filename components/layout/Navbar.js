@@ -13,8 +13,11 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import { createClient } from '@/utils/supabase/client';
 import { logout } from '@/app/actions/auth';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -117,20 +120,46 @@ export default function Navbar() {
   return (
     <>
       <nav className="landing-topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Logo size={28} showText={true} />
           </Link>
-
-          {/* Desktop Navigation Links */}
-          <div className="desktop-only" style={{ gap: '1.5rem', alignItems: 'center' }}>
-
-            {user && (
-              <Link href="/my-plugs" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: '500', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Package size={16} className="inline-icon" /> My Plugs
+        </div>
+        
+        {/* Centralized Desktop Navigation Links */}
+        <div className="desktop-only" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '0.5rem', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '0.35rem 0.5rem', borderRadius: '100px', border: '1px solid var(--border)', backdropFilter: 'blur(10px)' }}>
+          {[
+            { name: 'Home', path: '/' },
+            { name: 'About', path: '/about' },
+            { name: 'FAQ', path: '/faq' },
+          ].map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <Link key={item.path} href={item.path} style={{ position: 'relative', padding: '0.4rem 1rem', color: isActive ? 'var(--text-primary)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: isActive ? '600' : '500', fontSize: '0.95rem', transition: 'color 0.2s', zIndex: 1 }}>
+                {isActive && (
+                  <motion.div
+                    layoutId="navIndicator"
+                    style={{ position: 'absolute', inset: 0, background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '100px', zIndex: -1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                {item.name}
               </Link>
-            )}
-          </div>
+            );
+          })}
+
+          {user && (
+            <Link href="/my-plugs" style={{ position: 'relative', padding: '0.4rem 1rem', color: pathname === '/my-plugs' ? 'var(--text-primary)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: pathname === '/my-plugs' ? '600' : '500', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'color 0.2s', zIndex: 1 }}>
+              {pathname === '/my-plugs' && (
+                <motion.div
+                  layoutId="navIndicator"
+                  style={{ position: 'absolute', inset: 0, background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '100px', zIndex: -1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
+              <Package size={16} className="inline-icon" /> My Plugs
+            </Link>
+          )}
         </div>
         
         <div className="topbar-actions">

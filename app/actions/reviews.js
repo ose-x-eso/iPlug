@@ -32,16 +32,7 @@ export async function submitReview(formData) {
     .single()
 
   if (existingReview) {
-    const { error } = await supabase.from('reviews').update({
-      rating,
-      message: message.trim(),
-      created_at: new Date().toISOString()
-    }).eq('id', existingReview.id)
-
-    if (error) {
-      console.error('Error updating review:', error)
-      return { error: error.message }
-    }
+    return { error: 'You have already left a review for this provider. Multiple reviews are not allowed to prevent spamming.' }
   } else {
     const { error } = await supabase.from('reviews').insert({
       provider_id,
