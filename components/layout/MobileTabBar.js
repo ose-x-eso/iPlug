@@ -14,7 +14,7 @@ export default function MobileTabBar({ user, unreadCount, unreadNotificationsCou
     user 
       ? { name: 'Post', href: '#', icon: Plus, isAction: true, onClick: onOpenCreate }
       : { name: 'Login', href: '#', icon: LogIn, isAction: true, onClick: onOpenAuth },
-    { name: 'Inbox', href: '/inbox', icon: MessageSquare, badge: unreadCount, reqAuth: true },
+    { name: 'Inbox', href: '/messages', icon: MessageSquare, badge: unreadCount, reqAuth: true },
     { name: 'Profile', href: user ? `/profile/${user.id}` : '#', icon: User, reqAuth: true },
   ];
 

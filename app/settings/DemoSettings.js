@@ -12,9 +12,11 @@ export default function DemoSettings() {
     try {
       const storedGhost = localStorage.getItem('iplug_ghost_mode') === 'true';
       const storedCivic = localStorage.getItem('iplug_civic_verified') === 'true';
-      setGhostMode(storedGhost);
-      setCivicVerified(storedCivic);
-      setIsLoaded(true);
+      setTimeout(() => {
+        setGhostMode(storedGhost);
+        setCivicVerified(storedCivic);
+        setIsLoaded(true);
+      }, 0);
     } catch (e) {}
   }, []);
 
@@ -26,6 +28,9 @@ export default function DemoSettings() {
 
   const handleCivicChange = (e) => {
     const val = e.target.checked;
+    if (val) {
+      alert("Civic Verification requires submission of official documentation. Verification portal coming soon! Enabling demo mode.");
+    }
     setCivicVerified(val);
     localStorage.setItem('iplug_civic_verified', val);
   };

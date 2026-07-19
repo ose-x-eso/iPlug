@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -33,29 +33,34 @@ function LocationMarker({ position }) {
 
 export default function MapComponent({ initialPlugs }) {
   const [position, setPosition] = useState(null);
-  const [plugs, setPlugs] = useState(initialPlugs);
 
-  useEffect(() => {
-    // Generate mock coordinates for plugs that don't have them
-    // so they appear around the user or default center.
-    // In a real app, these would come from the database.
+  // Derive mapped plugs during render instead of effect to avoid cascading render
+  const plugs = React.useMemo(() => {
     const center = position || [37.7749, -122.4194]; // Default SF if no position
     
-    const mappedPlugs = initialPlugs.map(plug => {
-      if (plug.latitude && plug.longitude) return plug;
+    return initialPlugs.flatMap(plug => {
+      // If it uses the new multi-location array
+      if (plug.locations && plug.locations.length > 0) {
+        return plug.locations.map((loc, i) => {
+          let lat = loc.latitude;
+          let lng = loc.longitude;
+          if (!lat || !lng) {
+            lat = center[0] + (Math.random() - 0.5) * 0.1;
+            lng = center[1] + (Math.random() - 0.5) * 0.1;
+          }
+          return { ...plug, markerId: `${plug.id}-${i}`, latitude: lat, longitude: lng, displayAddress: loc.address };
+        });
+      }
       
-      // Add small random offset to center (-0.05 to +0.05)
-      const latOffset = (Math.random() - 0.5) * 0.1;
-      const lngOffset = (Math.random() - 0.5) * 0.1;
-      
-      return {
-        ...plug,
-        latitude: center[0] + latOffset,
-        longitude: center[1] + lngOffset
-      };
+      // Fallback for legacy data
+      let lat = plug.latitude;
+      let lng = plug.longitude;
+      if (!lat || !lng) {
+        lat = center[0] + (Math.random() - 0.5) * 0.1;
+        lng = center[1] + (Math.random() - 0.5) * 0.1;
+      }
+      return [{ ...plug, markerId: plug.id, latitude: lat, longitude: lng, displayAddress: plug.address }];
     });
-    
-    setPlugs(mappedPlugs);
   }, [initialPlugs, position]);
 
   useEffect(() => {
@@ -77,10 +82,10 @@ export default function MapComponent({ initialPlugs }) {
       
       // Fallback if geolocation hangs
       timeoutId = setTimeout(() => {
-        if (!position) setPosition([37.7749, -122.4194]);
+        setPosition(prev => prev || [37.7749, -122.4194]);
       }, 3000);
     } else {
-      setPosition([37.7749, -122.4194]); // SF
+      setTimeout(() => setPosition([37.7749, -122.4194]), 0); // SF
     }
     
     return () => clearTimeout(timeoutId);
@@ -112,13 +117,14 @@ export default function MapComponent({ initialPlugs }) {
         
         {plugs.map((plug) => (
           <Marker 
-            key={plug.id} 
+            key={plug.markerId} 
             position={[plug.latitude, plug.longitude]}
           >
             <Popup>
               <div style={{ padding: '0.5rem', minWidth: '150px' }}>
                 <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: '#333' }}>{plug.title}</h3>
-                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#666' }}>{plug.category}</p>
+                <p style={{ margin: '0 0 0.2rem 0', fontSize: '0.9rem', color: '#666' }}>{plug.category}</p>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', color: '#888' }}>{plug.displayAddress}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                   <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     {plug.profiles?.avatar_url ? (

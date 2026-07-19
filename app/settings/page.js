@@ -32,8 +32,8 @@ export default async function SettingsPage() {
       
       <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem 1rem 2rem 1rem' }}>
         
-        <div style={{ marginBottom: '2rem' }}>
-          <BackButton />
+        <BackButton />
+        <div style={{ marginBottom: '2rem', padding: '1rem 0', borderBottom: '1px solid var(--border)' }}>
           <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0' }}>Settings</h1>
           <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Manage your personal profile and account settings.</p>
         </div>

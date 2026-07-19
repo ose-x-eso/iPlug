@@ -5,19 +5,28 @@ import { createClient } from '@/utils/supabase/client';
 import { sendMessage, markMessagesAsRead } from '@/app/actions/messages';
 import Link from 'next/link';
 import { useTransition } from 'react';
-import { Hand, MapPin, Phone, User } from 'lucide-react';
+import { Hand, MapPin, Phone, User, MoreVertical, AlertCircle, Shield, Ban } from 'lucide-react';
 
 export default function ChatWindow({ initialMessages, currentUser, otherUser }) {
   const [messages, setMessages] = useState(initialMessages || []);
   const [isSending, setIsSending] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [showMenu, setShowMenu] = useState(false);
+  const [hideDistance, setHideDistance] = useState(false);
   const messagesEndRef = useRef(null);
   const supabase = createClient();
 
   const displayName = otherUser?.username || otherUser?.full_name || otherUser?.email?.split('@')[0] || "User";
 
   const isInitialLoad = useRef(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const ghostEnabled = localStorage.getItem('iplug_ghost_mode') === 'true';
+      setHideDistance(ghostEnabled || otherUser?.ghost_mode);
+    }, 0);
+  }, [otherUser?.ghost_mode]);
 
   // Scroll to bottom
   const scrollToBottom = () => {
@@ -135,7 +144,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   };
 
   return (
-    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 150px)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', background: 'var(--bg-default)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
       <div style={{ 
@@ -183,9 +192,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 {displayName}
               </h3>
-              {!otherUser.ghost_mode && (
+              {!hideDistance && otherUser.distance_str && (
                 <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '2px' }}>
-                  <MapPin size={12} /> {otherUser.distance_str || '2.4 miles away'}
+                  <MapPin size={12} /> {otherUser.distance_str}
                 </p>
               )}
             </div>
@@ -193,13 +202,54 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
         </div>
         
         {/* Call Icons */}
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-primary)' }}>
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-primary)', position: 'relative' }}>
           <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Video call coming soon!")}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
           </button>
           <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Voice call coming soon!")}>
             <Phone size={22} />
           </button>
+          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => setShowMenu(!showMenu)}>
+            <MoreVertical size={22} />
+          </button>
+          
+          {showMenu && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '100%', 
+              right: 0, 
+              marginTop: '0.5rem', 
+              background: 'var(--bg-card)', 
+              border: '1px solid var(--border)', 
+              borderRadius: 'var(--radius-md)', 
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              minWidth: '200px',
+              zIndex: 100,
+              overflow: 'hidden'
+            }}>
+              <button 
+                onClick={() => { alert("Customize Chat settings coming soon!"); setShowMenu(false); }}
+                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                className="hover-bg-input"
+              >
+                <Shield size={16} /> Customize Chat
+              </button>
+              <button 
+                onClick={() => { alert(`Blocked ${displayName}`); setShowMenu(false); }}
+                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                className="hover-bg-input"
+              >
+                <Ban size={16} /> Block User
+              </button>
+              <button 
+                onClick={() => { alert(`Reported ${displayName} to admins.`); setShowMenu(false); }}
+                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                className="hover-bg-input"
+              >
+                <AlertCircle size={16} /> Report User
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,9 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
+ 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Smartphone, Monitor } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './simulator.css';
 
 export default function DeviceSimulatorWrapper({ children }) {
@@ -11,6 +12,13 @@ export default function DeviceSimulatorWrapper({ children }) {
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    setTimeout(() => {
+      try {
+        const stored = localStorage.getItem('iplug_simulator_mode') === 'true';
+        setIsSimulatorMode(stored);
+      } catch (e) {}
+    }, 0);
+
     const handleResize = () => {
       setIsDesktop(window.innerWidth > 768);
       
@@ -49,32 +57,48 @@ export default function DeviceSimulatorWrapper({ children }) {
   return (
     <>
       <div className={`app-wrapper ${isSimulatorMode ? 'simulator-active' : ''}`}>
-        {isSimulatorMode ? (
-          <div className="simulator-environment">
-            <div className="simulator-bg"></div>
-            
-            <div className="device-frame">
-              <div className="device-notch">
-                <div className="device-camera"></div>
-                <div className="device-speaker"></div>
-              </div>
-              <div className="device-screen">
-                <div className="device-screen-scrollable">
-                  {children}
-                </div>
-              </div>
+        <AnimatePresence mode="wait">
+          {isSimulatorMode ? (
+            <motion.div 
+              key="simulator"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="simulator-environment"
+            >
+              <div className="simulator-bg"></div>
               
-              {/* Hardware buttons */}
-              <div className="device-button volume-up"></div>
-              <div className="device-button volume-down"></div>
-              <div className="device-button power"></div>
-            </div>
-          </div>
-        ) : (
-          <div className="desktop-environment">
-            {children}
-          </div>
-        )}
+              <div className="device-frame">
+                <div className="device-notch">
+                  <div className="device-camera"></div>
+                  <div className="device-speaker"></div>
+                </div>
+                <div className="device-screen">
+                  <div className="device-screen-scrollable">
+                    {children}
+                  </div>
+                </div>
+                
+                {/* Hardware buttons */}
+                <div className="device-button volume-up"></div>
+                <div className="device-button volume-down"></div>
+                <div className="device-button power"></div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="desktop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="desktop-environment"
+            >
+              {children}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <button 

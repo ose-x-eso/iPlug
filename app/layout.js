@@ -21,6 +21,11 @@ export const metadata = {
     type: "website",
     locale: "en_NG",
   },
+  appleWebApp: {
+    capable: true,
+    title: "iPlug",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport = {
@@ -34,6 +39,7 @@ export const viewport = {
 };
 
 import DeviceSimulatorWrapper from '@/components/layout/DeviceSimulatorWrapper';
+import { ToastProvider } from '@/components/ui/ToastProvider';
 
 export default function RootLayout({ children }) {
   return (
@@ -43,9 +49,11 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <ThemeProvider>
-          <DeviceSimulatorWrapper>
-            {children}
-          </DeviceSimulatorWrapper>
+          <ToastProvider>
+            <DeviceSimulatorWrapper>
+              {children}
+            </DeviceSimulatorWrapper>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

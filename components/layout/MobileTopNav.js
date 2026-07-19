@@ -11,7 +11,7 @@ export default function MobileTopNav({ unreadNotificationsCount }) {
   const pathname = usePathname();
   
   // Only show on these specific pages on mobile
-  const allowedRoutes = ['/', '/search', '/inbox'];
+  const allowedRoutes = ['/', '/search', '/messages'];
   if (!allowedRoutes.includes(pathname)) return null;
 
   return (

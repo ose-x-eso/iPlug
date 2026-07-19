@@ -17,8 +17,18 @@ export async function createPlug(formData) {
   const description = formData.get('description')
   const pillar = formData.get('pillar')
   const category = formData.get('category')
-  const address = formData.get('address')
+  const address = formData.get('address') // Fallback/primary address
   const portfolio_url = formData.get('portfolio_url')
+  
+  let locations = [];
+  const locationsStr = formData.get('locations');
+  if (locationsStr) {
+    try {
+      locations = JSON.parse(locationsStr);
+    } catch (e) {
+      console.error('Error parsing locations:', e);
+    }
+  }
   
   let imageUrl = formData.get('icon') // fallback MVP emoji
 
@@ -53,6 +63,7 @@ export async function createPlug(formData) {
       pillar,
       category,
       address,
+      locations,
       image_url: imageUrl, 
       portfolio_url: portfolio_url || null,
     })
@@ -109,6 +120,15 @@ export async function updatePlug(plugId, formData) {
     category: formData.get('category'),
     address: formData.get('address'),
   };
+
+  const locationsStr = formData.get('locations');
+  if (locationsStr) {
+    try {
+      updateData.locations = JSON.parse(locationsStr);
+    } catch (e) {
+      console.error('Error parsing locations:', e);
+    }
+  }
 
   const imageFile = formData.get('image_file');
   if (imageFile && imageFile.size > 0) {

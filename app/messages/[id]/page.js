@@ -1,21 +1,17 @@
 import { createClient } from '@/utils/supabase/server';
-import { notFound, redirect } from 'next/navigation';
-import Link from 'next/link';
-import AppShell from '@/components/layout/AppShell';
+import { redirect } from 'next/navigation';
 import ChatWindow from '@/components/chat/ChatWindow';
 
 export default async function MessagesPage(props) {
   const params = await props.params;
   const supabase = await createClient();
   
-  // Get current user session
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/'); // Must be logged in to view messages
+    redirect('/');
   }
 
-  // Fetch the person they want to chat with
   const { data: otherUser, error: userError } = await supabase
     .from('profiles')
     .select('*')
@@ -24,11 +20,9 @@ export default async function MessagesPage(props) {
 
   let chatUser = otherUser;
   if (userError || !otherUser) {
-    // If the profile is missing (e.g. old account before triggers), fallback gracefully
     chatUser = { id: params.id, full_name: 'Unknown User' };
   }
 
-  // Fetch initial messages history between these two users
   const { data: initialMessages } = await supabase
     .from('messages')
     .select('*')
@@ -36,20 +30,10 @@ export default async function MessagesPage(props) {
     .order('created_at', { ascending: true });
 
   return (
-    <AppShell initialUser={user}>
-      <div className="dashboard-container">
-      
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
-        {/* Header removed: ChatWindow has its own WhatsApp-style header with back button */}
-        
-        {/* Render the Client Component for Realtime Chat */}
-        <ChatWindow 
-          initialMessages={initialMessages || []} 
-          currentUser={user} 
-          otherUser={chatUser} 
-        />
-      </main>
-      </div>
-    </AppShell>
+    <ChatWindow 
+      initialMessages={initialMessages || []} 
+      currentUser={user} 
+      otherUser={chatUser} 
+    />
   );
 }

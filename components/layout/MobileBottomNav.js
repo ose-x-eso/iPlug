@@ -1,11 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Home, Package, Plus, Inbox, User } from 'lucide-react';
 
 export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpenMenu }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleHomeClick = (e) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      router.refresh();
+    }
+  };
 
   // If user is not logged in, we shouldn't show the full nav (maybe just Home and Auth)
   // For now, let's just return nothing if no user, since the top bar still has "Get Started"
@@ -13,7 +22,7 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
 
   return (
     <div className="mobile-bottom-nav mobile-only">
-      <Link href="/" className={`bottom-nav-item ${pathname === '/' ? 'active' : ''}`}>
+      <Link href="/" className={`bottom-nav-item ${pathname === '/' ? 'active' : ''}`} onClick={handleHomeClick}>
         <span className="bottom-nav-icon"><Home size={16} className="inline-icon" /></span>
         <span className="bottom-nav-label">Home</span>
       </Link>
@@ -28,7 +37,7 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
         <div className="fab-icon"><Plus size={16} className="inline-icon" /></div>
       </button>
 
-      <Link href="/inbox" className={`bottom-nav-item ${pathname === '/inbox' || pathname?.startsWith('/messages/') ? 'active' : ''}`} style={{ position: 'relative' }}>
+      <Link href="/messages" className={`bottom-nav-item ${pathname === '/messages' || pathname?.startsWith('/messages/') ? 'active' : ''}`} style={{ position: 'relative' }}>
         <span className="bottom-nav-icon"><Inbox size={16} className="inline-icon" /></span>
         <span className="bottom-nav-label">Inbox</span>
         {unreadCount > 0 && (

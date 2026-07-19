@@ -113,8 +113,10 @@ export default function NotificationsDropdown({ unreadCount }) {
                       await markNotificationAsRead(notif.id);
                       setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, is_read: true } : n));
                     }
-                    if (notif.type === 'NEW_MESSAGE') {
-                      router.push('/inbox');
+                    if (notif.link) {
+                      router.push(notif.link);
+                    } else if (notif.type === 'NEW_MESSAGE') {
+                      router.push('/messages');
                     } else {
                       router.push('/notifications');
                     }

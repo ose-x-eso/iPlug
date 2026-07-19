@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { createNotification } from './notifications'
 
 export async function sendMessage(formData) {
   const supabase = await createClient()
@@ -26,6 +27,26 @@ export async function sendMessage(formData) {
     return { error: error.message }
   }
 
+  if (receiver_id && receiver_id !== user.id) {
+    const { data: senderProfile } = await supabase
+      .from('profiles')
+      .select('username, full_name')
+      .eq('id', user.id)
+      .single()
+
+    const senderName = senderProfile?.username || senderProfile?.full_name || 'Someone'
+    const preview = content.trim()
+    const truncated = preview.length > 80 ? `${preview.substring(0, 80)}...` : preview
+
+    await createNotification(
+      receiver_id,
+      'NEW_MESSAGE',
+      `${senderName}: ${truncated}`,
+      { link: `/messages/${user.id}` }
+    )
+  }
+
+  revalidatePath('/messages', 'layout')
   return { success: true }
 }
 
@@ -35,7 +56,6 @@ export async function markMessagesAsRead(sender_id) {
   
   if (!user) return { error: 'Not authenticated' }
 
-  // Mark all messages from the sender to the current user as read
   const { error } = await supabase
     .from('messages')
     .update({ is_read: true })
@@ -56,7 +76,6 @@ export async function markMessageAsDelivered(message_id) {
   
   if (!user) return { error: 'Not authenticated' }
 
-  // Mark a specific message as delivered
   const { error } = await supabase
     .from('messages')
     .update({ is_delivered: true })
@@ -76,7 +95,6 @@ export async function markAllUnreadAsDelivered() {
   
   if (!user) return { error: 'Not authenticated' }
 
-  // Mark all unread messages received by the current user as delivered
   const { data, error } = await supabase
     .from('messages')
     .update({ is_delivered: true })
@@ -84,12 +102,10 @@ export async function markAllUnreadAsDelivered() {
     .eq('is_delivered', false)
     .select()
 
-  console.log('markAllUnreadAsDelivered executing for:', user.email, 'Updated rows:', data?.length || 0)
-
   if (error) {
     console.error('markAllUnreadAsDelivered error:', error)
     return { error: error.message }
   }
 
-  return { success: true }
+  return { success: true, updated: data?.length || 0 }
 }

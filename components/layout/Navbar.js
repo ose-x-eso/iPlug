@@ -13,7 +13,7 @@ import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import { createClient } from '@/utils/supabase/client';
 import { logout } from '@/app/actions/auth';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -25,7 +25,16 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const menuRef = useRef(null);
+  const router = useRouter();
   
+  const handleHomeClick = (e) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      router.refresh();
+    }
+  };
+
   // Stabilize the client instance across renders to prevent infinite useEffect loops
   const supabase = useMemo(() => createClient(), []);
 
@@ -121,7 +130,7 @@ export default function Navbar() {
     <>
       <nav className="landing-topbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
+          <Link href="/" style={{ textDecoration: 'none' }} onClick={handleHomeClick}>
             <Logo size={28} showText={true} />
           </Link>
         </div>
@@ -135,7 +144,12 @@ export default function Navbar() {
           ].map((item) => {
             const isActive = pathname === item.path;
             return (
-              <Link key={item.path} href={item.path} style={{ position: 'relative', padding: '0.4rem 1rem', color: isActive ? 'var(--text-primary)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: isActive ? '600' : '500', fontSize: '0.95rem', transition: 'color 0.2s', zIndex: 1 }}>
+              <Link 
+                key={item.path} 
+                href={item.path} 
+                onClick={item.path === '/' ? handleHomeClick : undefined}
+                style={{ position: 'relative', padding: '0.4rem 1rem', color: isActive ? 'var(--text-primary)' : 'var(--text-muted)', textDecoration: 'none', fontWeight: isActive ? '600' : '500', fontSize: '0.95rem', transition: 'color 0.2s', zIndex: 1 }}
+              >
                 {isActive && (
                   <motion.div
                     layoutId="navIndicator"
@@ -174,7 +188,7 @@ export default function Navbar() {
                 + List a Plug
               </button>
               
-              <Link href="/inbox" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
+              <Link href="/messages" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
                 <Inbox size={16} className="inline-icon" /> Inbox
                 {unreadCount > 0 && (
                   <span style={{

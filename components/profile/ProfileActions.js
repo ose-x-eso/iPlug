@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-
-import { createRecommendation } from '@/app/actions/recommendations';
 import { Phone, MessageSquare, Handshake } from 'lucide-react';
 
 export default function ProfileActions({ profile, isOwner, profileId, user }) {
