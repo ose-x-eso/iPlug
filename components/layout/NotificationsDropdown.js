@@ -73,7 +73,7 @@ export default function NotificationsDropdown({ unreadCount }) {
           right: '-0.5rem',
           marginTop: '0.5rem',
           width: '320px',
-          background: 'var(--bg-card)',
+          background: 'var(--bg-surface)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
           boxShadow: '0 10px 25px rgba(0,0,0,0.2)',

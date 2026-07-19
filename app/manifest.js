@@ -9,13 +9,8 @@ export default function manifest() {
     theme_color: '#FF6B35',
     icons: [
       {
-        src: '/icon.png',
-        sizes: '192x192',
-        type: 'image/png',
-      },
-      {
-        src: '/icon.png',
-        sizes: '512x512',
+        src: '/iplug_logo.png',
+        sizes: '192x192 512x512',
         type: 'image/png',
       }
     ],

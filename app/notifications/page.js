@@ -35,7 +35,7 @@ export default async function NotificationsPage() {
           <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Notifications</h1>
         </div>
 
-        <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+        <div style={{ background: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
           {!notifications || notifications.length === 0 ? (
             <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
               <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Bell size={16} className="inline-icon" /></span>
