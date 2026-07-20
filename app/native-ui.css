@@ -1,0 +1,249 @@
+.native-page {
+  background-color: black;
+  min-height: 100dvh;
+}
+
+.native-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(44, 44, 46, 0.5);
+}
+
+.native-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.native-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: white;
+  margin: 0;
+}
+
+.native-done-btn {
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 17px;
+  text-decoration: none;
+}
+
+.native-main {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 1rem 0;
+}
+
+.native-section {
+  margin-bottom: 2rem;
+}
+
+.native-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  margin-left: 0.5rem;
+}
+
+.native-card {
+  background-color: #1C1C1E;
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.native-card > * + * {
+  border-top: 1px solid #2C2C2E;
+}
+
+.native-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  color: white;
+  text-decoration: none;
+}
+
+.native-row-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.native-row-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.native-row-title {
+  font-size: 17px;
+  color: white;
+}
+
+.native-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.native-input-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.native-input {
+  width: 100%;
+  background-color: #1C1C1E;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  color: white;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+}
+
+.native-input:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.native-btn-primary {
+  width: 100%;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.875rem;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.native-btn-outline {
+  width: 100%;
+  background-color: transparent;
+  color: #3b82f6;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.875rem;
+  font-size: 17px;
+  border: 1px solid #3b82f6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.native-btn-danger {
+  width: 100%;
+  background-color: transparent;
+  color: #ef4444;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.875rem;
+  font-size: 17px;
+  border: 1px solid #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.native-buttons-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.native-spacer {
+  height: 120px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.native-icon-box {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.native-helper-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+}
+
+.native-error-text {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.native-success-text {
+  color: #34d399;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+.native-segmented-control {
+  background-color: #1C1C1E;
+  border-radius: 99px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 2rem;
+}
+
+.native-segment {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: #9ca3af;
+}
+
+.native-segment.active {
+  background-color: #39393D;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}

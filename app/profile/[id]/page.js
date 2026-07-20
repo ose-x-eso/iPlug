@@ -166,22 +166,24 @@ export default async function ProfilePage(props) {
 
         {/* MOBILE LAYOUT */}
         <main className="dashboard-main mobile-profile-main mobile-only" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '90px', flexDirection: 'column' }}>
-          <div style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%' }}>
-            <BackButton label="Back" />
-          </div>
+          {!isOwner && (
+            <div style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%' }}>
+              <BackButton label="Back" />
+            </div>
+          )}
           {/* Cover Photo / Header */}
           <div style={{ 
             height: '180px', 
             background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--primary), var(--secondary))', 
             width: '100%', 
             position: 'relative',
-            marginTop: '-60px' /* Pull up to hide behind glass back button if desired, but we want it below */
+            marginTop: !isOwner ? '-60px' : '0' /* Pull up to hide behind glass back button if present */
           }}>
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%)' }}></div>
             {isOwner && (
               <Link href="/settings" style={{
                 position: 'absolute',
-                top: '1rem',
+                top: 'calc(1rem + env(safe-area-inset-top, 0px))',
                 right: '1rem',
                 background: 'rgba(0,0,0,0.5)',
                 color: 'white',
@@ -234,31 +236,26 @@ export default async function ProfilePage(props) {
             </p>
 
             {/* Stats Grid */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(3, 1fr)', 
+            <div className="native-card" style={{ 
+              display: 'flex', 
               width: '100%', 
-              padding: '1rem 0', 
-              borderTop: '1px solid var(--border)', 
-              borderBottom: '1px solid var(--border)',
-              marginBottom: '1.5rem',
-              gap: '0.5rem'
+              marginBottom: '1.5rem'
             }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{plugs?.length || 0}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderRight: '1px solid #2C2C2E' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{plugs?.length || 0}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
                   <Package size={14} /> Plugs
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{averageRating === 'New' ? '—' : averageRating}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderRight: '1px solid #2C2C2E' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{averageRating === 'New' ? '—' : averageRating}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
                   <Star size={14} /> Rating
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{joinedDate}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{joinedDate}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
                   <Calendar size={14} /> Joined
                 </div>
               </div>

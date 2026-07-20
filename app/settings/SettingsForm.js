@@ -97,25 +97,23 @@ export default function SettingsForm({ initialProfile }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form" autoComplete="off">
-      {errorMsg && <div className="auth-error">{errorMsg}</div>}
+    <form onSubmit={handleSubmit} style={{ width: '100%' }} autoComplete="off">
+      {errorMsg && <div className="native-error-text">{errorMsg}</div>}
 
-      <div className="input-group">
-        <label>Full Name (Private)</label>
+      <div className="native-input-group">
+        <label className="native-input-label">Full Name (Private)</label>
         <input 
           type="text" 
           name="full_name" 
           defaultValue={initialProfile?.full_name || ''} 
           required 
           placeholder="Ose Web Developer" 
+          className="native-input"
         />
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-          Only used for billing and account recovery.
-        </p>
       </div>
 
-      <div className="input-group">
-        <label>Username (Public)</label>
+      <div className="native-input-group">
+        <label className="native-input-label">Username (Public)</label>
         <input 
           type="text" 
           name="username" 
@@ -124,40 +122,33 @@ export default function SettingsForm({ initialProfile }) {
           placeholder="ose_dev" 
           pattern="^[a-zA-Z0-9_]{3,15}$" 
           title="3-15 characters, letters, numbers, and underscores only"
+          className="native-input"
         />
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-          This is how you will appear to others on the platform.
-        </p>
       </div>
 
-      <div className="input-group">
-        <label>Phone Number</label>
+      <div className="native-input-group">
+        <label className="native-input-label">Phone Number</label>
         <input 
           type="tel" 
           name="phone_number" 
           defaultValue={initialProfile?.phone_number || ''} 
           placeholder="+234..." 
+          className="native-input"
         />
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-          Used for customers to contact you directly if you list a plug.
-        </p>
       </div>
 
-      <div className="input-group">
-        <label>Email Address</label>
+      <div className="native-input-group">
+        <label className="native-input-label">Email Address</label>
         <input 
           type="email" 
           defaultValue={initialProfile?.email || ''} 
           disabled 
-          style={{ opacity: 0.7, cursor: 'not-allowed' }}
+          className="native-input"
         />
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-          Email address cannot be changed currently.
-        </p>
       </div>
 
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-        <button type="submit" className="btn btn-primary mt-lg" disabled={isLoading} style={{ width: 'auto', padding: '0.75rem 2rem' }}>
+      <div className="native-buttons-stack">
+        <button type="submit" className="native-btn-primary" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save Changes'}
         </button>
         
@@ -165,8 +156,7 @@ export default function SettingsForm({ initialProfile }) {
           <button 
             type="button" 
             onClick={handleEnablePush}
-            className="btn btn-outline mt-lg"
-            style={{ width: 'auto', padding: '0.75rem 2rem', border: '1px solid var(--border)' }}
+            className="native-btn-outline"
           >
             {pushStatus || 'Enable Push Notifications'}
           </button>

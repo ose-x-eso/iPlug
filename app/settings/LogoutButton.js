@@ -12,18 +12,7 @@ export default function LogoutButton() {
   return (
     <button 
       onClick={handleLogout}
-      className="btn btn-secondary"
-      style={{ 
-        display: 'inline-flex', 
-        alignItems: 'center', 
-        gap: '0.5rem', 
-        color: '#ff4d4d', 
-        borderColor: '#ff4d4d',
-        width: '100%',
-        justifyContent: 'center',
-        padding: '1rem',
-        fontSize: '1.1rem'
-      }}
+      className="native-btn-danger"
     >
       <LogOut size={16} className="inline-icon" /> Logout
     </button>

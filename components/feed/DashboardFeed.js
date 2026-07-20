@@ -59,21 +59,19 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
       <main className="dashboard-main">
         
         {/* Global/Local Mode Toggle */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '100px', padding: '0.25rem', display: 'flex', gap: '0.5rem', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-            <button 
-              onClick={() => setGlobalMode(false)}
-              style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: !globalMode ? 'var(--text-primary)' : 'transparent', color: !globalMode ? 'var(--bg-default)' : 'var(--text-muted)', border: 'none', borderRadius: '100px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-            >
-              <MapPin size={16} /> Local Mode
-            </button>
-            <button 
-              onClick={() => setGlobalMode(true)}
-              style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: globalMode ? 'var(--text-primary)' : 'transparent', color: globalMode ? 'var(--bg-default)' : 'var(--text-muted)', border: 'none', borderRadius: '100px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s' }}
-            >
-              <Globe size={16} /> Global Mode
-            </button>
-          </div>
+        <div className="native-segmented-control">
+          <button 
+            onClick={() => setGlobalMode(false)}
+            className={`native-segment ${!globalMode ? 'active' : ''}`}
+          >
+            <MapPin size={16} /> Local Mode
+          </button>
+          <button 
+            onClick={() => setGlobalMode(true)}
+            className={`native-segment ${globalMode ? 'active' : ''}`}
+          >
+            <Globe size={16} /> Global Mode
+          </button>
         </div>
 
         {/* Spotify-style Horizontal Rows (Default View) */}

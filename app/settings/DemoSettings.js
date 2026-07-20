@@ -20,117 +20,127 @@ export default function DemoSettings() {
     } catch (e) {}
   }, []);
 
-  const handleGhostChange = (e) => {
-    const val = e.target.checked;
-    setGhostMode(val);
-    localStorage.setItem('iplug_ghost_mode', val);
+  const handleToggleGhostMode = () => {
+    const newVal = !ghostMode;
+    setGhostMode(newVal);
+    localStorage.setItem('iplug_ghost_mode', newVal);
   };
 
-  const handleCivicChange = (e) => {
-    const val = e.target.checked;
-    if (val) {
+  const handleToggleCivic = () => {
+    const newVal = !civicVerified;
+    if (newVal) {
       alert("Civic Verification requires submission of official documentation. Verification portal coming soon! Enabling demo mode.");
     }
-    setCivicVerified(val);
-    localStorage.setItem('iplug_civic_verified', val);
+    setCivicVerified(newVal);
+    localStorage.setItem('iplug_civic_verified', newVal);
   };
 
   if (!isLoaded) return null;
 
   return (
-    <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        Privacy & Demo Settings
-      </h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Toggle these MVP features to demonstrate functionality.</p>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* Ghost Mode */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.1)', padding: '0.75rem', borderRadius: '50%' }}>
-            <Ghost size={24} color="var(--text-primary)" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <h3 style={{ margin: '0 0 0.25rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              Ghost Mode 
-              <label className="switch">
-                <input type="checkbox" checked={ghostMode} onChange={handleGhostChange} />
-                <span className="slider round"></span>
-              </label>
-            </h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.5' }}>
-              When enabled, your exact location will be hidden from the map and real-time chat distance indicators will be masked.
-            </p>
-          </div>
-        </div>
-
-        {/* Civic Verified */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-          <div style={{ background: 'rgba(33, 179, 166, 0.15)', padding: '0.75rem', borderRadius: '50%' }}>
-            <ShieldCheck size={24} color="#21B3A6" />
-          </div>
-          <div style={{ flex: 1 }}>
-            <h3 style={{ margin: '0 0 0.25rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              Civic Verification (Demo)
-              <label className="switch">
-                <input type="checkbox" checked={civicVerified} onChange={handleCivicChange} />
-                <span className="slider round"></span>
-              </label>
-            </h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.5' }}>
-              Enable this to simulate being an approved government official or community leader. Unlocks the "Civic Broadcast" pillar when creating a plug.
-            </p>
+    <>
+      <h2 className="native-section-title">Privacy & Demo</h2>
+      <div className="native-card">
+        
+        <div className="native-row" onClick={handleToggleGhostMode} style={{ cursor: 'pointer' }}>
+          <div className="native-row-content" style={{ width: '100%', justifyContent: 'space-between' }}>
+            <div className="native-row-text">
+              <span className="native-row-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Ghost size={18} /> Ghost Mode
+              </span>
+              <span className="native-input-label" style={{ marginTop: '0.25rem' }}>Hide your location from the map.</span>
+            </div>
+            
+            <button 
+              type="button"
+              style={{
+                width: '50px',
+                height: '30px',
+                borderRadius: '999px',
+                backgroundColor: ghostMode ? '#34C759' : '#39393D',
+                position: 'relative',
+                transition: 'background-color 0.2s',
+                border: 'none',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: ghostMode ? '22px' : '2px',
+                width: '26px',
+                height: '26px',
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                transition: 'left 0.2s',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }} />
+            </button>
           </div>
         </div>
 
+        <div className="native-row" onClick={handleToggleCivic} style={{ cursor: 'pointer' }}>
+          <div className="native-row-content" style={{ width: '100%', justifyContent: 'space-between' }}>
+            <div className="native-row-text">
+              <span className="native-row-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <ShieldCheck size={18} color="#21B3A6" /> Civic Verification
+              </span>
+              <span className="native-input-label" style={{ marginTop: '0.25rem' }}>Show you are verified.</span>
+            </div>
+            
+            <button 
+              type="button"
+              style={{
+                width: '50px',
+                height: '30px',
+                borderRadius: '999px',
+                backgroundColor: civicVerified ? '#34C759' : '#39393D',
+                position: 'relative',
+                transition: 'background-color 0.2s',
+                border: 'none',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: civicVerified ? '22px' : '2px',
+                width: '26px',
+                height: '26px',
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                transition: 'left 0.2s',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }} />
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Switch CSS */}
-      <style>{`
-        .switch {
-          position: relative;
-          display: inline-block;
-          width: 50px;
-          height: 24px;
-        }
-        .switch input { 
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background-color: var(--border-strong);
-          transition: .4s;
-        }
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          transition: .4s;
-        }
-        input:checked + .slider {
-          background-color: var(--success);
-        }
-        input:focus + .slider {
-          box-shadow: 0 0 1px var(--success);
-        }
-        input:checked + .slider:before {
-          transform: translateX(26px);
-        }
-        .slider.round {
-          border-radius: 34px;
-        }
-        .slider.round:before {
-          border-radius: 50%;
-        }
-      `}</style>
-    </div>
+      <div style={{ marginTop: '1.5rem' }}>
+        <h2 className="native-section-title">Developer Demo</h2>
+        <div className="native-card" style={{ padding: '1rem', display: 'block' }}>
+          <p className="native-input-label" style={{ marginBottom: '1rem' }}>
+            Simulate a demo match or interaction (Dev only).
+          </p>
+          <div className="native-buttons-stack">
+            <button 
+              onClick={() => alert('Demo Match simulated')} 
+              className="native-btn-outline"
+            >
+              Simulate Match
+            </button>
+            <button 
+              onClick={() => alert('Demo Message simulated')} 
+              className="native-btn-outline"
+            >
+              Simulate Message
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

@@ -3,23 +3,22 @@ import { redirect } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import SettingsForm from './SettingsForm';
 import SecuritySettings from './SecuritySettings';
-import BackButton from '@/components/layout/BackButton';
 import LogoutButton from './LogoutButton';
 import EditProfileSettings from './EditProfileSettings';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import DemoSettings from './DemoSettings';
+import BackButton from '@/components/layout/BackButton';
+
 
 export default async function SettingsPage() {
   const supabase = await createClient();
   
-  // Get current user session
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/');
   }
 
-  // Fetch the user's profile from the database
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -28,50 +27,57 @@ export default async function SettingsPage() {
 
   return (
     <AppShell initialUser={user}>
-      <div className="dashboard-container">
-      
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem 1rem 2rem 1rem' }}>
+      <div className="native-page">
         
-        <BackButton />
-        <div style={{ marginBottom: '2rem', padding: '1rem 0', borderBottom: '1px solid var(--border)' }}>
-          <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0' }}>Settings</h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Manage your personal profile and account settings.</p>
-        </div>
-
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>Personal Information</h2>
-          
-          <SettingsForm initialProfile={profile} />
-        </div>
-
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>Public Profile</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Update your bio, title, portfolio links, and photos.</p>
-          <EditProfileSettings profile={profile} />
-        </div>
-
-        <DemoSettings />
-
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-          <SecuritySettings />
-        </div>
-
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>Appearance</h2>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ margin: 0, fontWeight: 'bold' }}>Theme</p>
-              <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Toggle between light and dark mode.</p>
+        <div className="native-header">
+          <div className="native-header-content">
+            <h1 className="native-title">Settings</h1>
+            {/* The user explicitly wants the back arrow! */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <BackButton label="Done" plain={true} />
             </div>
-            <ThemeToggle />
           </div>
         </div>
 
-        <div style={{ marginTop: '3rem' }}>
-          <LogoutButton />
-        </div>
+        <main className="native-main">
+          
+          <div className="native-section">
+            <h2 className="native-section-title">Personal Information</h2>
+            <SettingsForm initialProfile={profile} />
+          </div>
 
-      </main>
+          <div className="native-section">
+            <h2 className="native-section-title">Public Profile</h2>
+            <div className="native-card">
+              <EditProfileSettings profile={profile} />
+            </div>
+          </div>
+
+          <div className="native-section">
+            <DemoSettings />
+          </div>
+
+          <div className="native-section">
+            <h2 className="native-section-title">Security</h2>
+            <SecuritySettings />
+          </div>
+
+          <div className="native-section">
+            <h2 className="native-section-title">Appearance</h2>
+            <div className="native-card">
+              <div className="native-row">
+                <span className="native-row-title">Dark Mode</span>
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+
+          <div className="native-section">
+            <LogoutButton />
+          </div>
+
+          <div className="native-spacer"></div>
+        </main>
       </div>
     </AppShell>
   );

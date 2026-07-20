@@ -25,21 +25,21 @@ export default async function MyPlugsPage() {
     <AppShell initialUser={user}>
       <div className="dashboard-container">
       
-      <main className="dashboard-main" style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem 1rem' }}>
+      <main className="dashboard-main native-main">
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <header className="native-header" style={{ position: 'relative', marginBottom: '1.5rem', background: 'transparent', borderBottom: 'none' }}>
           <div>
-            <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0' }}>My Plugs</h1>
-            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Manage all the services and shops you have listed on iPlug.</p>
+            <h1 className="native-title">My Plugs</h1>
+            <p className="native-input-label" style={{ marginTop: '0.25rem' }}>Manage all the services and shops you have listed on iPlug.</p>
           </div>
-        </div>
+        </header>
 
         <section className="feed-grid">
           {!plugs || plugs.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 2rem', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-              <span style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem' }}><Package size={16} className="inline-icon" /></span>
-              <h3 style={{ margin: '0 0 0.5rem 0' }}>You haven't listed any plugs yet!</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>Start reaching customers in your area by listing your first service or shop.</p>
+            <div className="native-card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 2rem' }}>
+              <span style={{ fontSize: '4rem', display: 'block', marginBottom: '1rem', color: '#9ca3af' }}><Package size={48} className="inline-icon" /></span>
+              <h3 style={{ margin: '0 0 0.5rem 0', color: 'white' }}>You haven't listed any plugs yet!</h3>
+              <p className="native-input-label" style={{ marginBottom: '2rem' }}>Start reaching customers in your area by listing your first service or shop.</p>
               {/* Note: In a full app, we would put a button here that opens the CreatePlugModal via state */}
             </div>
           ) : (

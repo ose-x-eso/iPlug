@@ -11,18 +11,16 @@ export default function EditProfileSettings({ profile }) {
     <>
       <button 
         onClick={() => setIsEditOpen(true)}
-        className="btn btn-primary"
-        style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          gap: '0.5rem', 
-          width: '100%',
-          justifyContent: 'center',
-          padding: '1rem',
-          fontSize: '1.1rem'
-        }}
+        className="native-row"
+        style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
       >
-        <Pencil size={16} className="inline-icon" /> Edit Public Profile
+        <div className="native-row-content">
+          <div className="native-icon-box" style={{ backgroundColor: '#3b82f6' }}>
+            <Pencil size={16} color="white" />
+          </div>
+          <span className="native-row-title">Edit Public Profile</span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </button>
 
       <EditProfileModal 

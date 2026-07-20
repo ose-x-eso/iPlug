@@ -99,44 +99,45 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
               <>
                 {filteredProfiles.length > 0 && (
                   <div style={{ gridColumn: '1 / -1', marginBottom: '0.5rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', color: 'var(--text-faint)' }}>People</h3>
+                    <h3 className="native-section-title" style={{ marginLeft: 0 }}>People</h3>
+                    <div className="native-card">
+                      {filteredProfiles.map(profile => (
+                        <Link href={`/profile/${profile.id}`} key={profile.id} className="native-row" style={{ color: 'inherit' }}>
+                          <div className="native-row-content">
+                            <div style={{ 
+                              width: '40px', 
+                              height: '40px', 
+                              borderRadius: '50%', 
+                              background: 'var(--gradient-accent)', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              fontSize: '1.2rem', 
+                              color: 'white',
+                              backgroundImage: profile.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center'
+                            }}>
+                              {!profile.avatar_url?.startsWith('http') && ((profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U')}
+                            </div>
+                            <div className="native-row-text">
+                              <span className="native-row-title" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                {profile.username || profile.full_name}
+                                {profile.is_verified && (
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                                  </svg>
+                                )}
+                              </span>
+                              <span className="native-input-label">Tap to view profile</span>
+                            </div>
+                          </div>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
-                {filteredProfiles.map(profile => (
-                  <Link href={`/profile/${profile.id}`} key={profile.id} style={{ textDecoration: 'none' }}>
-                    <div className="feed-card" style={{ display: 'flex', alignItems: 'center', padding: '1rem', flexDirection: 'row', gap: '1rem' }}>
-                      <div style={{ 
-                        width: '50px', 
-                        height: '50px', 
-                        borderRadius: '50%', 
-                        background: 'var(--gradient-accent)', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '1.5rem', 
-                        color: 'white',
-                        backgroundImage: profile.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}>
-                        {!profile.avatar_url?.startsWith('http') && ((profile.username || profile.full_name)?.charAt(0).toUpperCase() || 'U')}
-                      </div>
-                      <div className="feed-card-content" style={{ padding: 0 }}>
-                        <div className="feed-card-header" style={{ marginBottom: 0 }}>
-                          <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            {profile.username || profile.full_name}
-                            {profile.is_verified && (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                              </svg>
-                            )}
-                          </h3>
-                        </div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>Tap to view profile</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
 
                 {filteredPlugs.length > 0 && filteredProfiles.length > 0 && (
                   <div style={{ gridColumn: '1 / -1', marginBottom: '0.5rem', marginTop: '1.5rem' }}>

@@ -1,4 +1,5 @@
 import "./globals.css";
+import "./native-ui.css";
 import { ThemeProvider } from "@/lib/theme";
 
 export const metadata = {
