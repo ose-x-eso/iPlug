@@ -15,6 +15,10 @@
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 70px);
 }
 
+.app-main-content.no-bottom-padding {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
 /* Desktop Sidebar */
 .desktop-sidebar {
   display: none;
@@ -322,4 +326,9 @@
 .simulator-active .feedback-widget-container {
   bottom: 90px !important;
   right: 1rem !important;
+}
+
+.simulator-active .app-shell {
+  min-height: 100% !important;
+  height: 100% !important;
 }

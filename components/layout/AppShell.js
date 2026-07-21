@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
 
@@ -10,6 +11,7 @@ import MobileTopNav from './MobileTopNav';
 import AuthModal from '@/components/auth/AuthModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
 import FeedbackWidget from './FeedbackWidget';
+import { useToast } from '@/components/ui/ToastProvider';
 import './layout.css';
 
 export default function AppShell({ children, initialUser }) {
@@ -18,6 +20,10 @@ export default function AppShell({ children, initialUser }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { toast } = useToast();
+  const pathname = usePathname();
+  const isMessagesPage = pathname?.startsWith('/messages');
+  const isChatPage = pathname?.match(/^\/messages\/.+$/);
   
   const supabase = useMemo(() => createClient(), []);
 
@@ -74,6 +80,9 @@ export default function AppShell({ children, initialUser }) {
           (payload) => {
             setUnreadCount((prev) => prev + 1);
             markMessageAsDelivered(payload.new.id);
+            if (payload.new.sender_id !== user.id) {
+              toast.info('New message received');
+            }
           }
         )
         .on(
@@ -94,6 +103,7 @@ export default function AppShell({ children, initialUser }) {
           { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
           (payload) => {
             setUnreadNotificationsCount((prev) => prev + 1);
+            toast.info(payload.new.message || 'New notification');
           }
         )
         .on(
@@ -114,19 +124,19 @@ export default function AppShell({ children, initialUser }) {
       if (messageSub) supabase.removeChannel(messageSub);
       if (notifSub) supabase.removeChannel(notifSub);
     };
-  }, [supabase, user?.id, initialUser]);
+  }, [supabase, user?.id, initialUser, toast]);
 
   return (
     <div className="app-shell">
       <DesktopSidebar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
       
-      <main className="app-main-content">
-        <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />
+      <main className={`app-main-content ${isChatPage ? 'no-bottom-padding' : ''}`}>
+        {!isMessagesPage && <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />}
         
         {children}
       </main>
       
-      <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
+      {!isChatPage && <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       

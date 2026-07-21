@@ -10,28 +10,20 @@ export default function MessagesLayoutClient({ user, conversations, children }) 
   const isChatActive = pathname !== '/messages';
 
   return (
-    <div className="flex w-full overflow-hidden bg-[var(--bg-base)] h-[calc(100dvh-70px)] md:h-[calc(100dvh-var(--topbar-height))]">
+    <div className="messages-layout-container">
       {/* Sidebar Area: 
-          Desktop: always visible (block)
-          Mobile: visible only if no chat is active (!isChatActive)
+          Desktop: always visible (forced by CSS media query)
+          Mobile: visible only if no chat is active
       */}
-      <div 
-        className={`w-full md:w-[350px] md:flex flex-shrink-0 flex-col border-r border-[var(--border)] h-full ${
-          isChatActive ? 'hidden' : 'flex'
-        }`}
-      >
+      <div className={`messages-sidebar-wrapper ${isChatActive ? 'chat-active-hidden' : ''}`}>
         <InboxSidebar user={user} initialConversations={conversations} />
       </div>
 
       {/* Chat Content Area:
-          Desktop: always visible (flex)
-          Mobile: visible only if chat is active (isChatActive)
+          Desktop: always visible (forced by CSS media query)
+          Mobile: visible only if chat is active
       */}
-      <div 
-        className={`flex-1 min-w-0 h-full flex-col relative ${
-          !isChatActive ? 'hidden md:flex' : 'flex'
-        }`}
-      >
+      <div className={`messages-chat-wrapper ${!isChatActive ? 'chat-inactive-hidden' : ''}`}>
         {children}
       </div>
     </div>
