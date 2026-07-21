@@ -23,7 +23,6 @@ export default function AppShell({ children, initialUser }) {
   const { toast } = useToast();
   const pathname = usePathname();
   const isMessagesPage = pathname?.startsWith('/messages');
-  const isChatPage = pathname?.match(/^\/messages\/.+$/);
   
   const supabase = useMemo(() => createClient(), []);
 
@@ -130,13 +129,13 @@ export default function AppShell({ children, initialUser }) {
     <div className="app-shell">
       <DesktopSidebar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
       
-      <main className={`app-main-content ${isChatPage ? 'no-bottom-padding' : ''}`}>
+      <main className="app-main-content">
         {!isMessagesPage && <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />}
         
         {children}
       </main>
       
-      {!isChatPage && <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />}
+      <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       
