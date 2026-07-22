@@ -67,7 +67,7 @@ export default async function ProfilePage(props) {
         <ReferralTracker profileId={profile.id} />
         
         {/* DESKTOP LAYOUT */}
-        <main className="dashboard-main desktop-only" style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 0 2rem 0', flexDirection: 'column' }}>
+        <main className="dashboard-main desktop-only" style={{ display: 'flex', maxWidth: '1000px', margin: '0 auto', padding: '0 0 2rem 0', flexDirection: 'column' }}>
           {/* Cover Banner */}
           <div style={{ 
             height: '250px', 
@@ -262,7 +262,7 @@ export default async function ProfilePage(props) {
             </div>
 
             {/* Actions Bar */}
-            <div style={{ display: 'flex', gap: '0.75rem', width: '100%', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem', width: '100%', marginBottom: '1.5rem' }}>
               <ProfileActions profile={profile} isOwner={isOwner} profileId={profile.id} user={user} />
             </div>
 

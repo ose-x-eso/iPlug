@@ -31,31 +31,29 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
   if (!isOwner) {
     return (
       <>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.5rem', justifyContent: 'center', width: '100%' }}>
-          {profile?.phone_number && (
-            <a 
-              href={`tel:${profile.phone_number}`}
-              className="native-btn-outline"
-              style={{ flex: '1 1 auto', minWidth: '100px', textDecoration: 'none' }}
-            >
-              <Phone size={16} className="inline-icon" /> Call
-            </a>
-          )}
-          <Link 
-            href={`/messages/${profileId}`}
-            className="native-btn-primary"
+        {profile?.phone_number && (
+          <a 
+            href={`tel:${profile.phone_number}`}
+            className="native-btn-outline"
             style={{ flex: '1 1 auto', minWidth: '100px', textDecoration: 'none' }}
           >
-            <MessageSquare size={16} className="inline-icon" /> Message
-          </Link>
-          <button 
-            onClick={handleShare}
-            className="native-btn-outline"
-            style={{ flex: '1 1 auto', minWidth: '150px', border: '1px solid #1C1C1E', color: 'white' }}
-          >
-            <Handshake size={16} className="inline-icon" /> Recommend & Share
-          </button>
-        </div>
+            <Phone size={16} className="inline-icon" /> Call
+          </a>
+        )}
+        <Link 
+          href={`/messages/${profileId}`}
+          className="native-btn-primary"
+          style={{ flex: '1 1 auto', minWidth: '100px', textDecoration: 'none' }}
+        >
+          <MessageSquare size={16} className="inline-icon" /> Message
+        </Link>
+        <button 
+          onClick={handleShare}
+          className="native-btn-outline"
+          style={{ flex: '1 1 auto', minWidth: '150px', border: '1px solid #1C1C1E', color: 'white' }}
+        >
+          <Handshake size={16} className="inline-icon" /> Recommend & Share
+        </button>
       </>
     );
   }

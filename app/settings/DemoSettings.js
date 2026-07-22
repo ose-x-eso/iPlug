@@ -119,28 +119,7 @@ export default function DemoSettings() {
         </div>
       </div>
 
-      <div style={{ marginTop: '1.5rem' }}>
-        <h2 className="native-section-title">Developer Demo</h2>
-        <div className="native-card" style={{ padding: '1rem', display: 'block' }}>
-          <p className="native-input-label" style={{ marginBottom: '1rem' }}>
-            Simulate a demo match or interaction (Dev only).
-          </p>
-          <div className="native-buttons-stack">
-            <button 
-              onClick={() => alert('Demo Match simulated')} 
-              className="native-btn-outline"
-            >
-              Simulate Match
-            </button>
-            <button 
-              onClick={() => alert('Demo Message simulated')} 
-              className="native-btn-outline"
-            >
-              Simulate Message
-            </button>
-          </div>
-        </div>
-      </div>
+
     </>
   );
 }
