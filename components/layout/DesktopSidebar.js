@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, MessageSquare, PlusCircle, LogIn, MapPin, Bell, Settings, Package, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Home, Search, MessageSquare, PlusCircle, LogIn, MapPin, Bell, Settings, Package, ChevronsLeft, ChevronsRight, ShieldAlert } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import Logo from './Logo';
 import './layout.css';
 
-export default function DesktopSidebar({ user, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenAuth }) {
+export default function DesktopSidebar({ user, isCivicAuth, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenBroadcast, onOpenAuth }) {
   const pathname = usePathname();
   const [profile, setProfile] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
@@ -91,14 +91,27 @@ export default function DesktopSidebar({ user, unreadCount, unreadNotificationsC
         })}
 
         {user && (
-          <button
-            className="btn btn-primary btn-full new-plug-btn"
-            onClick={onOpenCreate}
-            title={collapsed ? 'Post a Plug' : undefined}
-          >
-            <PlusCircle size={20} />
-            <span className="nav-label" style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>Post a Plug</span>
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem', padding: '0 0.5rem' }}>
+            {isCivicAuth && (
+              <button
+                className="btn btn-primary btn-full new-plug-btn"
+                onClick={onOpenBroadcast}
+                title={collapsed ? 'Broadcast Alert' : undefined}
+                style={{ background: '#ef4444', color: 'white' }}
+              >
+                <ShieldAlert size={20} />
+                <span className="nav-label" style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>Broadcast Alert</span>
+              </button>
+            )}
+            <button
+              className="btn btn-primary btn-full new-plug-btn"
+              onClick={onOpenCreate}
+              title={collapsed ? 'Post a Plug' : undefined}
+            >
+              <PlusCircle size={20} />
+              <span className="nav-label" style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>Post a Plug</span>
+            </button>
+          </div>
         )}
       </nav>
 

@@ -10,6 +10,7 @@ import MobileTabBar from './MobileTabBar';
 import MobileTopNav from './MobileTopNav';
 import AuthModal from '@/components/auth/AuthModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
+import CreateBroadcastModal from '@/components/civic/CreateBroadcastModal';
 import FeedbackWidget from './FeedbackWidget';
 import { useToast } from '@/components/ui/ToastProvider';
 import './layout.css';
@@ -20,6 +21,8 @@ export default function AppShell({ children, initialUser }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+  const [isCivicAuth, setIsCivicAuth] = useState(false);
   const { toast } = useToast();
   const pathname = usePathname();
   const isMessagesPage = pathname?.startsWith('/messages');
@@ -45,6 +48,13 @@ export default function AppShell({ children, initialUser }) {
         .eq('user_id', currentUser.id)
         .eq('is_read', false);
       if (notifCount !== null) setUnreadNotificationsCount(notifCount);
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_civic_authority')
+        .eq('id', currentUser.id)
+        .single();
+      if (profile) setIsCivicAuth(profile.is_civic_authority);
     };
 
     const fetchUserAndBadges = async () => {
@@ -127,7 +137,7 @@ export default function AppShell({ children, initialUser }) {
 
   return (
     <div className="app-shell">
-      <DesktopSidebar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
+      <DesktopSidebar user={user} isCivicAuth={isCivicAuth} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenBroadcast={() => setIsBroadcastOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
       
       <main className="app-main-content">
         {!isMessagesPage && <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />}
@@ -135,12 +145,15 @@ export default function AppShell({ children, initialUser }) {
         {children}
       </main>
       
-      <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
+      <MobileTabBar user={user} isCivicAuth={isCivicAuth} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenBroadcast={() => setIsBroadcastOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       
       {user && (
-        <CreatePlugModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+        <>
+          <CreatePlugModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+          <CreateBroadcastModal isOpen={isBroadcastOpen} onClose={() => setIsBroadcastOpen(false)} />
+        </>
       )}
       
       {/* Universal Feedback Widget for Beta */}

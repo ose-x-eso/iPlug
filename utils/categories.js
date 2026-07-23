@@ -34,10 +34,10 @@ export const PILLARS = {
     icon: <Ticket size={18} className="inline-icon" />,
     description: "Local events, parties, and gatherings",
   },
-  civic: {
-    label: "Civic Broadcasts",
-    icon: <Megaphone size={18} className="inline-icon" />,
-    description: "Official government alerts, community news, and road closures",
+  events: {
+    label: "Events",
+    icon: <Ticket size={18} className="inline-icon" />,
+    description: "Local events, parties, and gatherings",
   }
 };
 
@@ -96,11 +96,7 @@ export const CATEGORIES = {
   cultural_event: { label: "Cultural Event", pillar: "events", icon: <Calendar size={16} className="inline-icon" /> },
   comedy: { label: "Comedy Show", pillar: "events", icon: <Mic size={16} className="inline-icon" /> },
 
-  // ---- Civic ----
-  alert: { label: "Safety Alert", pillar: "civic", icon: <AlertCircle size={16} className="inline-icon" /> },
-  news: { label: "Community News", pillar: "civic", icon: <Newspaper size={16} className="inline-icon" /> },
-  closure: { label: "Road Closure", pillar: "civic", icon: <MapPin size={16} className="inline-icon" /> },
-  announcement: { label: "General Announcement", pillar: "civic", icon: <Megaphone size={16} className="inline-icon" /> }
+  comedy: { label: "Comedy Show", pillar: "events", icon: <Mic size={16} className="inline-icon" /> }
 };
 
 /**

@@ -226,7 +226,7 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
                   />
                   <datalist id="edit-categories-list">
                     {categories.map(cat => (
-                      <option key={cat.key} value={cat.label} />
+                      <option key={cat.id} value={cat.label} />
                     ))}
                   </datalist>
                 </div>

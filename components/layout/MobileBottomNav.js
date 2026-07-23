@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Package, Plus, Inbox, User } from 'lucide-react';
+import { Home, Package, Plus, Inbox, User, ShieldAlert } from 'lucide-react';
 
-export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpenMenu }) {
+export default function MobileBottomNav({ user, isCivicAuth, unreadCount, onOpenCreate, onOpenBroadcast, onOpenMenu }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -16,8 +16,6 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
     }
   };
 
-  // If user is not logged in, we shouldn't show the full nav (maybe just Home and Auth)
-  // For now, let's just return nothing if no user, since the top bar still has "Get Started"
   if (!user) return null;
 
   return (
@@ -32,10 +30,17 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
         <span className="bottom-nav-label">My Plugs</span>
       </Link>
 
-      {/* Floating Action Button style for creating a plug */}
-      <button className="bottom-nav-item create-fab" onClick={onOpenCreate}>
-        <div className="fab-icon"><Plus size={16} className="inline-icon" /></div>
-      </button>
+      {/* Floating Action Buttons */}
+      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', margin: '0 -0.5rem' }}>
+        {isCivicAuth && (
+          <button className="bottom-nav-item create-fab" onClick={onOpenBroadcast} style={{ transform: 'scale(0.8)', background: '#ef4444', border: '2px solid var(--bg-base)' }}>
+            <div className="fab-icon" style={{ background: 'transparent' }}><ShieldAlert size={16} className="inline-icon" color="white" /></div>
+          </button>
+        )}
+        <button className="bottom-nav-item create-fab" onClick={onOpenCreate}>
+          <div className="fab-icon"><Plus size={16} className="inline-icon" /></div>
+        </button>
+      </div>
 
       <Link href="/messages" className={`bottom-nav-item ${pathname === '/messages' || pathname?.startsWith('/messages/') ? 'active' : ''}`} style={{ position: 'relative' }}>
         <span className="bottom-nav-icon"><Inbox size={16} className="inline-icon" /></span>

@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, MessageSquare, User, Plus, LogIn, MapPin, Bell } from 'lucide-react';
+import { Home, Search, MessageSquare, User, Plus, LogIn, MapPin, Bell, ShieldAlert } from 'lucide-react';
 import './layout.css';
 
-export default function MobileTabBar({ user, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenAuth }) {
+export default function MobileTabBar({ user, isCivicAuth, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenBroadcast, onOpenAuth }) {
   const pathname = usePathname();
 
   const navLinks = [
@@ -28,11 +28,20 @@ export default function MobileTabBar({ user, unreadCount, unreadNotificationsCou
         
         if (link.isAction) {
           return (
-            <button key="action-btn" onClick={link.onClick} className="tab-action-btn">
-              <div className="action-circle">
-                <Icon size={24} color="#fff" strokeWidth={2.5} />
-              </div>
-            </button>
+            <div key="action-btns" style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+              {isCivicAuth && (
+                <button onClick={onOpenBroadcast} className="tab-action-btn" style={{ transform: 'scale(0.8)' }}>
+                  <div className="action-circle" style={{ background: '#ef4444' }}>
+                    <ShieldAlert size={24} color="#fff" strokeWidth={2.5} />
+                  </div>
+                </button>
+              )}
+              <button onClick={link.onClick} className="tab-action-btn">
+                <div className="action-circle">
+                  <Icon size={24} color="#fff" strokeWidth={2.5} />
+                </div>
+              </button>
+            </div>
           );
         }
 

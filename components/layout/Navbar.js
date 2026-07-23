@@ -9,21 +9,25 @@ import ThemeToggle from './ThemeToggle';
 import AuthModal from '@/components/auth/AuthModal';
 import DownloadAppModal from '@/components/landing/DownloadAppModal';
 import CreatePlugModal from '@/components/feed/CreatePlugModal';
+import CreateBroadcastModal from '@/components/civic/CreateBroadcastModal';
 import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import { createClient } from '@/utils/supabase/client';
 import { logout } from '@/app/actions/auth';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { ShieldAlert } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [isCivicAuth, setIsCivicAuth] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
   const menuRef = useRef(null);
   const router = useRouter();
   
@@ -46,6 +50,14 @@ export default function Navbar() {
       setUser(currentUser);
 
       if (currentUser) {
+        // Fetch civic authority status
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_civic_authority')
+          .eq('id', currentUser.id)
+          .single();
+        if (profile) setIsCivicAuth(profile.is_civic_authority);
+
         // Ping the server to mark any backlog messages as delivered!
         markAllUnreadAsDelivered();
 
@@ -181,6 +193,16 @@ export default function Navbar() {
           
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {isCivicAuth && (
+                <button 
+                  className="btn btn-sm desktop-only"
+                  style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.4rem 0.8rem', fontWeight: 'bold' }}
+                  onClick={() => setIsBroadcastOpen(true)}
+                >
+                  <ShieldAlert size={16} className="inline-icon" /> Broadcast Alert
+                </button>
+              )}
+              
               <button 
                 className="btn btn-primary btn-sm desktop-only"
                 onClick={() => setIsCreateOpen(true)}
@@ -281,10 +303,16 @@ export default function Navbar() {
             isOpen={isCreateOpen}
             onClose={() => setIsCreateOpen(false)}
           />
+          <CreateBroadcastModal 
+            isOpen={isBroadcastOpen}
+            onClose={() => setIsBroadcastOpen(false)}
+          />
           <MobileBottomNav 
             user={user} 
+            isCivicAuth={isCivicAuth}
             unreadCount={unreadCount} 
             onOpenCreate={() => setIsCreateOpen(true)}
+            onOpenBroadcast={() => setIsBroadcastOpen(true)}
             onOpenMenu={() => setIsMenuOpen(!isMenuOpen)}
           />
         </>

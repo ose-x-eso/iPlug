@@ -48,7 +48,11 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
     {
       title: <><Sparkles size={16} className="inline-icon" /> Newest Arrivals</>,
       pillar: 'new',
-      items: displayPlugs.slice(0, 10)
+      items: displayPlugs.filter(p => {
+        if (!p.created_at) return false;
+        const daysOld = (Date.now() - new Date(p.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        return daysOld <= 7;
+      }).slice(0, 10)
     }
   ];
 

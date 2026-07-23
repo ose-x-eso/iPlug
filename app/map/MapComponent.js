@@ -31,7 +31,28 @@ function LocationMarker({ position }) {
   );
 }
 
-export default function MapComponent({ initialPlugs }) {
+const civicIcon = new L.divIcon({
+  className: 'civic-marker-wrapper',
+  html: `<div style="
+    width: 24px; 
+    height: 24px; 
+    background: #ef4444; 
+    border-radius: 50%; 
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(239,68,68,0.8), 0 0 0 0 rgba(239, 68, 68, 0.7); 
+    animation: civic-pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+  ">!</div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+});
+
+export default function MapComponent({ initialPlugs = [], initialBroadcasts = [] }) {
   const [position, setPosition] = useState(null);
 
   // Derive mapped plugs during render instead of effect to avoid cascading render
@@ -65,27 +86,38 @@ export default function MapComponent({ initialPlugs }) {
 
   useEffect(() => {
     let timeoutId;
+    
+    // Attempt to load last known location from localStorage to avoid jumping to SF immediately
+    try {
+      const saved = localStorage.getItem('iplug_last_location');
+      if (saved) {
+        setPosition(JSON.parse(saved));
+      }
+    } catch (e) {}
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (loc) => {
           clearTimeout(timeoutId);
-          setPosition([loc.coords.latitude, loc.coords.longitude]);
+          const newPos = [loc.coords.latitude, loc.coords.longitude];
+          setPosition(newPos);
+          try { localStorage.setItem('iplug_last_location', JSON.stringify(newPos)); } catch (e) {}
         },
         (err) => {
           console.warn("Geolocation warning:", err.message);
           clearTimeout(timeoutId);
-          // Default center if user denies location
-          setPosition([37.7749, -122.4194]); // SF
+          // Only fallback to SF if we don't have a saved position
+          setPosition(prev => prev || [37.7749, -122.4194]);
         },
-        { timeout: 3000 }
+        { timeout: 10000 } // Increased to 10 seconds for mobile/slow networks
       );
       
-      // Fallback if geolocation hangs
+      // Fallback if geolocation hangs completely
       timeoutId = setTimeout(() => {
         setPosition(prev => prev || [37.7749, -122.4194]);
-      }, 3000);
+      }, 10000);
     } else {
-      setTimeout(() => setPosition([37.7749, -122.4194]), 0); // SF
+      setTimeout(() => setPosition(prev => prev || [37.7749, -122.4194]), 0);
     }
     
     return () => clearTimeout(timeoutId);
@@ -145,7 +177,40 @@ export default function MapComponent({ initialPlugs }) {
             </Popup>
           </Marker>
         ))}
+
+        {initialBroadcasts.map((broadcast) => (
+          <Marker 
+            key={broadcast.id} 
+            position={[broadcast.latitude, broadcast.longitude]}
+            icon={civicIcon}
+          >
+            <Popup>
+              <div style={{ padding: '0.5rem', minWidth: '200px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    {broadcast.type}
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: '#888' }}>
+                    {new Date(broadcast.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </span>
+                </div>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: '#ef4444' }}>{broadcast.title}</h3>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#333' }}>{broadcast.description}</p>
+                <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', color: '#ef4444', textAlign: 'center', fontWeight: '500' }}>
+                  Radius: {broadcast.radius_km} km
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes civic-pulse {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+          70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+      `}} />
     </div>
   );
 }
