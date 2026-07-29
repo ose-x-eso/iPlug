@@ -32,11 +32,7 @@ export default function MobileBottomNav({ user, isCivicAuth, unreadCount, onOpen
 
       {/* Floating Action Buttons */}
       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', margin: '0 -0.5rem' }}>
-        {isCivicAuth && (
-          <button className="bottom-nav-item create-fab" onClick={onOpenBroadcast} style={{ transform: 'scale(0.8)', background: '#ef4444', border: '2px solid var(--bg-base)' }}>
-            <div className="fab-icon" style={{ background: 'transparent' }}><ShieldAlert size={16} className="inline-icon" color="white" /></div>
-          </button>
-        )}
+
         <button className="bottom-nav-item create-fab" onClick={onOpenCreate}>
           <div className="fab-icon"><Plus size={16} className="inline-icon" /></div>
         </button>

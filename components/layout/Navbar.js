@@ -193,15 +193,7 @@ export default function Navbar() {
           
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {isCivicAuth && (
-                <button 
-                  className="btn btn-sm desktop-only"
-                  style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.4rem 0.8rem', fontWeight: 'bold' }}
-                  onClick={() => setIsBroadcastOpen(true)}
-                >
-                  <ShieldAlert size={16} className="inline-icon" /> Broadcast Alert
-                </button>
-              )}
+
               
               <button 
                 className="btn btn-primary btn-sm desktop-only"

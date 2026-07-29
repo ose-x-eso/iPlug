@@ -82,7 +82,12 @@ export default function AuthModal({ isOpen, onClose }) {
         setSuccessMsg('Password reset link sent to your email.');
       } else if (isLogin) {
         onClose();
-        window.location.reload();
+        const path = window.location.pathname;
+        if (path === '/faq' || path === '/about') {
+          window.location.href = '/';
+        } else {
+          window.location.reload();
+        }
       } else {
         if (result.requireConfirmation) {
           setSuccessMsg('Account created! Please check your email to confirm your account.');
