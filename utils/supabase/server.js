@@ -15,9 +15,8 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) => {
-              // Strip maxAge and expires so this becomes a session cookie
-              const { maxAge, expires, ...sessionOptions } = options;
-              cookieStore.set(name, value, sessionOptions)
+              // Pass all options, including maxAge and expires, for persistent sessions
+              cookieStore.set(name, value, options)
             })
           } catch (error) {
             // Rethrow Next.js control flow exceptions so we don't crash the server

@@ -39,7 +39,6 @@ export const viewport = {
   ],
 };
 
-import DeviceSimulatorWrapper from '@/components/layout/DeviceSimulatorWrapper';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import PostHogProvider from '@/components/analytics/PostHogProvider';
 import ReferralTracker from '@/components/analytics/ReferralTracker';
@@ -55,15 +54,13 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider>
           <ToastProvider>
-            <DeviceSimulatorWrapper>
-              <PostHogProvider>
-                <Suspense fallback={null}>
-                  <ReferralTracker />
-                </Suspense>
-                {children}
-                <PwaInstallPrompt />
-              </PostHogProvider>
-            </DeviceSimulatorWrapper>
+            <PostHogProvider>
+              <Suspense fallback={null}>
+                <ReferralTracker />
+              </Suspense>
+              {children}
+              <PwaInstallPrompt />
+            </PostHogProvider>
           </ToastProvider>
         </ThemeProvider>
       </body>

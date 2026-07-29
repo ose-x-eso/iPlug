@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Mailbox, Edit, Search } from 'lucide-react';
+import EnablePushPrompt from './EnablePushPrompt';
 
 export default function InboxSidebar({ user, initialConversations = [] }) {
   if (!user) return null;
@@ -23,6 +24,8 @@ export default function InboxSidebar({ user, initialConversations = [] }) {
         <h3 style={{ margin: 0, fontSize: '1rem' }}>Messages</h3>
         <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 'bold' }}>Requests</span>
       </div>
+
+      <EnablePushPrompt />
 
       {/* Conversation List */}
       <div className="flex-1 overflow-y-auto px-4 pb-8 md:p-0">

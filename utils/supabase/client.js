@@ -17,7 +17,8 @@ export function createClient() {
           if (options.domain) cookieStr += `; domain=${options.domain}`;
           if (options.secure) cookieStr += `; secure`;
           if (options.sameSite) cookieStr += `; samesite=${options.sameSite}`;
-          // Deliberately omitting max-age and expires to create a Session Cookie
+          if (options.maxAge) cookieStr += `; max-age=${options.maxAge}`;
+          if (options.expires) cookieStr += `; expires=${options.expires.toUTCString ? options.expires.toUTCString() : options.expires}`;
           document.cookie = cookieStr;
         },
         remove(name, options) {
