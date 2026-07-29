@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
 import { broadcastNotification } from './notifications'
+import PostHogClient from '@/lib/posthog-server'
 
 export async function createPlug(formData) {
   const supabase = await createClient()
@@ -103,6 +104,12 @@ export async function deletePlug(plugId) {
 
   if (error) return { error: error.message }
 
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'plug_deleted', properties: { plug_id: plugId } })
+    await posthog.shutdown()
+  }
+
   revalidatePath('/', 'layout')
   return { success: true }
 }
@@ -157,6 +164,12 @@ export async function updatePlug(plugId, formData) {
     .eq('provider_id', user.id)
 
   if (error) return { error: error.message }
+
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'plug_updated', properties: { plug_id: plugId } })
+    await posthog.shutdown()
+  }
 
   revalidatePath('/', 'layout')
   return { success: true }

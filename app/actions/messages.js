@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { createNotification } from './notifications'
+import PostHogClient from '@/lib/posthog-server'
 
 export async function sendMessage(formData) {
   const supabase = await createClient()
@@ -25,6 +26,12 @@ export async function sendMessage(formData) {
 
   if (error) {
     return { error: error.message }
+  }
+
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'message_sent' })
+    await posthog.shutdown()
   }
 
   if (receiver_id && receiver_id !== user.id) {

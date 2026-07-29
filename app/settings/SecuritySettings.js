@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { updateUserPassword, deleteUserAccount } from '@/app/actions/auth';
+import posthog from 'posthog-js';
 
 export default function SecuritySettings() {
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -28,11 +29,12 @@ export default function SecuritySettings() {
     if (result?.error) {
       setPasswordError(result.error);
     } else {
+      posthog.capture('password_changed');
       setPasswordSuccess('Password successfully updated!');
       e.target.reset();
       setTimeout(() => setPasswordSuccess(''), 3000);
     }
-    
+
     setPasswordLoading(false);
   }
 
@@ -49,6 +51,9 @@ export default function SecuritySettings() {
     if (result?.error) {
       setDeleteError(result.error);
       setDeleteLoading(false);
+    } else if (result?.success) {
+      posthog.capture('account_deleted');
+      posthog.reset();
     }
   }
 

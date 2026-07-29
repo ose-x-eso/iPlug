@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import PostHogClient from '@/lib/posthog-server'
 
 export async function submitReview(formData) {
   const supabase = await createClient()
@@ -45,6 +46,12 @@ export async function submitReview(formData) {
       console.error('Error submitting review:', error)
       return { error: error.message }
     }
+  }
+
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'review_submitted', properties: { rating } })
+    await posthog.shutdown()
   }
 
   revalidatePath(`/profile/${provider_id}`)

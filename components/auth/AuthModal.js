@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { login, signUp, sendPasswordResetEmail } from '@/app/actions/auth';
 import { Eye, EyeOff } from 'lucide-react';
 import Logo from '../layout/Logo';
+import posthog from 'posthog-js';
 
 export default function AuthModal({ isOpen, onClose }) {
   const router = useRouter();
@@ -81,12 +82,15 @@ export default function AuthModal({ isOpen, onClose }) {
       if (isForgotPassword) {
         setSuccessMsg('Password reset link sent to your email.');
       } else if (isLogin) {
+        posthog.capture('user_logged_in');
         onClose();
         window.location.reload();
       } else {
         if (result.requireConfirmation) {
+          posthog.capture('user_signed_up', { requires_email_confirmation: true });
           setSuccessMsg('Account created! Please check your email to confirm your account.');
         } else {
+          posthog.capture('user_signed_up', { requires_email_confirmation: false });
           setSuccessMsg('Account created! Logging you in...');
           setTimeout(() => {
             window.location.reload();

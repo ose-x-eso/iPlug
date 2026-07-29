@@ -2,9 +2,12 @@
 
 import { logout } from '@/app/actions/auth';
 import { LogOut } from 'lucide-react';
+import posthog from 'posthog-js';
 
 export default function LogoutButton() {
   const handleLogout = async () => {
+    posthog.capture('user_logged_out');
+    posthog.reset();
     await logout();
     window.location.href = '/';
   };
