@@ -45,9 +45,13 @@ export async function login(formData) {
   }
 }
 
+import { cookies } from 'next/headers';
+
 export async function signUp(formData) {
   try {
     const supabase = await createClient()
+    const cookieStore = cookies();
+    const referredBy = cookieStore.get('iplug_referred_by')?.value;
     
     const email = formData.get('email')?.toLowerCase();
     const password = formData.get('password')
@@ -88,6 +92,7 @@ export async function signUp(formData) {
           full_name: fullName,
           phone_number: phoneNumber,
           username: username,
+          referred_by: referredBy || null,
         }
       }
     })
@@ -114,7 +119,14 @@ export async function signUp(formData) {
       }
 
       // If we have a session, we can safely upsert
-      await supabase.from('profiles').upsert({ id: data.user.id, username, email, full_name: fullName, phone_number: phoneNumber });
+      await supabase.from('profiles').upsert({ 
+        id: data.user.id, 
+        username, 
+        email, 
+        full_name: fullName, 
+        phone_number: phoneNumber,
+        referred_by: referredBy || null
+      });
       
       // Send Welcome Notification
       await createNotification(

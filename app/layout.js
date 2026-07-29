@@ -41,6 +41,9 @@ export const viewport = {
 
 import DeviceSimulatorWrapper from '@/components/layout/DeviceSimulatorWrapper';
 import { ToastProvider } from '@/components/ui/ToastProvider';
+import PostHogProvider from '@/components/analytics/PostHogProvider';
+import ReferralTracker from '@/components/analytics/ReferralTracker';
+import { Suspense } from 'react';
 
 export default function RootLayout({ children }) {
   return (
@@ -52,7 +55,12 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <ToastProvider>
             <DeviceSimulatorWrapper>
-              {children}
+              <PostHogProvider>
+                <Suspense fallback={null}>
+                  <ReferralTracker />
+                </Suspense>
+                {children}
+              </PostHogProvider>
             </DeviceSimulatorWrapper>
           </ToastProvider>
         </ThemeProvider>
