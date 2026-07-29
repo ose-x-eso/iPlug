@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppShell from "@/components/layout/AppShell";
 import SearchFilters from "@/components/search/SearchFilters";
-import { Mailbox, MapPin, Package } from 'lucide-react';
+import { Mailbox, MapPin, Package, Megaphone, Target } from 'lucide-react';
 
 export default function SearchPageClient({ user, initialPlugs = [], initialProfiles = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,8 +64,9 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
   const filteredProfiles = searchQuery.trim() !== '' 
     ? initialProfiles.filter(profile => 
         (profile.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         profile.full_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        profile.id !== user?.id // Don't show yourself
+         profile.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         (profile.is_requesting_skill && profile.skill_request_desc?.toLowerCase().includes(searchQuery.toLowerCase()))) &&
+        (profile.id !== user?.id || profile.is_requesting_skill) // Show yourself if you have an active beacon so you can verify it
       )
     : [];
 
@@ -91,9 +92,19 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
           <section className="feed-grid">
             {filteredPlugs.length === 0 && filteredProfiles.length === 0 ? (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Mailbox size={16} className="inline-icon" /></span>
-                <h3>No matches found</h3>
-                <p>Try adjusting your search or filters to find what you're looking for.</p>
+                <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}><Mailbox size={48} color="var(--text-muted)" /></span>
+                <h3 style={{ color: 'var(--text-heading)' }}>No Plugs found in this area</h3>
+                <p>Don't give up. Broadcast this request to the iPlug community and let the right Plug find you.</p>
+                <button 
+                  className="btn-primary" 
+                  onClick={() => {
+                    alert(`Broadcast sent! We are notifying all users in ${location || 'your area'} that someone is looking for "${searchQuery}".`);
+                    // In a real app, this would trigger an API call to send global push notifications
+                  }}
+                  style={{ marginTop: '1.5rem', borderRadius: 'var(--radius-full)' }}
+                >
+                  <Megaphone size={16} /> Broadcast Request
+                </button>
               </div>
             ) : (
               <>
@@ -129,7 +140,16 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                                   </svg>
                                 )}
                               </span>
-                              <span className="native-input-label">Tap to view profile</span>
+                              <span className="native-input-label">
+                                {profile.is_requesting_skill ? (
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--danger)' }}>
+                                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--danger)', animation: 'pulse 2s infinite' }}></span>
+                                    Needs: {profile.skill_request_desc?.slice(0, 30)}{profile.skill_request_desc?.length > 30 ? '...' : ''}
+                                  </span>
+                                ) : (
+                                  'Tap to view profile'
+                                )}
+                              </span>
                             </div>
                           </div>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
@@ -145,9 +165,13 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                   </div>
                 )}
                 
-                {filteredPlugs.map(plug => (
+                {filteredPlugs.map(plug => {
+                  const plugOwner = initialProfiles.find(p => p.id === plug.provider_id);
+                  const isRequesting = plugOwner?.is_requesting_skill;
+                  
+                  return (
                   <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none' }}>
-                    <div className="feed-card">
+                    <div className="feed-card" style={{ position: 'relative' }}>
                       <div className="feed-card-image" style={{ 
                         background: 'var(--bg-surface-raised)',
                         backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none',
@@ -155,6 +179,11 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                         backgroundPosition: 'center'
                       }}>
                         {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
+                        {isRequesting && (
+                          <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: 'var(--danger)', color: 'white', padding: '0.25rem 0.5rem', borderRadius: 'var(--radius-full)', fontSize: '0.7rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem', animation: 'pulse 2s infinite', boxShadow: '0 2px 8px var(--danger-subtle)' }}>
+                            <Target size={12} /> Seeking Skill
+                          </div>
+                        )}
                       </div>
                       <div className="feed-card-content">
                         <div className="feed-card-header">
@@ -167,7 +196,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                       </div>
                     </div>
                   </Link>
-                ))}
+                )})}
               </>
             )}
           </section>

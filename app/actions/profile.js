@@ -53,3 +53,57 @@ export async function updateProfile(formData) {
   
   return { success: true }
 }
+
+export async function updateOnboardingState(hasCompleted) {
+  const supabase = await createClient()
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ has_completed_onboarding: hasCompleted })
+    .eq('id', user.id)
+
+  if (error) {
+    console.error("Failed to update onboarding state:", error)
+    return { error: 'Failed to update' }
+  }
+
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
+
+export async function toggleSkillRequest({ isActive, description = null, lat = null, lng = null }) {
+  const supabase = await createClient()
+  
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return { error: 'Not authenticated' }
+  }
+
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ 
+        is_requesting_skill: isActive,
+        skill_request_desc: isActive ? description : null,
+        skill_request_lat: isActive ? lat : null,
+        skill_request_lng: isActive ? lng : null
+      })
+      .eq('id', user.id)
+
+    if (error) {
+      console.error("Failed to update skill request:", error)
+      return { error: 'Failed to update skill request' }
+    }
+  } catch (err) {
+    console.error("Exception during skill request update:", err);
+    return { error: 'An unexpected error occurred. Did you run the SQL script?' }
+  }
+
+  revalidatePath('/', 'layout')
+  return { success: true }
+}

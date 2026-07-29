@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Component to recenter map when location is found
-function LocationMarker({ position }) {
+function LocationMarker({ position, isRequesting, requestDesc }) {
   const map = useMap();
   useEffect(() => {
     if (position) {
@@ -25,8 +25,17 @@ function LocationMarker({ position }) {
   }, [position, map]);
 
   return position === null ? null : (
-    <Marker position={position}>
-      <Popup>You are here</Popup>
+    <Marker position={position} icon={isRequesting ? getDistressIcon() : new L.Icon.Default()}>
+      <Popup>
+        {isRequesting ? (
+          <div style={{ padding: '0.5rem', textAlign: 'center' }}>
+            <div style={{ color: '#10b981', fontWeight: 'bold', marginBottom: '0.25rem' }}>Your Distress Beacon</div>
+            <div style={{ fontStyle: 'italic', color: '#666' }}>"{requestDesc}"</div>
+          </div>
+        ) : (
+          "You are here"
+        )}
+      </Popup>
     </Marker>
   );
 }
@@ -52,7 +61,28 @@ const civicIcon = new L.divIcon({
   iconAnchor: [12, 12],
 });
 
-export default function MapComponent({ initialPlugs = [], initialBroadcasts = [] }) {
+const getDistressIcon = () => new L.divIcon({
+  className: 'distress-marker-wrapper',
+  html: `<div style="
+    width: 36px; 
+    height: 36px; 
+    background: #10b981; 
+    border-radius: 50%; 
+    border: 3px solid white;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 0 0 rgba(16, 185, 129, 0.7); 
+    animation: distress-pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  ">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+  </div>`,
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
+
+export default function MapComponent({ initialPlugs = [], initialBroadcasts = [], initialBeacons = [], currentUserProfile = null }) {
   const [position, setPosition] = useState(null);
 
   // Derive mapped plugs during render instead of effect to avoid cascading render
@@ -145,12 +175,17 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         
-        <LocationMarker position={position} />
+        <LocationMarker 
+          position={position} 
+          isRequesting={currentUserProfile?.is_requesting_skill} 
+          requestDesc={currentUserProfile?.skill_request_desc} 
+        />
         
         {plugs.map((plug) => (
           <Marker 
-            key={plug.markerId} 
+            key={plug.markerId}
             position={[plug.latitude, plug.longitude]}
+            icon={new L.Icon.Default()}
           >
             <Popup>
               <div style={{ padding: '0.5rem', minWidth: '150px' }}>
@@ -172,6 +207,44 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
                   style={{ display: 'block', background: 'var(--primary)', color: '#fff', textAlign: 'center', padding: '0.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold' }}
                 >
                   View Plug
+                </Link>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+
+        {initialBeacons.map((beacon) => (
+          <Marker 
+            key={`beacon-${beacon.id}`}
+            position={[beacon.skill_request_lat, beacon.skill_request_lng]}
+            icon={getDistressIcon()}
+          >
+            <Popup>
+              <div style={{ padding: '0.5rem', minWidth: '150px' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem', borderRadius: '4px', border: '1px solid #10b981', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#10b981', textTransform: 'uppercase', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                    Seeking Skill
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: '500' }}>
+                    "{beacon.skill_request_desc}"
+                  </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#ccc', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {beacon.avatar_url ? (
+                      <img src={beacon.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ fontSize: '10px', color: '#fff' }}>{(beacon.username || beacon.full_name)?.charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <span style={{ fontSize: '0.85rem', color: '#555', fontWeight: 'bold' }}>{beacon.username || beacon.full_name}</span>
+                </div>
+                <Link 
+                  href={`/profile/${beacon.id}`}
+                  style={{ display: 'block', background: '#10b981', color: '#fff', textAlign: 'center', padding: '0.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', marginTop: '1rem' }}
+                >
+                  View Profile
                 </Link>
               </div>
             </Popup>
@@ -209,6 +282,11 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
           0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
           70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
           100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        @keyframes distress-pulse {
+          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+          70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
       `}} />
     </div>

@@ -46,177 +46,209 @@ export default async function PlugDetailsPage(props) {
 
   return (
     <AppShell initialUser={user}>
-      <div className="dashboard-container">
-      <RecentlyViewedTracker plug={plug} />
-      
-      <main className="dashboard-main" style={{ maxWidth: '800px', margin: '0 auto', padding: '1rem' }}>
+      <div className="dashboard-container plug-details-page-container">
+        <RecentlyViewedTracker plug={plug} />
         
-        <BackButton />
-
-        <div className="plug-details-card" style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+        {/* DESKTOP & MOBILE LAYOUT COMBINED */}
+        <main className="dashboard-main" style={{ padding: '0 0 4rem 0', display: 'flex', flexDirection: 'column' }}>
           
-          <div className="plug-header-bg" style={{ 
-            height: '250px', 
-            background: 'var(--bg-input)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'linear-gradient(45deg, #1A1A2E, #16213E)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+          {/* Back Button Overlay */}
+          <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 50 }}>
+            <BackButton label="Back" />
+          </div>
+
+          {/* Hero Header Image */}
+          <div style={{ 
+            height: '350px', 
+            width: '100%', 
+            position: 'relative',
+            background: plug.image_url?.startsWith('http') ? `url(${plug.image_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--accent-flat), var(--accent-subtle))', 
           }}>
-            {!plug.image_url?.startsWith('http') && <div style={{ color: 'var(--text-muted)' }}><Package size={64} /></div>}
-          </div>
-
-          <div className="plug-details-content" style={{ padding: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-              <div>
-                <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{plug.title}</h1>
-                <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '1rem', alignItems: 'center' }}>
-                  <span><MapPin size={16} className="inline-icon" /> {plug.address || 'Location unknown'}</span>
-                  <span><Star size={16} className="inline-icon" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
-                  <span><Tag size={16} className="inline-icon" /> {plug.category}</span>
-                </div>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.7) 100%)' }}></div>
+            {!plug.image_url?.startsWith('http') && (
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.2)' }}>
+                <Package size={100} />
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <span className="category-pill active">{plug.pillar}</span>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '2rem' }}>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--text-secondary)' }}>About this Plug</h3>
-              <p style={{ fontSize: '1.1rem', lineHeight: '1.6', color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>
-                {plug.description}
-              </p>
-              
-              {plug.portfolio_url && (
-                <div style={{ marginTop: '1.5rem' }}>
-                  <a 
-                    href={plug.portfolio_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="btn btn-secondary"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.5rem 1rem' }}
-                  >
-                    <LinkIcon size={16} className="inline-icon" /> View Portfolio / Website
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>Provider Details</h3>
-              
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ 
-                    width: '60px', 
-                    height: '60px', 
-                    borderRadius: '50%', 
-                    background: 'linear-gradient(45deg, var(--primary), var(--secondary))', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    fontSize: '1.5rem', 
-                    color: 'white',
-                    backgroundImage: profile?.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}>
-                    {!profile?.avatar_url?.startsWith('http') && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
-                  </div>
-                  <div>
-                    <h4 style={{ fontSize: '1.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      {profile?.username || profile?.full_name || 'Unknown User'}
-                      {profile?.is_verified && (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                        </svg>
-                      )}
-                    </h4>
-                    <p style={{ color: 'var(--text-secondary)', margin: 0 }}>iPlug Provider</p>
-                  </div>
-                </div>
-
-                {!isOwner ? (
-                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                    {/* Call Button - Only show if phone number is provided */}
-                    {profile?.phone_number && (
-                      <a 
-                        href={`tel:${profile.phone_number}`}
-                        className="btn btn-secondary"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-                      >
-                        <Phone size={16} className="inline-icon" /> Call
-                      </a>
-                    )}
-
-                    {/* Email Button - As an alternative contact method */}
-                    {profile?.email && (
-                      <a 
-                        href={`mailto:${profile.email}`}
-                        className="btn btn-secondary"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-                      >
-                        <Mail size={16} className="inline-icon" /> Email
-                      </a>
-                    )}
-
-                    {/* Message Button - links to the chat system we built */}
-                    <Link 
-                      href={`/messages/${plug.provider_id}`}
-                      className="btn btn-primary"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
-                    >
-                      <MessageSquare size={16} className="inline-icon" /> Message
-                    </Link>
-                  </div>
-                ) : (
-                  <PlugDetailActions plug={plug} />
-                )}
-                
-              </div>
-            </div>
-
-            {plug.pillar !== 'civic' && (
-              <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0 }}>Reviews & Ratings</h3>
-                <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}><Star size={16} className="inline-icon" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}</span>
-              </div>
-              
-              <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-                {isOwner ? (
-                  <>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                      To manage your reviews and see all ratings, visit your dashboard.
-                    </p>
-                    <Link href={`/profile/${profile.id}`}>
-                      <button className="btn btn-secondary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
-                        View Dashboard
-                      </button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                      To read all reviews and ratings, visit {profile.username || profile.full_name}'s profile.
-                    </p>
-                    <Link href={`/profile/${profile.id}`}>
-                      <button className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}>
-                        View Profile
-                      </button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
             )}
+          </div>
+
+          {/* Main Content Area */}
+          <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%', padding: '0 1.5rem', position: 'relative', marginTop: '-100px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            
+            {/* Floating Glass Title Card */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: 'var(--shadow-lg)',
+              zIndex: 10
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+                <h1 style={{ fontSize: '2.5rem', margin: '0', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' }}>{plug.title}</h1>
+                <span className="category-pill active" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', fontWeight: 'bold' }}>{plug.pillar}</span>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-secondary)', fontSize: '1.05rem', alignItems: 'center', flexWrap: 'wrap', fontWeight: '500' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <MapPin size={18} color="var(--accent-flat)" /> {plug.address || 'Location unknown'}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Tag size={18} color="var(--accent-flat)" /> {plug.category}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#eab308' }}>
+                  <Star size={18} fill="#eab308" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}
+                </span>
+              </div>
+            </div>
+
+            {/* Layout Grid: 2 Columns on Desktop */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              
+              {/* Left Column: Description & Portfolio */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '2rem' }}>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}>About this Plug</h3>
+                  <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>
+                    {plug.description}
+                  </p>
+                  
+                  {plug.portfolio_url && (
+                    <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px dashed var(--border)' }}>
+                      <a 
+                        href={plug.portfolio_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="btn btn-secondary"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem 1.5rem', width: '100%', justifyContent: 'center', fontWeight: 'bold' }}
+                      >
+                        <LinkIcon size={18} /> View Portfolio / Website
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {/* Reviews Section */}
+                {plug.pillar !== 'civic' && (
+                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                      <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 'bold' }}>Reviews & Ratings</h3>
+                      <span style={{ fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#eab308' }}><Star size={20} fill="#eab308" /> {averageRating === 'New' ? 'New' : `${averageRating}`}</span>
+                    </div>
+                    
+                    <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                      {isOwner ? (
+                        <>
+                          <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.95rem' }}>
+                            Manage your reviews and see all ratings on your dashboard.
+                          </p>
+                          <Link href={`/profile/${profile.id}`}>
+                            <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontWeight: 'bold' }}>
+                              View Dashboard
+                            </button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.95rem' }}>
+                            Read all reviews and ratings on {profile.username || profile.full_name}'s profile.
+                          </p>
+                          <Link href={`/profile/${profile.id}`}>
+                            <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontWeight: 'bold' }}>
+                              View Profile
+                            </button>
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Provider Card */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '2rem', boxShadow: 'var(--shadow-md)', position: 'sticky', top: '100px' }}>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--text-secondary)', fontWeight: 'bold' }}>Provided By</h3>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+                    <div style={{ 
+                      width: '70px', 
+                      height: '70px', 
+                      borderRadius: '50%', 
+                      background: 'var(--bg-card)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      fontSize: '1.8rem', 
+                      color: 'var(--text-primary)',
+                      border: '3px solid var(--accent-subtle)',
+                      backgroundImage: profile?.avatar_url?.startsWith('http') ? `url(${profile.avatar_url})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      flexShrink: 0
+                    }}>
+                      {!profile?.avatar_url?.startsWith('http') && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+                    </div>
+                    <div>
+                      <h4 style={{ fontSize: '1.3rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
+                        {profile?.username || profile?.full_name || 'Unknown User'}
+                        {profile?.is_verified && (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                          </svg>
+                        )}
+                      </h4>
+                      <p style={{ color: 'var(--accent-flat)', margin: 0, fontWeight: '600' }}>{profile?.title || 'iPlug Provider'}</p>
+                    </div>
+                  </div>
+
+                  {!isOwner ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <Link 
+                        href={`/messages/${plug.provider_id}`}
+                        className="btn btn-primary"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', textDecoration: 'none', padding: '0.85rem', fontWeight: 'bold', fontSize: '1.05rem', borderRadius: 'var(--radius-md)' }}
+                      >
+                        <MessageSquare size={20} /> Send Message
+                      </Link>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        {profile?.phone_number && (
+                          <a 
+                            href={`tel:${profile.phone_number}`}
+                            className="btn btn-secondary"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: '600' }}
+                          >
+                            <Phone size={18} /> Call
+                          </a>
+                        )}
+                        {profile?.email && (
+                          <a 
+                            href={`mailto:${profile.email}`}
+                            className="btn btn-secondary"
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: '600', gridColumn: !profile?.phone_number ? '1 / span 2' : 'auto' }}
+                          >
+                            <Mail size={18} /> Email
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+                      <PlugDetailActions plug={plug} />
+                    </div>
+                  )}
+                  
+                </div>
+              </div>
+            </div>
 
           </div>
-        </div>
-      </main>
+        </main>
       </div>
     </AppShell>
   );

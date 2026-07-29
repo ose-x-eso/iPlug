@@ -15,7 +15,7 @@ export default function InboxSidebar({ user, initialConversations = [] }) {
       <div style={{ padding: '0.5rem 1.5rem' }}>
          <div style={{ background: 'var(--bg-input)', borderRadius: '100px', display: 'flex', alignItems: 'center', padding: '0.5rem 1rem', gap: '0.5rem' }}>
            <Search size={16} color="var(--text-muted)" />
-           <input type="text" placeholder="Search" style={{ background: 'transparent', border: 'none', color: 'white', flex: 1, outline: 'none' }} />
+           <input type="text" placeholder="Search" style={{ background: 'transparent', border: 'none', color: 'var(--text-heading)', flex: 1, outline: 'none' }} />
          </div>
       </div>
 

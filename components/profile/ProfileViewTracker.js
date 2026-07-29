@@ -14,7 +14,7 @@ export default function ProfileViewTracker({ profileId, viewerId, viewerName }) 
     createNotification(
       profileId,
       'profile_view',
-      `${viewerName || 'Someone'} viewed your profile.`
+      `Someone viewed your profile.`
     ).catch(e => console.error(e));
   }, [profileId, viewerId, viewerName]);
 

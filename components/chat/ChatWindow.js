@@ -144,7 +144,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   };
 
   return (
-    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', background: 'var(--bg-default)', overflow: 'hidden' }}>
+    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', background: 'var(--bg-page)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
       <div style={{ 
@@ -153,7 +153,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
         justifyContent: 'space-between', 
         padding: '0.75rem 1rem', 
         borderBottom: '1px solid var(--border)', 
-        background: 'rgba(18, 18, 20, 0.8)', 
+        background: 'var(--bg-nav)', 
         backdropFilter: 'blur(12px)',
         position: 'sticky',
         top: 0,
@@ -165,7 +165,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             style={{ 
               background: 'transparent',
               border: 'none',
-              color: 'var(--text-primary)', 
+              color: 'var(--text-heading)', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
@@ -189,7 +189,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               )}
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-heading)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 {displayName}
               </h3>
               {!hideDistance && otherUser.distance_str && (
@@ -202,7 +202,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
         </div>
         
         {/* Call Icons */}
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-primary)', position: 'relative' }}>
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-heading)', position: 'relative' }}>
           <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Video call coming soon!")}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
           </button>
@@ -229,14 +229,14 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             }}>
               <button 
                 onClick={() => { alert("Customize Chat settings coming soon!"); setShowMenu(false); }}
-                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 className="hover-bg-input"
               >
                 <Shield size={16} /> Customize Chat
               </button>
               <button 
                 onClick={() => { alert(`Blocked ${displayName}`); setShowMenu(false); }}
-                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 className="hover-bg-input"
               >
                 <Ban size={16} /> Block User
@@ -266,8 +266,8 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             return (
               <div className="chat-message-bubble" key={msg.id} style={{ alignSelf: isMine ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
                 <div style={{ 
-                  background: isMine ? 'linear-gradient(45deg, var(--primary), var(--secondary))' : 'var(--bg-input)', 
-                  color: isMine ? 'white' : 'var(--text-primary)',
+                  background: isMine ? 'linear-gradient(45deg, var(--accent-primary), var(--accent-secondary))' : 'var(--bg-input)', 
+                  color: isMine ? 'white' : 'var(--text-heading)',
                   padding: '0.75rem 1rem', 
                   borderRadius: isMine ? '1rem 1rem 0 1rem' : '1rem 1rem 1rem 0',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
@@ -383,7 +383,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               borderRadius: '50%',
               background: 'transparent',
               border: 'none',
-              color: showAttachments ? 'var(--primary)' : 'var(--text-secondary)',
+              color: showAttachments ? 'var(--accent-primary)' : 'var(--text-muted)',
               fontSize: '1.5rem',
               display: 'flex',
               alignItems: 'center',
@@ -404,24 +404,24 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               placeholder="Type a message..." 
               disabled={isSending}
               autoComplete="off"
-              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none' }}
+              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: 'var(--text-heading)', outline: 'none' }}
             />
             
             {/* Camera inside input bar */}
-            <button type="button" onClick={() => alert("Camera coming soon!")} style={{ padding: '0.5rem', color: 'var(--text-secondary)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+            <button type="button" onClick={() => alert("Camera coming soon!")} style={{ padding: '0.5rem', color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             </button>
           </div>
           
           {/* Microphone next to Send / in input bar area */}
-          <button type="button" onClick={() => alert("Voice note coming soon!")} style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', background: 'var(--bg-input)', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
+          <button type="button" onClick={() => alert("Voice note coming soon!")} style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: 'var(--bg-input)', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
           </button>
 
           <button 
             type="submit" 
             disabled={isSending}
-            style={{ padding: '0.75rem 1.25rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--primary)', color: 'white', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center' }}
+            style={{ padding: '0.75rem 1.25rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--accent-flat)', color: 'white', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </button>

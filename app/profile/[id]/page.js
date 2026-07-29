@@ -8,7 +8,8 @@ import ProfileViewTracker from '@/components/profile/ProfileViewTracker';
 import ReferralTracker from '@/components/profile/ReferralTracker';
 import BioSection from '@/components/profile/BioSection';
 import BackButton from '@/components/layout/BackButton';
-import { Package, Star, Calendar } from 'lucide-react';
+import SkillRequestToggle from '@/components/profile/SkillRequestToggle';
+import { Package, Star, Calendar, Target } from 'lucide-react';
 
 export default async function ProfilePage(props) {
   const params = await props.params;
@@ -70,12 +71,12 @@ export default async function ProfilePage(props) {
         <main className="dashboard-main desktop-only" style={{ display: 'flex', maxWidth: '1000px', margin: '0 auto', padding: '0 0 2rem 0', flexDirection: 'column' }}>
           {/* Cover Banner */}
           <div style={{ 
-            height: '250px', 
-            background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--primary), var(--secondary))', 
+            height: '280px', 
+            background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--accent-flat), var(--accent-subtle))', 
             width: '100%', 
             position: 'relative' 
           }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }}></div>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.6))' }}></div>
             {isOwner && (
               <Link href="/settings" style={{
                 position: 'absolute',
@@ -89,7 +90,7 @@ export default async function ProfilePage(props) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'background 0.2s ease',
+                transition: 'transform 0.2s ease',
                 zIndex: 20
               }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -97,93 +98,145 @@ export default async function ProfilePage(props) {
             )}
           </div>
 
-          <div style={{ padding: '0 2rem', position: 'relative', marginTop: '-60px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
-              {/* Avatar */}
-              <div style={{ 
-                width: '120px', 
-                height: '120px', 
-                borderRadius: '50%', 
-                background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover no-repeat` : 'var(--bg-card)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                fontSize: '4rem', 
-                color: 'var(--text-primary)', 
-                border: '4px solid var(--bg-page)',
-                boxShadow: 'var(--shadow-lg)',
-                zIndex: 10
-              }}>
-                {!profile?.avatar_url && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+          <div style={{ padding: '0 2rem', position: 'relative', marginTop: '-80px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {/* Glassmorphic Info Card */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              boxShadow: 'var(--shadow-lg)',
+              flexWrap: 'wrap',
+              gap: '2rem',
+              zIndex: 10
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <div style={{ 
+                  width: '120px', 
+                  height: '120px', 
+                  borderRadius: '50%', 
+                  background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover no-repeat` : 'var(--bg-card)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '4rem', 
+                  color: 'var(--text-primary)', 
+                  border: '4px solid var(--bg-page)',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.1)'
+                }}>
+                  {!profile?.avatar_url && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+                </div>
+                <div>
+                  <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
+                    {profile?.username || profile?.full_name || 'Unknown User'}
+                    {profile?.is_verified && (
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                      </svg>
+                    )}
+                  </h1>
+                  <p style={{ color: 'var(--accent-flat)', fontWeight: '600', margin: '0', fontSize: '1.1rem' }}>{profile?.title || 'iPlug Provider'}</p>
+                </div>
               </div>
 
               {/* Actions Bar (Desktop alignment) */}
-              <div style={{ display: 'flex', gap: '1rem', zIndex: 10 }}>
+              <div style={{ display: 'flex', gap: '1rem' }}>
                 <ProfileActions profile={profile} isOwner={isOwner} profileId={profile.id} user={user} />
               </div>
             </div>
 
-            {/* Bio & Details */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                {profile?.username || profile?.full_name || 'Unknown User'}
-                {profile?.is_verified && (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                  </svg>
-                )}
-              </h1>
-              <p style={{ color: 'var(--primary)', fontWeight: '600', margin: '0 0 1rem 0' }}>{profile?.title || 'iPlug Provider'}</p>
-
-              <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <Calendar size={16} /> Member since {joinedDate}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <Package size={16} /> {plugs?.length || 0} Plugs
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                  <Star size={16} /> {averageRating === 'New' ? 'New' : `${averageRating} Average Rating`}
-                </span>
+            {/* Skill Request Banner (Public) */}
+            {profile.is_requesting_skill && (
+              <div style={{ padding: '1rem 1.5rem', background: 'var(--danger-subtle)', border: '1px solid var(--danger)', borderRadius: 'var(--radius-lg)', display: 'flex', gap: '1rem', alignItems: 'center', boxShadow: '0 4px 12px var(--danger-subtle)' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
+                  <Target size={24} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--danger)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 'bold' }}>Actively Looking For</h4>
+                  <p style={{ margin: 0, color: 'var(--text-heading)', fontSize: '1.1rem', fontWeight: '500' }}>"{profile.skill_request_desc}"</p>
+                </div>
               </div>
+            )}
 
-              <BioSection bio={profile?.bio} />
+            {/* Premium Stats Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--accent-subtle)', color: 'var(--accent-flat)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Package size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-heading)', lineHeight: '1' }}>{plugs?.length || 0}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.25rem' }}>Total Plugs</div>
+                </div>
+              </div>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Star size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-heading)', lineHeight: '1' }}>{averageRating === 'New' ? '—' : averageRating}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.25rem' }}>Avg Rating</div>
+                </div>
+              </div>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--bg-card)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Calendar size={24} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--text-heading)', lineHeight: '1' }}>{joinedDate}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.25rem' }}>Joined</div>
+                </div>
+              </div>
             </div>
 
+            <BioSection bio={profile?.bio} />
+            
+            {isOwner && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <SkillRequestToggle isRequesting={profile.is_requesting_skill} currentDesc={profile.skill_request_desc} />
+              </div>
+            )}
+
             {/* Interactive Tabs */}
-            <ProfileTabs 
-              profile={profile}
-              plugs={plugs || []} 
-              profileId={profile.id} 
-              isOwner={isOwner} 
-              isPremium={profile?.is_premium}
-              user={user} 
-              recommendations={recommendations || []}
-              reviews={reviews || []}
-            />
+            <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
+              <ProfileTabs 
+                profile={profile}
+                plugs={plugs || []} 
+                profileId={profile.id} 
+                isOwner={isOwner} 
+                isPremium={profile?.is_premium}
+                user={user} 
+                recommendations={recommendations || []}
+                reviews={reviews || []}
+              />
+            </div>
           </div>
         </main>
 
         {/* MOBILE LAYOUT */}
         <main className="dashboard-main mobile-profile-main mobile-only" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '90px', flexDirection: 'column' }}>
           {!isOwner && (
-            <div style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%' }}>
+            <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 50 }}>
               <BackButton label="Back" />
             </div>
           )}
           {/* Cover Photo / Header */}
           <div style={{ 
-            height: '180px', 
-            background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--primary), var(--secondary))', 
+            height: '220px', 
+            background: profile?.cover_url ? `url(${profile.cover_url}) center/cover no-repeat` : 'linear-gradient(135deg, var(--accent-flat), var(--accent-subtle))', 
             width: '100%', 
-            position: 'relative',
-            marginTop: !isOwner ? '-60px' : '0' /* Pull up to hide behind glass back button if present */
+            position: 'relative'
           }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%)' }}></div>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%)' }}></div>
             {isOwner && (
               <Link href="/settings" style={{
                 position: 'absolute',
-                top: 'calc(1rem + env(safe-area-inset-top, 0px))',
+                top: '1rem',
                 right: '1rem',
                 background: 'rgba(0,0,0,0.5)',
                 color: 'white',
@@ -200,73 +253,104 @@ export default async function ProfilePage(props) {
             )}
           </div>
 
-          <div style={{ padding: '0 1.5rem', position: 'relative', marginTop: '-50px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {/* Centered Avatar */}
-            <div style={{ 
-              width: '100px', 
-              height: '100px', 
-              borderRadius: '50%', 
-              background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover no-repeat` : 'var(--bg-card)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '2.5rem', 
-              color: 'var(--text-primary)', 
-              border: '4px solid var(--bg-surface)',
+          <div style={{ padding: '0 1rem', position: 'relative', marginTop: '-60px', display: 'flex', flexDirection: 'column' }}>
+            {/* Glassmorphic Info Card */}
+            <div style={{
+              background: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-xl)',
+              padding: '1.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
               boxShadow: 'var(--shadow-md)',
-              zIndex: 10,
-              marginBottom: '1rem'
+              marginBottom: '1.5rem',
+              zIndex: 10
             }}>
-              {!profile?.avatar_url && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+              {/* Centered Avatar */}
+              <div style={{ 
+                width: '100px', 
+                height: '100px', 
+                borderRadius: '50%', 
+                background: profile?.avatar_url ? `url(${profile.avatar_url}) center/cover no-repeat` : 'var(--bg-card)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                fontSize: '2.5rem', 
+                color: 'var(--text-primary)', 
+                border: '4px solid var(--bg-surface)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                marginTop: '-4rem',
+                marginBottom: '1rem'
+              }}>
+                {!profile?.avatar_url && ((profile?.username || profile?.full_name)?.charAt(0).toUpperCase() || 'U')}
+              </div>
+
+              {/* Profile Name & Verification */}
+              <h1 style={{ fontSize: '1.6rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', textAlign: 'center', fontWeight: '800', letterSpacing: '-0.02em' }}>
+                {profile?.username || profile?.full_name || 'Unknown User'}
+                {profile?.is_verified && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                  </svg>
+                )}
+              </h1>
+              
+              {/* Title / Handle */}
+              <p style={{ color: 'var(--accent-flat)', fontSize: '1rem', fontWeight: '600', margin: '0 0 1.5rem 0', textAlign: 'center' }}>
+                {profile?.title || 'iPlug Provider'}
+              </p>
+
+              {/* Actions Bar */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem', width: '100%' }}>
+                <ProfileActions profile={profile} isOwner={isOwner} profileId={profile.id} user={user} />
+              </div>
             </div>
 
-            {/* Profile Name & Verification */}
-            <h1 style={{ fontSize: '1.5rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', textAlign: 'center' }}>
-              {profile?.username || profile?.full_name || 'Unknown User'}
-              {profile?.is_verified && (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                </svg>
-              )}
-            </h1>
-            
-            {/* Title / Handle */}
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: '0 0 1.5rem 0', textAlign: 'center' }}>
-              {profile?.title || 'iPlug Provider'}
-            </p>
+            {/* Skill Request Banner (Mobile Public) */}
+            {profile.is_requesting_skill && (
+              <div style={{ width: '100%', marginBottom: '1.5rem', padding: '1rem', background: 'var(--danger-subtle)', border: '1px solid var(--danger)', borderRadius: 'var(--radius-lg)', display: 'flex', gap: '1rem', alignItems: 'center', textAlign: 'left', boxShadow: '0 4px 12px var(--danger-subtle)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexShrink: 0, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
+                  <Target size={20} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--danger)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 'bold' }}>Actively Looking For</h4>
+                  <p style={{ margin: 0, color: 'var(--text-heading)', fontSize: '1rem', fontWeight: '500' }}>"{profile.skill_request_desc}"</p>
+                </div>
+              </div>
+            )}
 
-            {/* Stats Grid */}
-            <div className="native-card" style={{ 
-              display: 'flex', 
-              width: '100%', 
-              marginBottom: '1.5rem'
-            }}>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderRight: '1px solid #2C2C2E' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{plugs?.length || 0}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
+            {/* Premium Stats Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-heading)' }}>{plugs?.length || 0}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--accent-flat)', fontWeight: '600', marginTop: '0.25rem' }}>
                   <Package size={14} /> Plugs
                 </div>
               </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderRight: '1px solid #2C2C2E' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{averageRating === 'New' ? '—' : averageRating}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-heading)' }}>{averageRating === 'New' ? '—' : averageRating}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#eab308', fontWeight: '600', marginTop: '0.25rem' }}>
                   <Star size={14} /> Rating
                 </div>
               </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>{joinedDate}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>
+              <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-heading)' }}>{joinedDate}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: '600', marginTop: '0.25rem' }}>
                   <Calendar size={14} /> Joined
                 </div>
               </div>
             </div>
 
-            {/* Actions Bar */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0.75rem', width: '100%', marginBottom: '1.5rem' }}>
-              <ProfileActions profile={profile} isOwner={isOwner} profileId={profile.id} user={user} />
-            </div>
-
             <BioSection bio={profile?.bio} />
+            
+            {isOwner && (
+              <div style={{ marginTop: '0.5rem', width: '100%', marginBottom: '1rem' }}>
+                <SkillRequestToggle isRequesting={profile.is_requesting_skill} currentDesc={profile.skill_request_desc} />
+              </div>
+            )}
           </div>
 
           {/* Interactive Tabs Container */}

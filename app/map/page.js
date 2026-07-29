@@ -7,17 +7,35 @@ export default async function MapPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: plugs, error: plugsError } = await supabase
     .from('plugs')
-    .select('*, profiles(username, full_name, avatar_url, title)');
+    .select('*, profiles(username, full_name, avatar_url, title, is_requesting_skill, skill_request_desc)');
+    
+  let currentUserProfile = null;
+  if (user) {
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    currentUserProfile = profile;
+  }
     
   const { data: broadcasts, error: civicError } = await supabase
     .from('civic_broadcasts')
     .select('*')
     .gte('expires_at', new Date().toISOString());
 
+  // Fetch active distress beacons
+  const { data: beacons } = await supabase
+    .from('profiles')
+    .select('id, username, full_name, avatar_url, skill_request_desc, skill_request_lat, skill_request_lng')
+    .eq('is_requesting_skill', true)
+    .not('skill_request_lat', 'is', null);
+
   return (
     <AppShell initialUser={user}>
       <div style={{ flex: 1, minHeight: 'calc(100dvh - 70px)', position: 'relative', overflow: 'hidden' }}>
-        <MapClientWrapper initialPlugs={plugs || []} initialBroadcasts={broadcasts || []} />
+        <MapClientWrapper 
+          initialPlugs={plugs || []} 
+          initialBroadcasts={broadcasts || []} 
+          initialBeacons={beacons || []}
+          currentUserProfile={currentUserProfile} 
+        />
       </div>
     </AppShell>
   );

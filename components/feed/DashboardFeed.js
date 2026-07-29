@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppShell from "@/components/layout/AppShell";
 import EditPlugModal from './EditPlugModal';
-import { Mailbox, Pencil, Package, Wrench, ShoppingBag, Building, Sparkles, Megaphone, MapPin, Globe, AlertCircle } from 'lucide-react';
+import { Mailbox, Pencil, Package, Wrench, ShoppingBag, Building, Sparkles, Megaphone, MapPin, Globe, AlertCircle, Target } from 'lucide-react';
+import OnboardingModal from '@/components/onboarding/OnboardingModal';
 
 export default function DashboardFeed({ user, initialPlugs = [], initialProfiles = [] }) {
   const router = useRouter();
   const [recentPlugs, setRecentPlugs] = useState([]);
   const [editingPlug, setEditingPlug] = useState(null);
   const [globalMode, setGlobalMode] = useState(false);
+  
+  const currentUserProfile = initialProfiles.find(p => p?.id === user?.id);
 
   useEffect(() => {
     try {
@@ -24,11 +27,14 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
   // Filter plugs based on Global Mode toggle (Demo MVP Logic)
   const displayPlugs = globalMode ? initialPlugs : initialPlugs.slice(0, Math.max(1, Math.floor(initialPlugs.length * 0.5))); // Mocking geographic radius limitation
 
+  // Civic Broadcasts should be strictly community updates (curfew, road fix, security)
+  const displayCivic = displayPlugs.filter(p => p.pillar === 'civic');
+
   const categories = [
     {
       title: <><Megaphone size={16} className="inline-icon" color="#FF3D71" /> Civic Broadcasts</>,
       pillar: 'civic',
-      items: displayPlugs.filter(p => p.pillar === 'civic')
+      items: displayCivic
     },
     {
       title: <><Wrench size={16} className="inline-icon" /> Top Services &amp; Mechanics</>,
@@ -59,6 +65,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
   return (
     <AppShell initialUser={user}>
       <div className="dashboard-container">
+        {user && <OnboardingModal userProfile={currentUserProfile} />}
       
       <main className="dashboard-main">
         
@@ -94,7 +101,10 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                       🕒 Jump back in
                     </h2>
                     <div className="spotify-carousel">
-                      {recentPlugs.map(plug => (
+                      {recentPlugs.map(plug => {
+                        const plugOwner = initialProfiles.find(p => p.id === plug.provider_id);
+                        const isRequesting = plugOwner?.is_requesting_skill;
+                        return (
                         <div 
                           key={plug.id} 
                           className="spotify-card"
@@ -103,6 +113,11 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                         >
                           <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: 'var(--bg-input)' }}>
                             {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
+                            {isRequesting && (
+                              <div style={{ position: 'absolute', top: '0.25rem', left: '0.25rem', background: 'var(--danger)', color: 'white', padding: '0.2rem 0.4rem', borderRadius: 'var(--radius-full)', fontSize: '0.6rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.15rem', animation: 'pulse 2s infinite', boxShadow: '0 2px 4px var(--danger-subtle)' }}>
+                                <Target size={10} /> Seeking Skill
+                              </div>
+                            )}
                           </div>
                           <div>
                             <h3 className="spotify-card-title">{plug.title}</h3>
@@ -136,7 +151,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                             </button>
                           )}
                         </div>
-                      ))}
+                      )})}
                     </div>
                   </section>
                 )}
@@ -165,26 +180,38 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                         )}
                       </div>
                       <div className="spotify-carousel">
-                        {cat.items.map(plug => (
+                        {cat.items.map(plug => {
+                            const plugOwner = initialProfiles.find(p => p.id === plug.provider_id);
+                            const isRequesting = plugOwner?.is_requesting_skill;
+                            return (
                             <div 
                               key={plug.id} 
                               className="spotify-card"
-                              onClick={() => router.push(`/plug/${plug.id}`)}
+                              onClick={() => {
+                                router.push(`/plug/${plug.id}`);
+                              }}
                               style={{ 
                                 position: 'relative', 
                                 cursor: 'pointer',
-                                border: plug.pillar === 'civic' ? '1px solid var(--accent-red, #FF3D71)' : undefined,
-                                background: plug.pillar === 'civic' ? 'rgba(255, 61, 113, 0.05)' : undefined
+                                border: plug.pillar === 'civic' ? '1px solid var(--accent-flat)' : undefined,
+                                background: plug.pillar === 'civic' ? 'var(--accent-subtle)' : undefined
                               }}
                             >
-                              <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: plug.pillar === 'civic' ? '#FF3D71' : 'var(--bg-input)' }}>
+                              <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: plug.pillar === 'civic' ? 'var(--accent-flat)' : 'var(--bg-input)' }}>
                                 {!plug.image_url?.startsWith('http') && (
                                   plug.pillar === 'civic' ? <AlertCircle size={48} color="#fff" /> : <Package size={48} color="var(--text-muted)" />
+                                )}
+                                {isRequesting && plug.pillar !== 'civic' && (
+                                  <div style={{ position: 'absolute', top: '0.25rem', left: '0.25rem', background: 'var(--danger)', color: 'white', padding: '0.2rem 0.4rem', borderRadius: 'var(--radius-full)', fontSize: '0.6rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.15rem', animation: 'pulse 2s infinite', boxShadow: '0 2px 4px var(--danger-subtle)' }}>
+                                    <Target size={10} /> Seeking Skill
+                                  </div>
                                 )}
                               </div>
                               <div>
                                 {plug.pillar === 'civic' && (
-                                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#FF3D71', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Official Broadcast</div>
+                                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--accent-text)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+                                    Official Broadcast
+                                  </div>
                                 )}
                                 <h3 className="spotify-card-title">{plug.title}</h3>
                                 <p className="spotify-card-subtitle">{plug.category || plug.address || 'Local Plug'}</p>
@@ -217,7 +244,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                               </button>
                             )}
                           </div>
-                        ))}
+                        )})}
                         {cat.pillar && (
                           <div 
                             className="spotify-card"

@@ -14,7 +14,7 @@ export default function BioSection({ bio, maxLength = 100 }) {
     <div style={{ width: '100%', marginBottom: '1.5rem', textAlign: 'left' }}>
       <h3 className="native-section-title" style={{ marginLeft: 0 }}>About</h3>
       <div className="native-card" style={{ padding: '1rem' }}>
-        <p style={{ fontSize: '15px', lineHeight: '1.5', color: 'white', whiteSpace: 'pre-wrap', margin: 0 }}>
+        <p style={{ fontSize: '15px', lineHeight: '1.5', color: 'var(--text-body)', whiteSpace: 'pre-wrap', margin: 0 }}>
           {displayText}
           {isLong && !isExpanded && '...'}
         </p>
