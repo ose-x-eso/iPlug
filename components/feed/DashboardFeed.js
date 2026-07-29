@@ -27,15 +27,8 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
   // Filter plugs based on Global Mode toggle (Demo MVP Logic)
   const displayPlugs = globalMode ? initialPlugs : initialPlugs.slice(0, Math.max(1, Math.floor(initialPlugs.length * 0.5))); // Mocking geographic radius limitation
 
-  // Civic Broadcasts should be strictly community updates (curfew, road fix, security)
-  const displayCivic = displayPlugs.filter(p => p.pillar === 'civic');
 
   const categories = [
-    {
-      title: <><Megaphone size={16} className="inline-icon" color="#FF3D71" /> Civic Broadcasts</>,
-      pillar: 'civic',
-      items: displayCivic
-    },
     {
       title: <><Wrench size={16} className="inline-icon" /> Top Services &amp; Mechanics</>,
       pillar: 'services',
@@ -192,27 +185,21 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
                               }}
                               style={{ 
                                 position: 'relative', 
-                                cursor: 'pointer',
-                                border: plug.pillar === 'civic' ? '1px solid var(--accent-flat)' : undefined,
-                                background: plug.pillar === 'civic' ? 'var(--accent-subtle)' : undefined
+                                cursor: 'pointer'
                               }}
                             >
-                              <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: plug.pillar === 'civic' ? 'var(--accent-flat)' : 'var(--bg-input)' }}>
+                              <div className="spotify-card-img" style={{ backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', backgroundColor: 'var(--bg-input)' }}>
                                 {!plug.image_url?.startsWith('http') && (
-                                  plug.pillar === 'civic' ? <AlertCircle size={48} color="#fff" /> : <Package size={48} color="var(--text-muted)" />
+                                  <Package size={48} color="var(--text-muted)" />
                                 )}
-                                {isRequesting && plug.pillar !== 'civic' && (
+                                {isRequesting && (
                                   <div style={{ position: 'absolute', top: '0.25rem', left: '0.25rem', background: 'var(--danger)', color: 'white', padding: '0.2rem 0.4rem', borderRadius: 'var(--radius-full)', fontSize: '0.6rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.15rem', animation: 'pulse 2s infinite', boxShadow: '0 2px 4px var(--danger-subtle)' }}>
                                     <Target size={10} /> Seeking Skill
                                   </div>
                                 )}
                               </div>
                               <div>
-                                {plug.pillar === 'civic' && (
-                                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--accent-text)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
-                                    Official Broadcast
-                                  </div>
-                                )}
+
                                 <h3 className="spotify-card-title">{plug.title}</h3>
                                 <p className="spotify-card-subtitle">{plug.category || plug.address || 'Local Plug'}</p>
                               </div>

@@ -8,7 +8,7 @@ import { Globe, Search, MessageSquare, Star, CheckCircle2, ChevronRight, Zap, Ch
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import DownloadAppModal from './DownloadAppModal';
+
 import './landing.css';
 
 const HERO_IMAGES = [
@@ -36,7 +36,6 @@ const itemVariants = {
 
 export default function LandingPage() {
   const router = useRouter();
-  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -50,15 +49,6 @@ export default function LandingPage() {
     <div className="landing">
       {/* ---- Dynamic Top Bar ---- */}
       <Navbar />
-
-      <DownloadAppModal 
-        isOpen={isDownloadModalOpen} 
-        onClose={() => setIsDownloadModalOpen(false)} 
-        onContinueWeb={() => {
-          setIsDownloadModalOpen(false);
-          window.dispatchEvent(new CustomEvent('open-auth-modal'));
-        }}
-      />
 
       {/* ---- Hero Section ---- */}
       <section className="hero">
@@ -101,7 +91,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.div variants={itemVariants} className="hero-actions" style={{ marginTop: '1.5rem' }}>
-             <button onClick={() => setIsDownloadModalOpen(true)} className="btn btn-primary btn-large">
+             <button onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))} className="btn btn-primary btn-large">
                Get Started Now <ChevronRight size={18} />
              </button>
           </motion.div>
@@ -342,8 +332,8 @@ export default function LandingPage() {
           <h2 className="section-title">Ready to find your plug?</h2>
           <p className="section-subtitle">Join thousands of users discovering local services, shops, and events on iPlug today.</p>
           <div className="cta-actions">
-             <button onClick={() => setIsDownloadModalOpen(true)} className="btn btn-primary btn-large">
-               Download the App <ChevronRight size={18} />
+             <button onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))} className="btn btn-primary btn-large">
+               Get Started Now <ChevronRight size={18} />
              </button>
           </div>
         </motion.div>

@@ -5,11 +5,43 @@ import AppShell from '@/components/layout/AppShell';
 import ProfileActions from '@/components/profile/ProfileActions';
 import ProfileTabs from '@/components/profile/ProfileTabs';
 import ProfileViewTracker from '@/components/profile/ProfileViewTracker';
-import ReferralTracker from '@/components/profile/ReferralTracker';
 import BioSection from '@/components/profile/BioSection';
 import BackButton from '@/components/layout/BackButton';
 import SkillRequestToggle from '@/components/profile/SkillRequestToggle';
 import { Package, Star, Calendar, Target } from 'lucide-react';
+
+export async function generateMetadata(props) {
+  const params = await props.params;
+  const supabase = await createClient();
+  
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', params.id)
+    .single();
+
+  if (!profile) return { title: 'Profile Not Found' };
+
+  const name = profile.full_name || profile.username || 'User';
+  const description = profile.bio?.substring(0, 160) || `Check out ${name}'s official profile on iPlug.`;
+
+  return {
+    title: `${name} | iPlug`,
+    description: description,
+    openGraph: {
+      title: `${name} on iPlug`,
+      description: description,
+      images: profile.avatar_url ? [profile.avatar_url] : (profile.cover_url ? [profile.cover_url] : []),
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${name} on iPlug`,
+      description: description,
+      images: profile.avatar_url ? [profile.avatar_url] : (profile.cover_url ? [profile.cover_url] : []),
+    },
+  };
+}
 
 export default async function ProfilePage(props) {
   const params = await props.params;
@@ -65,7 +97,6 @@ export default async function ProfilePage(props) {
     <AppShell initialUser={user}>
       <div className="dashboard-container profile-page-container">
         <ProfileViewTracker profileId={profile.id} viewerId={user?.id} viewerName={viewerName} />
-        <ReferralTracker profileId={profile.id} />
         
         {/* DESKTOP LAYOUT */}
         <main className="dashboard-main desktop-only" style={{ display: 'flex', maxWidth: '1000px', margin: '0 auto', padding: '0 0 2rem 0', flexDirection: 'column' }}>
@@ -135,9 +166,9 @@ export default async function ProfilePage(props) {
                   <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800', letterSpacing: '-0.02em' }}>
                     {profile?.username || profile?.full_name || 'Unknown User'}
                     {profile?.is_verified && (
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
-                      </svg>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
+                      <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="var(--accent-flat)"/>
+                    </svg>
                     )}
                   </h1>
                   <p style={{ color: 'var(--accent-flat)', fontWeight: '600', margin: '0', fontSize: '1.1rem' }}>{profile?.title || 'iPlug Provider'}</p>
@@ -175,7 +206,7 @@ export default async function ProfilePage(props) {
                 </div>
               </div>
               <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--accent-subtle)', color: 'var(--accent-flat)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Star size={24} />
                 </div>
                 <div>
@@ -293,7 +324,7 @@ export default async function ProfilePage(props) {
                 {profile?.username || profile?.full_name || 'Unknown User'}
                 {profile?.is_verified && (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="var(--accent-flat)"/>
                   </svg>
                 )}
               </h1>
@@ -332,7 +363,7 @@ export default async function ProfilePage(props) {
               </div>
               <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--text-heading)' }}>{averageRating === 'New' ? '—' : averageRating}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#eab308', fontWeight: '600', marginTop: '0.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--accent-flat)', fontWeight: '600', marginTop: '0.25rem' }}>
                   <Star size={14} /> Rating
                 </div>
               </div>

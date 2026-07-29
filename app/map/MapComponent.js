@@ -29,7 +29,7 @@ function LocationMarker({ position, isRequesting, requestDesc }) {
       <Popup>
         {isRequesting ? (
           <div style={{ padding: '0.5rem', textAlign: 'center' }}>
-            <div style={{ color: '#10b981', fontWeight: 'bold', marginBottom: '0.25rem' }}>Your Distress Beacon</div>
+            <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.25rem' }}>Your Distress Beacon</div>
             <div style={{ fontStyle: 'italic', color: '#666' }}>"{requestDesc}"</div>
           </div>
         ) : (
@@ -40,36 +40,17 @@ function LocationMarker({ position, isRequesting, requestDesc }) {
   );
 }
 
-const civicIcon = new L.divIcon({
-  className: 'civic-marker-wrapper',
-  html: `<div style="
-    width: 24px; 
-    height: 24px; 
-    background: #ef4444; 
-    border-radius: 50%; 
-    border: 3px solid white;
-    box-shadow: 0 0 10px rgba(239,68,68,0.8), 0 0 0 0 rgba(239, 68, 68, 0.7); 
-    animation: civic-pulse 2s infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-  ">!</div>`,
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-});
+
 
 const getDistressIcon = () => new L.divIcon({
   className: 'distress-marker-wrapper',
   html: `<div style="
     width: 36px; 
     height: 36px; 
-    background: #10b981; 
+    background: #ef4444; 
     border-radius: 50%; 
     border: 3px solid white;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.8), 0 0 0 0 rgba(16, 185, 129, 0.7); 
+    box-shadow: 0 0 10px rgba(239,68,68,0.8), 0 0 0 0 rgba(239, 68, 68, 0.7); 
     animation: distress-pulse 2s infinite;
     display: flex;
     align-items: center;
@@ -82,7 +63,7 @@ const getDistressIcon = () => new L.divIcon({
   iconAnchor: [18, 18],
 });
 
-export default function MapComponent({ initialPlugs = [], initialBroadcasts = [], initialBeacons = [], currentUserProfile = null }) {
+export default function MapComponent({ initialPlugs = [], initialBeacons = [], currentUserProfile = null }) {
   const [position, setPosition] = useState(null);
 
   // Derive mapped plugs during render instead of effect to avoid cascading render
@@ -221,12 +202,12 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
           >
             <Popup>
               <div style={{ padding: '0.5rem', minWidth: '150px' }}>
-                <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem', borderRadius: '4px', border: '1px solid #10b981', marginBottom: '0.5rem' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#10b981', textTransform: 'uppercase', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ef4444', marginBottom: '0.5rem' }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#ef4444', textTransform: 'uppercase', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
                     Seeking Skill
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: '500' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#ef4444', fontWeight: '500' }}>
                     "{beacon.skill_request_desc}"
                   </div>
                 </div>
@@ -242,7 +223,7 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
                 </div>
                 <Link 
                   href={`/profile/${beacon.id}`}
-                  style={{ display: 'block', background: '#10b981', color: '#fff', textAlign: 'center', padding: '0.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', marginTop: '1rem' }}
+                  style={{ display: 'block', background: '#ef4444', color: '#fff', textAlign: 'center', padding: '0.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold', marginTop: '1rem' }}
                 >
                   View Profile
                 </Link>
@@ -251,42 +232,14 @@ export default function MapComponent({ initialPlugs = [], initialBroadcasts = []
           </Marker>
         ))}
 
-        {initialBroadcasts.map((broadcast) => (
-          <Marker 
-            key={broadcast.id} 
-            position={[broadcast.latitude, broadcast.longitude]}
-            icon={civicIcon}
-          >
-            <Popup>
-              <div style={{ padding: '0.5rem', minWidth: '200px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                    {broadcast.type}
-                  </span>
-                  <span style={{ fontSize: '0.75rem', color: '#888' }}>
-                    {new Date(broadcast.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                  </span>
-                </div>
-                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: '#ef4444' }}>{broadcast.title}</h3>
-                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#333' }}>{broadcast.description}</p>
-                <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', color: '#ef4444', textAlign: 'center', fontWeight: '500' }}>
-                  Radius: {broadcast.radius_km} km
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+
       </MapContainer>
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes civic-pulse {
+
+        @keyframes distress-pulse {
           0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
           70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
           100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        @keyframes distress-pulse {
-          0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-          70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
       `}} />
     </div>

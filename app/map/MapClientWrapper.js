@@ -12,6 +12,6 @@ const MapComponent = dynamic(() => import('./MapComponent'), {
   )
 });
 
-export default function MapClientWrapper({ initialPlugs, initialBroadcasts, initialBeacons, currentUserProfile }) {
-  return <MapComponent initialPlugs={initialPlugs} initialBroadcasts={initialBroadcasts} initialBeacons={initialBeacons} currentUserProfile={currentUserProfile} />;
+export default function MapClientWrapper({ initialPlugs, initialBeacons, currentUserProfile }) {
+  return <MapComponent initialPlugs={initialPlugs} initialBeacons={initialBeacons} currentUserProfile={currentUserProfile} />;
 }

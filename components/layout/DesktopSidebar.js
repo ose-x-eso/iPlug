@@ -8,7 +8,7 @@ import { createClient } from '@/utils/supabase/client';
 import Logo from './Logo';
 import './layout.css';
 
-export default function DesktopSidebar({ user, isCivicAuth, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenBroadcast, onOpenAuth }) {
+export default function DesktopSidebar({ user, unreadCount, unreadNotificationsCount, onOpenCreate, onOpenAuth }) {
   const pathname = usePathname();
   const [profile, setProfile] = useState(null);
   const [collapsed, setCollapsed] = useState(false);

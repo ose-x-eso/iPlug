@@ -53,12 +53,12 @@
   --topbar-height: 60px;
   --max-width: 1200px;
 
-  /* ---- The Gradient Accent (10%) ---- */
-  --gradient-accent: linear-gradient(135deg, #FF6B35 0%, #FF3D71 100%);
-  --gradient-accent-hover: linear-gradient(135deg, #FF7B45 0%, #FF4D81 100%);
-  --gradient-accent-subtle: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 61, 113, 0.08) 100%);
-  --accent-primary: #FF6B35;
-  --accent-secondary: #FF3D71;
+  /* ---- Simplified Single Accent Color ---- */
+  --gradient-accent: #2563eb;
+  --gradient-accent-hover: #1d4ed8;
+  --gradient-accent-subtle: rgba(37, 99, 235, 0.08);
+  --accent-primary: #2563eb;
+  --accent-secondary: #1d4ed8;
 }
 
 /* ============================================================
@@ -70,21 +70,21 @@
 
 [data-theme="light"],
 :root {
-  /* 60% — Dominant Background (Greige) */
-  --bg-base: #EDEBE7;
-  --bg-page: #E8E5E0;
-  --bg-surface: #FDFCFA;
-  --bg-surface-hover: #F8F6F3;
-  --bg-surface-raised: #FDFCFA;
-  --bg-nav: rgba(237, 235, 231, 0.88);
-  --bg-input: #E5E2DD;
-  --bg-input-focus: #FDFCFA;
-  --bg-section-alt: #E2DFDA;
+  /* 60% — Dominant Background */
+  --bg-base: #f8fafc;
+  --bg-page: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f8fafc;
+  --bg-surface-raised: #ffffff;
+  --bg-nav: rgba(255, 255, 255, 0.9);
+  --bg-input: #f1f5f9;
+  --bg-input-focus: #ffffff;
+  --bg-section-alt: #e2e8f0;
 
-  --accent-flat: #E85D2A;
-  --accent-text: #D4511E;
-  --accent-subtle: rgba(255, 107, 53, 0.07);
-  --accent-medium: rgba(255, 107, 53, 0.14);
+  --accent-flat: #2563eb;
+  --accent-text: #1d4ed8;
+  --accent-subtle: rgba(37, 99, 235, 0.07);
+  --accent-medium: rgba(37, 99, 235, 0.14);
 
   --text-heading: #1A1A1F;
   --text-body: #44444D;
@@ -149,11 +149,11 @@
   --bg-input-focus: #18181B;
   --bg-section-alt: #0C0C0E;
 
-  /* Vibrant Accent - Electric Orange / Coral */
-  --accent-flat: #FF5722;
-  --accent-text: #FF7043;
-  --accent-subtle: rgba(255, 87, 34, 0.1);
-  --accent-medium: rgba(255, 87, 34, 0.2);
+  /* Vibrant Accent - Electric Blue */
+  --accent-flat: #2563eb;
+  --accent-text: #60a5fa;
+  --accent-subtle: rgba(37, 99, 235, 0.1);
+  --accent-medium: rgba(37, 99, 235, 0.2);
 
   /* Crisp, high-contrast text */
   --text-heading: #FFFFFF;
@@ -165,7 +165,7 @@
   /* Subtle sleek borders */
   --border: #27272A;
   --border-strong: #3F3F46;
-  --border-accent: rgba(255, 87, 34, 0.3);
+  --border-accent: rgba(37, 99, 235, 0.3);
   --divider: #18181B;
 
   /* Premium glowing shadows */
@@ -174,8 +174,8 @@
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.7);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.8);
   --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.9);
-  --shadow-glow: 0 4px 30px rgba(255, 87, 34, 0.15);
-  --shadow-glow-lg: 0 8px 50px rgba(255, 87, 34, 0.25);
+  --shadow-glow: 0 4px 30px rgba(37, 99, 235, 0.15);
+  --shadow-glow-lg: 0 8px 50px rgba(37, 99, 235, 0.25);
 
   --success: #10B981;
   --success-subtle: rgba(16, 185, 129, 0.15);
@@ -191,8 +191,8 @@
   --pill-text-active: #09090B;
   --pill-border: #27272A;
 
-  --badge-bg: rgba(255, 87, 34, 0.15);
-  --badge-text: #FF7043;
+  --badge-bg: rgba(37, 99, 235, 0.15);
+  --badge-text: #60a5fa;
 
   --chat-received-bg: #18181B;
 

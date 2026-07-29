@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Package, Plus, Inbox, User, ShieldAlert } from 'lucide-react';
 
-export default function MobileBottomNav({ user, isCivicAuth, unreadCount, onOpenCreate, onOpenBroadcast, onOpenMenu }) {
+export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpenMenu }) {
   const pathname = usePathname();
   const router = useRouter();
 

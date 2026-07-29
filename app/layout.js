@@ -41,7 +41,6 @@ export const viewport = {
 
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import PostHogProvider from '@/components/analytics/PostHogProvider';
-import ReferralTracker from '@/components/analytics/ReferralTracker';
 import PwaInstallPrompt from '@/components/layout/PwaInstallPrompt';
 import { Suspense } from 'react';
 
@@ -55,9 +54,6 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <ToastProvider>
             <PostHogProvider>
-              <Suspense fallback={null}>
-                <ReferralTracker />
-              </Suspense>
               {children}
               <PwaInstallPrompt />
             </PostHogProvider>

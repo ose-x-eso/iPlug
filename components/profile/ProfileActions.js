@@ -13,11 +13,7 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
 
   const getShareUrl = () => {
     if (typeof window === 'undefined') return '';
-    const url = new URL(window.location.href);
-    if (user?.id) {
-      url.searchParams.set('ref', user.id);
-    }
-    return url.toString();
+    return window.location.href;
   };
 
   const handleShare = async () => {

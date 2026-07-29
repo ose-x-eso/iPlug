@@ -5,7 +5,38 @@ import AppShell from '@/components/layout/AppShell';
 import BackButton from '@/components/layout/BackButton';
 import RecentlyViewedTracker from '@/components/feed/RecentlyViewedTracker';
 import PlugDetailActions from '@/components/feed/PlugDetailActions';
+import PlugShareActions from '@/components/feed/PlugShareActions';
 import { Package, MapPin, Star, Tag, LinkIcon, Phone, Mail, MessageSquare } from 'lucide-react';
+
+export async function generateMetadata(props) {
+  const params = await props.params;
+  const supabase = await createClient();
+  
+  const { data: plug } = await supabase
+    .from('plugs')
+    .select('*')
+    .eq('id', params.id)
+    .single();
+
+  if (!plug) return { title: 'Plug Not Found' };
+
+  return {
+    title: `${plug.title} | iPlug`,
+    description: plug.description?.substring(0, 160) || `Check out ${plug.title} on iPlug.`,
+    openGraph: {
+      title: plug.title,
+      description: plug.description?.substring(0, 160) || `Check out ${plug.title} on iPlug.`,
+      images: plug.image_url ? [plug.image_url] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: plug.title,
+      description: plug.description?.substring(0, 160),
+      images: plug.image_url ? [plug.image_url] : [],
+    },
+  };
+}
 
 export default async function PlugDetailsPage(props) {
   const params = await props.params;
@@ -100,8 +131,8 @@ export default async function PlugDetailsPage(props) {
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Tag size={18} color="var(--accent-flat)" /> {plug.category}
                 </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#eab308' }}>
-                  <Star size={18} fill="#eab308" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-flat)' }}>
+                  <Star size={18} fill="var(--accent-flat)" /> {averageRating === 'New' ? 'New' : `${averageRating} (${reviews?.length} Reviews)`}
                 </span>
               </div>
             </div>
@@ -133,11 +164,10 @@ export default async function PlugDetailsPage(props) {
                 </div>
 
                 {/* Reviews Section */}
-                {plug.pillar !== 'civic' && (
-                  <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                      <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 'bold' }}>Reviews & Ratings</h3>
-                      <span style={{ fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#eab308' }}><Star size={20} fill="#eab308" /> {averageRating === 'New' ? 'New' : `${averageRating}`}</span>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 'bold' }}>Reviews & Ratings</h3>
+                      <span style={{ fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-flat)' }}><Star size={20} fill="var(--accent-flat)" /> {averageRating === 'New' ? 'New' : `${averageRating}`}</span>
                     </div>
                     
                     <div style={{ padding: '1.5rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
@@ -164,9 +194,8 @@ export default async function PlugDetailsPage(props) {
                           </Link>
                         </>
                       )}
-                    </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Right Column: Provider Card */}
@@ -198,7 +227,7 @@ export default async function PlugDetailsPage(props) {
                         {profile?.username || profile?.full_name || 'Unknown User'}
                         {profile?.is_verified && (
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified Provider">
-                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="#3b82f6"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="var(--accent-flat)"/>
                           </svg>
                         )}
                       </h4>
@@ -236,10 +265,13 @@ export default async function PlugDetailsPage(props) {
                           </a>
                         )}
                       </div>
+                      
+                      <PlugShareActions plugTitle={plug.title} isOwner={false} />
                     </div>
                   ) : (
-                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                       <PlugDetailActions plug={plug} />
+                      <PlugShareActions plugTitle={plug.title} isOwner={true} />
                     </div>
                   )}
                   

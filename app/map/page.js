@@ -15,11 +15,6 @@ export default async function MapPage() {
     currentUserProfile = profile;
   }
     
-  const { data: broadcasts, error: civicError } = await supabase
-    .from('civic_broadcasts')
-    .select('*')
-    .gte('expires_at', new Date().toISOString());
-
   // Fetch active distress beacons
   const { data: beacons } = await supabase
     .from('profiles')
@@ -32,7 +27,6 @@ export default async function MapPage() {
       <div style={{ flex: 1, minHeight: 'calc(100dvh - 70px)', position: 'relative', overflow: 'hidden' }}>
         <MapClientWrapper 
           initialPlugs={plugs || []} 
-          initialBroadcasts={broadcasts || []} 
           initialBeacons={beacons || []}
           currentUserProfile={currentUserProfile} 
         />
