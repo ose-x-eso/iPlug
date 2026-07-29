@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { MessageSquare, X, Send } from 'lucide-react';
 import { submitFeedback } from '@/app/actions/feedback';
+import posthog from 'posthog-js';
 
 export default function FeedbackWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function FeedbackWidget() {
     setIsSubmitting(false);
 
     if (result.success) {
+      posthog.capture('feedback_submitted');
       setIsSubmitted(true);
       setIsOpen(false);
     } else {

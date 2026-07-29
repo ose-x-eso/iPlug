@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createPlug } from '@/app/actions/plugs';
 import { PILLARS, getCategoriesByPillar } from '@/utils/categories';
 import { useToast } from '@/components/ui/ToastProvider';
+import posthog from 'posthog-js';
 
 export default function CreatePlugModal({ isOpen, onClose }) {
   const { toast } = useToast();
@@ -61,6 +62,11 @@ export default function CreatePlugModal({ isOpen, onClose }) {
       toast.error(result.error);
       setIsLoading(false);
     } else if (result?.success) {
+      posthog.capture('plug_created', {
+        pillar: formData.get('pillar'),
+        category: formData.get('category'),
+        location_count: locations.length,
+      });
       setIsLoading(false);
       toast.success('Your Plug has been successfully listed!');
       // Wait a moment before closing so they see the success message

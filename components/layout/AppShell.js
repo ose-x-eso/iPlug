@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { markMessageAsDelivered, markAllUnreadAsDelivered } from '@/app/actions/messages';
+import posthog from 'posthog-js';
 
 import DesktopSidebar from './DesktopSidebar';
 import MobileTabBar from './MobileTabBar';
@@ -61,12 +62,16 @@ export default function AppShell({ children, initialUser }) {
       const { data: { session } } = await supabase.auth.getSession();
       const currentUser = session?.user || null;
       setUser(currentUser);
+      if (currentUser) {
+        posthog.identify(currentUser.id);
+      }
       fetchBadges(currentUser);
     };
-    
+
     if (!initialUser) {
       fetchUserAndBadges();
     } else {
+      posthog.identify(initialUser.id);
       fetchBadges(initialUser);
     }
 

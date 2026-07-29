@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { createNotification } from './notifications';
+import PostHogClient from '@/lib/posthog-server';
 
 export async function createRecommendation(providerId, message, isAnonymous) {
   const supabase = await createClient();
@@ -17,6 +18,12 @@ export async function createRecommendation(providerId, message, isAnonymous) {
   });
 
   if (error) return { error: error.message };
+
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'recommendation_created', properties: { is_anonymous: isAnonymous } })
+    await posthog.shutdown()
+  }
 
   const recommenderName = isAnonymous
     ? 'Someone'

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/utils/supabase/server'
+import PostHogClient from '@/lib/posthog-server'
 
 export async function updateProfile(formData) {
   const supabase = await createClient()
@@ -48,8 +49,14 @@ export async function updateProfile(formData) {
     data: { full_name: fullName, phone_number: phoneNumber, username: username }
   })
 
+  const posthog = PostHogClient()
+  if (posthog) {
+    posthog.capture({ distinctId: user.id, event: 'profile_updated' })
+    await posthog.shutdown()
+  }
+
   // Revalidate to ensure new name shows in Navbar, Dashboard, etc.
   revalidatePath('/', 'layout')
-  
+
   return { success: true }
 }
