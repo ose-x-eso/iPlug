@@ -190,8 +190,17 @@
 }
 
 .sidebar-collapsed .sidebar-header {
-  padding: 0 var(--space-md);
+  padding: 0;
   justify-content: center;
+  gap: 0.25rem;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+.sidebar-nav {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .sidebar-collapsed .sidebar-nav {

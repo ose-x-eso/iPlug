@@ -54,7 +54,7 @@ export default function DesktopSidebar({ user, isCivicAuth, unreadCount, unreadN
   return (
     <aside className={`desktop-sidebar glass ${collapsed ? 'sidebar-collapsed' : ''}`}>
       <div className="sidebar-header">
-        <Link href="/" style={{ textDecoration: 'none', overflow: 'hidden' }}>
+        <Link href="/" style={{ textDecoration: 'none', overflow: 'hidden', flexShrink: 0 }}>
           <Logo size={28} showText={!collapsed} />
         </Link>
         <button
@@ -92,17 +92,6 @@ export default function DesktopSidebar({ user, isCivicAuth, unreadCount, unreadN
 
         {user && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem', padding: '0 0.5rem' }}>
-            {isCivicAuth && (
-              <button
-                className="btn btn-primary btn-full new-plug-btn"
-                onClick={onOpenBroadcast}
-                title={collapsed ? 'Broadcast Alert' : undefined}
-                style={{ background: '#ef4444', color: 'white' }}
-              >
-                <ShieldAlert size={20} />
-                <span className="nav-label" style={{ marginLeft: '0.5rem', fontWeight: 'bold' }}>Broadcast Alert</span>
-              </button>
-            )}
             <button
               className="btn btn-primary btn-full new-plug-btn"
               onClick={onOpenCreate}

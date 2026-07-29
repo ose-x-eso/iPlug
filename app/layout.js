@@ -43,6 +43,7 @@ import DeviceSimulatorWrapper from '@/components/layout/DeviceSimulatorWrapper';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import PostHogProvider from '@/components/analytics/PostHogProvider';
 import ReferralTracker from '@/components/analytics/ReferralTracker';
+import PwaInstallPrompt from '@/components/layout/PwaInstallPrompt';
 import { Suspense } from 'react';
 
 export default function RootLayout({ children }) {
@@ -60,6 +61,7 @@ export default function RootLayout({ children }) {
                   <ReferralTracker />
                 </Suspense>
                 {children}
+                <PwaInstallPrompt />
               </PostHogProvider>
             </DeviceSimulatorWrapper>
           </ToastProvider>
