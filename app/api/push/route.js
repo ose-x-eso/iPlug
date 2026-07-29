@@ -18,7 +18,10 @@ export async function POST(req) {
 
     const { error } = await supabase
       .from('profiles')
-      .update({ push_subscription: subscription })
+      .update({ 
+        push_subscription: subscription,
+        push_notifications_enabled: true 
+      })
       .eq('id', user.id);
 
     if (error) {

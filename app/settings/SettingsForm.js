@@ -28,10 +28,16 @@ export default function SettingsForm({ initialProfile }) {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
       setIsPushSupported(true);
       navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker registered'))
+        .then(reg => {
+          console.log('Service Worker registered');
+          // If they already granted permission and it's enabled in DB
+          if (Notification.permission === 'granted' && initialProfile?.push_notifications_enabled) {
+            setPushStatus('Push Enabled ✓');
+          }
+        })
         .catch(err => console.error('SW registration failed', err));
     }
-  }, []);
+  }, [initialProfile?.push_notifications_enabled]);
 
   async function handleEnablePush() {
     if (!isPushSupported) return;
@@ -156,7 +162,9 @@ export default function SettingsForm({ initialProfile }) {
           <button 
             type="button" 
             onClick={handleEnablePush}
+            disabled={pushStatus.includes('✓') || pushStatus.includes('Requesting') || pushStatus.includes('Generating')}
             className="native-btn-outline"
+            style={{ opacity: pushStatus.includes('✓') ? 0.6 : 1 }}
           >
             {pushStatus || 'Enable Push Notifications'}
           </button>
