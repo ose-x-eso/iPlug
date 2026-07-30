@@ -4,13 +4,57 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppShell from "@/components/layout/AppShell";
 import SearchFilters from "@/components/search/SearchFilters";
-import { Mailbox, MapPin, Package, Megaphone, Target } from 'lucide-react';
+import { Mailbox, MapPin, Package, Megaphone, Target, X } from 'lucide-react';
+import { toggleSkillRequest } from '@/app/actions/profile';
 
 export default function SearchPageClient({ user, initialPlugs = [], initialProfiles = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   const [location, setLocation] = useState('');
   const [showSearchFab, setShowSearchFab] = useState(false);
+
+  const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
+  const [broadcastDesc, setBroadcastDesc] = useState('');
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+
+  const handleSaveBroadcast = async () => {
+    if (!user) {
+      alert("Please log in to broadcast a request.");
+      return;
+    }
+    if (!broadcastDesc.trim()) return;
+    setIsBroadcasting(true);
+    
+    let lat = null;
+    let lng = null;
+    
+    if (navigator.geolocation) {
+      try {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+        });
+        lat = pos.coords.latitude;
+        lng = pos.coords.longitude;
+      } catch (err) {
+        console.warn('Could not get location for broadcast');
+      }
+    }
+
+    const res = await toggleSkillRequest({
+      isActive: true,
+      desc: broadcastDesc.trim(),
+      lat,
+      lng
+    });
+
+    setIsBroadcasting(false);
+    if (res?.error) {
+      alert(res.error);
+    } else {
+      setIsBroadcastModalOpen(false);
+      alert("Broadcast successful! Your request is now live.");
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,14 +140,14 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                 <h3 style={{ color: 'var(--text-heading)' }}>No Plugs found in this area</h3>
                 <p>Don't give up. Broadcast this request to the iPlug community and let the right Plug find you.</p>
                 <button 
-                  className="btn-primary" 
+                  className="native-btn-primary" 
                   onClick={() => {
-                    alert(`Broadcast sent! We are notifying all users in ${location || 'your area'} that someone is looking for "${searchQuery}".`);
-                    // In a real app, this would trigger an API call to send global push notifications
+                    setBroadcastDesc(searchQuery);
+                    setIsBroadcastModalOpen(true);
                   }}
-                  style={{ marginTop: '1.5rem', borderRadius: 'var(--radius-full)' }}
+                  style={{ marginTop: '1.5rem', background: 'var(--danger)', color: 'white', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: 'var(--radius-full)' }}
                 >
-                  <Megaphone size={16} /> Broadcast Request
+                  <Megaphone size={18} /> Broadcast Request
                 </button>
               </div>
             ) : (
@@ -233,7 +277,61 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
             </button>
           )}
         </main>
-      </div>
+
+      {isBroadcastModalOpen && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(0,0,0,0.8)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '1rem'
+        }}>
+          <div className="anim-scale" style={{
+            background: 'var(--bg-surface)',
+            borderRadius: 'var(--radius-xl)',
+            width: '100%',
+            maxWidth: '400px',
+            padding: '2rem',
+            border: '1px solid var(--border)',
+            position: 'relative'
+          }}>
+            <button onClick={() => setIsBroadcastModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <X size={20} />
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--danger)' }}>
+              <Target size={24} />
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-heading)' }}>Activate Beacon</h3>
+            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Describe exactly what you need. This will be visible to everyone who sees your profile or pin.</p>
+            
+            <textarea
+              placeholder="e.g., I need an experienced Plumber around Yaba immediately..."
+              value={broadcastDesc}
+              onChange={(e) => setBroadcastDesc(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '1rem',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-input)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                minHeight: '100px',
+                resize: 'none',
+                marginBottom: '1.5rem'
+              }}
+            />
+
+            <button 
+              onClick={handleSaveBroadcast}
+              disabled={isBroadcasting || !broadcastDesc.trim()}
+              className="native-btn-primary"
+              style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', background: 'var(--danger)', display: 'flex', justifyContent: 'center' }}
+            >
+              {isBroadcasting ? 'Activating...' : 'Broadcast Need'}
+            </button>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

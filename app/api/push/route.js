@@ -26,7 +26,7 @@ export async function POST(req) {
 
     if (error) {
       console.error('Failed to save push subscription:', error);
-      return NextResponse.json({ error: 'Failed to save subscription' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to save connection' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

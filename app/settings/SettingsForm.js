@@ -50,7 +50,7 @@ export default function SettingsForm({ initialProfile }) {
       }
       
       const registration = await navigator.serviceWorker.ready;
-      setPushStatus('Generating subscription...');
+      setPushStatus('Generating connection...');
       
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!vapidPublicKey) {
@@ -63,7 +63,7 @@ export default function SettingsForm({ initialProfile }) {
         applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
       });
       
-      setPushStatus('Saving subscription...');
+      setPushStatus('Saving connection...');
       const res = await fetch('/api/push', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,8 +74,8 @@ export default function SettingsForm({ initialProfile }) {
         toast.success('Push enabled successfully!');
         setPushStatus('Push enabled successfully!');
       } else {
-        toast.error('Failed to save subscription');
-        setPushStatus('Failed to save subscription');
+        toast.error('Failed to save connection');
+        setPushStatus('Failed to save connection');
       }
     } catch (err) {
       console.error(err);
