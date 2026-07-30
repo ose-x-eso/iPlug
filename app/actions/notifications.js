@@ -6,14 +6,16 @@ import { dispatchExternalNotifications } from '@/lib/notifications/dispatch';
 
 const HIGH_PRIORITY_TYPES = new Set(['NEW_MESSAGE', 'UNREAD_REMINDER', 'Unread Messages']);
 
+import { createAdminClient } from '@/utils/supabase/admin';
+
 export async function createNotification(userId, type, message, options = {}) {
   const { link = null } = options;
-  const supabase = await createClient();
+  const supabaseAdmin = createAdminClient();
 
   const insertData = { user_id: userId, type, message };
   if (link) insertData.link = link;
 
-  const { error } = await supabase.from('notifications').insert(insertData);
+  const { error } = await supabaseAdmin.from('notifications').insert(insertData);
   if (error) {
     console.error('Error creating notification:', error);
     return { error: error.message };
@@ -31,8 +33,8 @@ export async function createNotification(userId, type, message, options = {}) {
 }
 
 export async function broadcastNotification(type, message, excludeUserId = null) {
-  const supabase = await createClient();
-  const { data: profiles, error: fetchError } = await supabase.from('profiles').select('id');
+  const supabaseAdmin = createAdminClient();
+  const { data: profiles, error: fetchError } = await supabaseAdmin.from('profiles').select('id');
   if (fetchError || !profiles) {
     console.error('Error fetching users for broadcast:', fetchError);
     return;
@@ -47,7 +49,7 @@ export async function broadcastNotification(type, message, excludeUserId = null)
     }));
 
   if (notifications.length > 0) {
-    const { error } = await supabase.from('notifications').insert(notifications);
+    const { error } = await supabaseAdmin.from('notifications').insert(notifications);
     if (error) console.error('Error broadcasting notification:', error);
   }
 }
