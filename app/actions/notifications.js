@@ -20,9 +20,11 @@ export async function createNotification(userId, type, message, options = {}) {
   }
 
   if (HIGH_PRIORITY_TYPES.has(type)) {
-    dispatchExternalNotifications(userId, { type, message, link }).catch((err) => {
+    try {
+      await dispatchExternalNotifications(userId, { type, message, link });
+    } catch (err) {
       console.error('External notification dispatch failed:', err);
-    });
+    }
   }
 
   return { success: true };
