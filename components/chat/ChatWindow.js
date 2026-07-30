@@ -144,7 +144,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   };
 
   return (
-    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', background: 'var(--bg-page)', overflow: 'hidden' }}>
+    <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100dvh', width: '100%', background: 'var(--bg-page)', overflow: 'hidden' }}>
       
       {/* Chat Header */}
       <div style={{ 
@@ -307,7 +307,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       </div>
 
       {/* Input Area */}
-      <div style={{ padding: '1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)', position: 'relative' }}>
+      <div style={{ padding: '0.75rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px)) 1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)', position: 'relative' }}>
         
         {/* Attachment Menu Popup */}
         {showAttachments && (

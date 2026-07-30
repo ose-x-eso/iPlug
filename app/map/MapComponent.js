@@ -74,9 +74,9 @@ export default function MapComponent({ initialPlugs = [], initialBeacons = [], c
       // If it uses the new multi-location array
       if (plug.locations && plug.locations.length > 0) {
         return plug.locations.map((loc, i) => {
-          let lat = loc.latitude;
-          let lng = loc.longitude;
-          if (!lat || !lng) {
+          let lat = parseFloat(loc.latitude);
+          let lng = parseFloat(loc.longitude);
+          if (isNaN(lat) || isNaN(lng) || !lat || !lng) {
             lat = center[0] + (Math.random() - 0.5) * 0.1;
             lng = center[1] + (Math.random() - 0.5) * 0.1;
           }
@@ -85,9 +85,9 @@ export default function MapComponent({ initialPlugs = [], initialBeacons = [], c
       }
       
       // Fallback for legacy data
-      let lat = plug.latitude;
-      let lng = plug.longitude;
-      if (!lat || !lng) {
+      let lat = parseFloat(plug.latitude);
+      let lng = parseFloat(plug.longitude);
+      if (isNaN(lat) || isNaN(lng) || !lat || !lng) {
         lat = center[0] + (Math.random() - 0.5) * 0.1;
         lng = center[1] + (Math.random() - 0.5) * 0.1;
       }
@@ -195,12 +195,13 @@ export default function MapComponent({ initialPlugs = [], initialBeacons = [], c
         ))}
 
         {initialBeacons.map((beacon) => (
-          <Marker 
-            key={`beacon-${beacon.id}`}
-            position={[beacon.skill_request_lat, beacon.skill_request_lng]}
-            icon={getDistressIcon()}
-          >
-            <Popup>
+          !isNaN(parseFloat(beacon.skill_request_lat)) && !isNaN(parseFloat(beacon.skill_request_lng)) ? (
+            <Marker 
+              key={`beacon-${beacon.id}`}
+              position={[parseFloat(beacon.skill_request_lat), parseFloat(beacon.skill_request_lng)]}
+              icon={getDistressIcon()}
+            >
+              <Popup>
               <div style={{ padding: '0.5rem', minWidth: '150px' }}>
                 <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '4px', border: '1px solid #ef4444', marginBottom: '0.5rem' }}>
                   <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#ef4444', textTransform: 'uppercase', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -230,6 +231,7 @@ export default function MapComponent({ initialPlugs = [], initialBeacons = [], c
               </div>
             </Popup>
           </Marker>
+          ) : null
         ))}
 
 

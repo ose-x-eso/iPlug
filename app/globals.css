@@ -1500,19 +1500,23 @@ input:-webkit-autofill:active {
 .dashboard-container {
   min-height: 100vh;
   background-color: var(--bg-primary);
+  padding-top: 1px; /* Prevent margin collapse */
 }
 
 .dashboard-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.5rem 1rem 8rem 1rem;
+  padding: 0px 1rem 8rem 1rem !important;
+  margin-top: 0 !important;
 }
 
 .dashboard-header {
+  margin-top: 0 !important;
   margin-bottom: 2rem;
 }
 
 .dashboard-header h1 {
+  margin-top: 0 !important;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
@@ -1521,7 +1525,7 @@ input:-webkit-autofill:active {
   max-width: 600px;
   margin: 0 0 2rem 0;
   display: flex;
-  background: var(--bg-secondary);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1rem;

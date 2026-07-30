@@ -268,7 +268,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
               onClick={scrollToSearch}
               style={{
                 position: 'fixed',
-                bottom: '80px', // Above the mobile bottom nav
+                bottom: '120px', // Above the mobile bottom nav and feedback widget
                 right: '20px',
                 width: '56px',
                 height: '56px',

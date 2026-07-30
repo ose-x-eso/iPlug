@@ -3,10 +3,11 @@ import "./native-ui.css";
 import { ThemeProvider } from "@/lib/theme";
 
 export const metadata = {
-  title: "iPlug — Find Your Plug",
+  title: "iPlug Hub — Find Your Plug",
   description:
-    "iPlug is Nigeria's hyperlocal marketplace. Find services, shops, and places near you. Chat, negotiate, and connect — like a real Nigerian market, but digital.",
+    "iPlug Hub is Nigeria's hyperlocal marketplace. Find services, shops, and places near you. Chat, negotiate, and connect — like a real Nigerian market, but digital.",
   keywords: [
+    "iPlug Hub",
     "iPlug",
     "Nigeria marketplace",
     "find services near me",
@@ -16,7 +17,7 @@ export const metadata = {
     "plumber Nigeria",
   ],
   openGraph: {
-    title: "iPlug — Find Your Plug",
+    title: "iPlug Hub — Find Your Plug",
     description:
       "Nigeria's hyperlocal marketplace. Find services, shops, and places near you.",
     type: "website",
@@ -24,7 +25,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "iPlug",
+    title: "iPlug Hub",
     statusBarStyle: "black-translucent",
   },
 };

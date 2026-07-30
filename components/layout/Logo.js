@@ -23,7 +23,7 @@ export default function Logo({ size = 32, showText = true }) {
           color: 'var(--text-heading)',
           fontFamily: 'var(--font-display)'
         }}>
-          iPlug
+          iPlug Hub
         </span>
       )}
     </div>

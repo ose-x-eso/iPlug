@@ -154,6 +154,7 @@ export default function SearchFilters({
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           onFocus={() => { if (recentSearches.length > 0) setShowHistory(true); }}
+          autoComplete="off"
         />
         {showHistory && recentSearches.length > 0 && (
           <div style={{ 
