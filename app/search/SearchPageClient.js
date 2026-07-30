@@ -17,6 +17,8 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
   const [broadcastDesc, setBroadcastDesc] = useState('');
   const [isBroadcasting, setIsBroadcasting] = useState(false);
 
+  const [broadcastLocation, setBroadcastLocation] = useState('');
+
   const handleSaveBroadcast = async () => {
     if (!user) {
       alert("Please log in to broadcast a request.");
@@ -28,15 +30,42 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
     let lat = null;
     let lng = null;
     
-    if (navigator.geolocation) {
+    if (broadcastLocation.trim() !== '') {
+      // Geocode the typed location
       try {
-        const pos = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-        });
-        lat = pos.coords.latitude;
-        lng = pos.coords.longitude;
+        const geocodeRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(broadcastLocation.trim())}`);
+        const data = await geocodeRes.json();
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+        } else {
+          alert("We couldn't find that location. Please try being more specific (e.g., 'Yaba, Lagos').");
+          setIsBroadcasting(false);
+          return;
+        }
       } catch (err) {
-        console.warn('Could not get location for broadcast');
+        alert("Error searching for that location. Please try again.");
+        setIsBroadcasting(false);
+        return;
+      }
+    } else {
+      // Use device GPS
+      if (navigator.geolocation) {
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+          });
+          lat = pos.coords.latitude;
+          lng = pos.coords.longitude;
+        } catch (err) {
+          console.warn('Could not get location for broadcast');
+        }
+      }
+      
+      if (!lat || !lng) {
+        alert("We need your location to place your beacon on the map. Please enable location services or type a location in the field.");
+        setIsBroadcasting(false);
+        return;
       }
     }
 
@@ -52,7 +81,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
       alert(res.error);
     } else {
       setIsBroadcastModalOpen(false);
-      alert("Broadcast successful! Your request is now live.");
+      alert("Broadcast successful! Your beacon is now live on the map.");
     }
   };
 
@@ -336,7 +365,24 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                 color: 'var(--text-primary)',
                 minHeight: '100px',
                 resize: 'none',
-                marginBottom: '1.5rem'
+                marginBottom: '1rem'
+              }}
+            />
+            
+            <input
+              type="text"
+              placeholder="Enter specific location (optional)"
+              value={broadcastLocation}
+              onChange={(e) => setBroadcastLocation(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-input)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                marginBottom: '1.5rem',
+                fontSize: '0.9rem'
               }}
             />
 
