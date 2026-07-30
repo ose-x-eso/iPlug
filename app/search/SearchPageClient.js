@@ -42,7 +42,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
 
     const res = await toggleSkillRequest({
       isActive: true,
-      desc: broadcastDesc.trim(),
+      description: broadcastDesc.trim(),
       lat,
       lng
     });
