@@ -44,6 +44,7 @@ import { ToastProvider } from '@/components/ui/ToastProvider';
 import PostHogProvider from '@/components/analytics/PostHogProvider';
 import PwaInstallPrompt from '@/components/layout/PwaInstallPrompt';
 import { Suspense } from 'react';
+import { Analytics } from '@vercel/analytics/next';
 
 export default function RootLayout({ children }) {
   return (
@@ -60,6 +61,7 @@ export default function RootLayout({ children }) {
             </PostHogProvider>
           </ToastProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
