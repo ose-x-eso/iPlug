@@ -8,14 +8,14 @@ import { useRouter } from 'next/navigation';
 export default function BroadcastModal({ isOpen, onClose, initialDesc = '', onSuccess }) {
   const [desc, setDesc] = useState(initialDesc);
   const [customLocation, setCustomLocation] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [broadcastStatus, setBroadcastStatus] = useState('');
   const router = useRouter();
 
   if (!isOpen) return null;
 
   const handleSave = async () => {
     if (!desc.trim()) return;
-    setIsSubmitting(true);
+    setBroadcastStatus('Finding location...');
     
     let lat = null;
     let lng = null;
@@ -30,12 +30,12 @@ export default function BroadcastModal({ isOpen, onClose, initialDesc = '', onSu
           lng = parseFloat(data[0].lon);
         } else {
           alert("We couldn't find that exact location. Please try being more specific (e.g., 'Yaba, Lagos').");
-          setIsSubmitting(false);
+          setBroadcastStatus('');
           return;
         }
       } catch (err) {
         alert("There was an error searching for that location. Please try again or use your current location.");
-        setIsSubmitting(false);
+        setBroadcastStatus('');
         return;
       }
     } else {
@@ -54,13 +54,14 @@ export default function BroadcastModal({ isOpen, onClose, initialDesc = '', onSu
       
       if (!lat || !lng) {
         alert("We need your location to place your beacon on the map. Please enable location services or type a specific location.");
-        setIsSubmitting(false);
+        setBroadcastStatus('');
         return;
       }
     }
 
+    setBroadcastStatus('Activating beacon...');
     const res = await toggleSkillRequest({ isActive: true, description: desc, lat, lng });
-    setIsSubmitting(false);
+    setBroadcastStatus('');
     
     if (res?.error) {
       alert(res.error);
@@ -139,11 +140,11 @@ export default function BroadcastModal({ isOpen, onClose, initialDesc = '', onSu
 
         <button 
           onClick={handleSave}
-          disabled={isSubmitting || !desc.trim()}
+          disabled={!!broadcastStatus || !desc.trim()}
           className="btn-broadcast"
           style={{ margin: 0, width: '100%', maxWidth: '100%' }}
         >
-          {isSubmitting ? 'Activating...' : 'Broadcast Need'}
+          {broadcastStatus || 'Broadcast Need'}
         </button>
       </div>
     </div>

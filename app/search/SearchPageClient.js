@@ -15,7 +15,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
 
   const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false);
   const [broadcastDesc, setBroadcastDesc] = useState('');
-  const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [broadcastStatus, setBroadcastStatus] = useState('');
 
   const [broadcastLocation, setBroadcastLocation] = useState('');
 
@@ -25,7 +25,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
       return;
     }
     if (!broadcastDesc.trim()) return;
-    setIsBroadcasting(true);
+    setBroadcastStatus('Finding location...');
     
     let lat = null;
     let lng = null;
@@ -40,12 +40,12 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
           lng = parseFloat(data[0].lon);
         } else {
           alert("We couldn't find that location. Please try being more specific (e.g., 'Yaba, Lagos').");
-          setIsBroadcasting(false);
+          setBroadcastStatus('');
           return;
         }
       } catch (err) {
         alert("Error searching for that location. Please try again.");
-        setIsBroadcasting(false);
+        setBroadcastStatus('');
         return;
       }
     } else {
@@ -64,11 +64,12 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
       
       if (!lat || !lng) {
         alert("We need your location to place your beacon on the map. Please enable location services or type a location in the field.");
-        setIsBroadcasting(false);
+        setBroadcastStatus('');
         return;
       }
     }
 
+    setBroadcastStatus('Activating beacon...');
     const res = await toggleSkillRequest({
       isActive: true,
       description: broadcastDesc.trim(),
@@ -76,7 +77,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
       lng
     });
 
-    setIsBroadcasting(false);
+    setBroadcastStatus('');
     if (res?.error) {
       alert(res.error);
     } else {
@@ -388,11 +389,11 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
 
             <button 
               onClick={handleSaveBroadcast}
-              disabled={isBroadcasting || !broadcastDesc.trim()}
+              disabled={!!broadcastStatus || !broadcastDesc.trim()}
               className="native-btn-primary"
               style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', background: 'var(--danger)', display: 'flex', justifyContent: 'center' }}
             >
-              {isBroadcasting ? 'Activating...' : 'Broadcast Need'}
+              {broadcastStatus || 'Broadcast Need'}
             </button>
           </div>
         </div>
