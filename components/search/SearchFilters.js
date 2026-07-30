@@ -107,7 +107,7 @@ export default function SearchFilters({
 
   return (
     <div className="search-filters">
-      <div className="search-bar dashboard-search" style={{ marginBottom: '1rem', position: 'relative' }} ref={searchContainerRef}>
+      <div className="search-bar dashboard-search" style={{ marginBottom: '1rem', position: 'relative', zIndex: showHistory ? 52 : 3 }} ref={searchContainerRef}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -171,7 +171,7 @@ export default function SearchFilters({
         )}
       </div>
 
-      <div className="search-bar location-search" style={{ marginBottom: '1.5rem', background: 'var(--bg-input)', position: 'relative' }} ref={dropdownRef}>
+      <div className="search-bar location-search" style={{ marginBottom: '1.5rem', background: 'var(--bg-input)', position: 'relative', zIndex: showDropdown ? 51 : 2 }} ref={dropdownRef}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3"></circle>

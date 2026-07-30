@@ -302,7 +302,7 @@
 /* Feedback Widget */
 .feedback-widget-container {
   position: fixed;
-  bottom: 90px;
+  bottom: 120px;
   right: 1rem;
   z-index: 9999;
   display: flex;
@@ -333,7 +333,7 @@
 }
 
 .simulator-active .feedback-widget-container {
-  bottom: 90px !important;
+  bottom: 120px !important;
   right: 1rem !important;
 }
 
