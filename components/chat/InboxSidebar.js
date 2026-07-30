@@ -19,10 +19,8 @@ export default function InboxSidebar({ user, initialConversations = [] }) {
          </div>
       </div>
 
-      {/* Messages Header */}
       <div style={{ padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 style={{ margin: 0, fontSize: '1rem' }}>Messages</h3>
-        <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 'bold' }}>Requests</span>
       </div>
 
       <EnablePushPrompt />

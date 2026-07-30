@@ -3,7 +3,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Wrench, ShoppingBag, Building, Ticket } from 'lucide-react';
+import { MapPin, Wrench, ShoppingBag, Building, Ticket, Navigation } from 'lucide-react';
 
 export default function SearchFilters({ 
   searchQuery, 
@@ -98,6 +98,39 @@ export default function SearchFilters({
     } catch (e) {}
   };
 
+  const handleUseGPS = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+    
+    setIsSearching(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10`);
+          const data = await res.json();
+          if (data && data.name) {
+             setLocation(data.name);
+          } else if (data && data.address) {
+             setLocation(data.address.city || data.address.town || data.address.state || "Current Location");
+          } else {
+             setLocation("Current Location");
+          }
+        } catch (e) {
+          setLocation("Current Location");
+        } finally {
+          setIsSearching(false);
+        }
+      },
+      (error) => {
+        setIsSearching(false);
+        alert("Unable to retrieve your location.");
+      }
+    );
+  };
+
   const handleSearchKeyDown = (e) => {
     if (e.key === 'Enter') {
       saveSearchToHistory(searchQuery);
@@ -128,7 +161,7 @@ export default function SearchFilters({
             top: '110%', 
             left: 0, 
             right: 0, 
-            background: 'var(--bg-card)', 
+            background: 'var(--bg-surface)', 
             border: '1px solid var(--border)', 
             borderRadius: 'var(--radius-md)', 
             boxShadow: 'var(--shadow-lg)', 
@@ -190,10 +223,32 @@ export default function SearchFilters({
             if (suggestions.length > 0) setShowDropdown(true);
           }}
           autoComplete="off"
+          style={{ paddingRight: '2.5rem' }}
         />
         
+        <button 
+          onClick={handleUseGPS}
+          title="Use current location"
+          style={{ 
+            position: 'absolute', 
+            right: '1rem', 
+            top: '50%', 
+            transform: 'translateY(-50%)', 
+            background: 'transparent', 
+            border: 'none', 
+            color: 'var(--accent-primary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0.25rem'
+          }}
+        >
+          <Navigation size={18} />
+        </button>
+        
         {isSearching && (
-          <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)' }}>
+          <div style={{ position: 'absolute', right: '3rem', top: '50%', transform: 'translateY(-50%)' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Searching...</span>
           </div>
         )}
@@ -204,7 +259,7 @@ export default function SearchFilters({
             top: '110%', 
             left: 0, 
             right: 0, 
-            background: 'var(--bg-card)', 
+            background: 'var(--bg-surface)', 
             border: '1px solid var(--border)', 
             borderRadius: 'var(--radius-md)', 
             boxShadow: 'var(--shadow-lg)', 

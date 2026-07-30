@@ -529,6 +529,16 @@ ol {
   }
 }
 
+/* Reset autofill backgrounds */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-heading) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* ============================================================
    Typography
    ============================================================ */
@@ -1495,7 +1505,7 @@ ol {
 .dashboard-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.5rem 1rem 4rem 1rem;
+  padding: 0.5rem 1rem 8rem 1rem;
 }
 
 .dashboard-header {
@@ -1529,27 +1539,62 @@ ol {
 
 .dashboard-categories {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 3rem;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dashboard-categories::-webkit-scrollbar {
+  display: none;
 }
 
 .category-pill {
-  padding: 0.5rem 1.5rem;
-  background: var(--bg-secondary);
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.category-pill:hover,
+.category-pill svg {
+  stroke-width: 2.5;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.category-pill:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-heading);
+  transform: translateY(-1px);
+}
+
+.category-pill:hover svg {
+  opacity: 1;
+}
+
 .category-pill.active {
-  background: var(--brand-primary);
-  color: white;
-  border-color: var(--brand-primary);
+  background: var(--text-heading);
+  color: var(--bg-base);
+  border-color: var(--text-heading);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.category-pill.active svg {
+  opacity: 1;
+  color: var(--bg-base);
 }
 
 .feed-grid {
@@ -1996,4 +2041,43 @@ ol {
   .messages-mobile-inbox {
     display: none;
   }
+}
+
+/* ============================================================
+   Broadcast Button UI
+   ============================================================ */
+.btn-broadcast {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: broadcast-pulse 2s infinite;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.btn-broadcast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(239, 68, 68, 0.35);
+}
+
+.btn-broadcast:active {
+  transform: translateY(1px);
+}
+
+@keyframes broadcast-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }

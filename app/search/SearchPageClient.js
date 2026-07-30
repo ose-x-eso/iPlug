@@ -243,6 +243,24 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                 )})}
               </>
             )}
+
+            {/* Always show Broadcast option if there are results, at the bottom */}
+            {(filteredPlugs.length > 0 || filteredProfiles.length > 0) && (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '2rem 1rem', marginTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                <h3 style={{ color: 'var(--text-heading)', fontSize: '1.1rem', marginBottom: '0.5rem' }}>Didn't find what you're looking for?</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>Broadcast this request to the iPlug community and let the right Plug find you.</p>
+                <button 
+                  className="native-btn-primary" 
+                  onClick={() => {
+                    setBroadcastDesc(searchQuery);
+                    setIsBroadcastModalOpen(true);
+                  }}
+                  style={{ margin: '0 auto' }}
+                >
+                  <Megaphone size={16} /> Broadcast Request
+                </button>
+              </div>
+            )}
           </section>
 
           {showSearchFab && (
@@ -277,6 +295,7 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
             </button>
           )}
         </main>
+      </div>
 
       {isBroadcastModalOpen && (
         <div style={{

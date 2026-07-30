@@ -23,7 +23,7 @@ export default function AppShell({ children, initialUser }) {
   const { toast } = useToast();
   const pathname = usePathname();
   const isMessagesPage = pathname?.startsWith('/messages');
-  
+  const isChatActive = pathname?.startsWith('/messages/') && pathname !== '/messages';
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
@@ -131,13 +131,15 @@ export default function AppShell({ children, initialUser }) {
     <div className="app-shell">
       <DesktopSidebar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
       
-      <main className="app-main-content">
+      <main className={`app-main-content ${isChatActive ? 'messages-full-screen' : ''}`}>
         {!isMessagesPage && <MobileTopNav unreadNotificationsCount={unreadNotificationsCount} />}
         
         {children}
       </main>
       
-      <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
+      {!isChatActive && (
+        <MobileTabBar user={user} unreadCount={unreadCount} unreadNotificationsCount={unreadNotificationsCount} onOpenCreate={() => setIsCreateOpen(true)} onOpenAuth={() => setIsAuthOpen(true)} />
+      )}
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       

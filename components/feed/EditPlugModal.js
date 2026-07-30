@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { updatePlug, deletePlug } from '@/app/actions/plugs';
 import { PILLARS, getCategoriesByPillar } from '@/utils/categories';
+import imageCompression from 'browser-image-compression';
 
 export default function EditPlugModal({ isOpen, onClose, plug }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,23 @@ export default function EditPlugModal({ isOpen, onClose, plug }) {
     formData.set('locations', JSON.stringify(locations));
     if (locations.length > 0) {
       formData.set('address', locations[0].address);
+    }
+
+    // Compress image before upload to drastically improve speed
+    const imageFile = formData.get('image_file');
+    if (imageFile && imageFile.size > 0) {
+      try {
+        const options = {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+          initialQuality: 0.8
+        };
+        const compressedFile = await imageCompression(imageFile, options);
+        formData.set('image_file', compressedFile, compressedFile.name);
+      } catch (error) {
+        console.error('Image compression failed:', error);
+      }
     }
 
     const result = await updatePlug(plug.id, formData);

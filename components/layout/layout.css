@@ -15,6 +15,10 @@
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 70px);
 }
 
+.app-main-content.messages-full-screen {
+  padding-bottom: 0 !important;
+}
+
 .app-main-content.no-bottom-padding {
   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
 }
@@ -303,7 +307,7 @@
 .feedback-widget-container {
   position: fixed;
   bottom: 120px;
-  right: 1rem;
+  left: 1rem;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -329,12 +333,14 @@
   .feedback-widget-container {
     bottom: 2rem;
     right: 2rem;
+    left: auto;
   }
 }
 
 .simulator-active .feedback-widget-container {
   bottom: 120px !important;
-  right: 1rem !important;
+  left: 1rem !important;
+  right: auto !important;
 }
 
 .simulator-active .app-shell {

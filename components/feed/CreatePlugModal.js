@@ -5,6 +5,8 @@ import { createPlug } from '@/app/actions/plugs';
 import { PILLARS, getCategoriesByPillar } from '@/utils/categories';
 import { useToast } from '@/components/ui/ToastProvider';
 
+import imageCompression from 'browser-image-compression';
+
 export default function CreatePlugModal({ isOpen, onClose }) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +54,24 @@ export default function CreatePlugModal({ isOpen, onClose }) {
     formData.set('locations', JSON.stringify(locations));
     if (locations.length > 0) {
       formData.set('address', locations[0].address);
+    }
+
+    // Compress image before upload to drastically improve speed
+    const imageFile = formData.get('image_file');
+    if (imageFile && imageFile.size > 0) {
+      try {
+        const options = {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+          initialQuality: 0.8
+        };
+        const compressedFile = await imageCompression(imageFile, options);
+        formData.set('image_file', compressedFile, compressedFile.name);
+      } catch (error) {
+        console.error('Image compression failed:', error);
+        // proceed with uncompressed if it fails
+      }
     }
 
     const result = await createPlug(formData);
