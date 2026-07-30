@@ -4,8 +4,8 @@ self.addEventListener('push', function(event) {
     const title = data.title || 'iPlug Notification';
     const options = {
       body: data.body || 'You have a new message.',
-      icon: data.icon || '/icon-192x192.png',
-      badge: '/icon-192x192.png',
+      icon: data.icon || '/iplug_logo.png',
+      badge: '/iplug_logo.png',
       vibrate: [100, 50, 100],
       data: {
         url: data.url || '/'
