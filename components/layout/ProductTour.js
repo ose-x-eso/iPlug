@@ -23,20 +23,20 @@ export default function ProductTour() {
           }
         },
         {
-          element: 'a.nav-item[href="/"], a.tab-item[href="/"]',
+          element: isMobile ? 'a.tab-item[href="/"]' : 'a.nav-item[href="/"]',
           popover: {
             title: 'Home Feed',
             description: 'This is your dashboard. Discover trending shops, local services, and events right around you.',
-            side: 'right',
+            side: isMobile ? 'top' : 'right',
             align: 'start'
           }
         },
         {
-          element: 'a.nav-item[href="/search"], a.tab-item[href="/search"]',
+          element: isMobile ? 'a.tab-item[href="/search"]' : 'a.nav-item[href="/search"]',
           popover: {
             title: 'Hyperlocal Search',
             description: 'Looking for a specific skill, shop, or place? Search instantly and find who is closest to you.',
-            side: 'right',
+            side: isMobile ? 'top' : 'right',
             align: 'center'
           }
         },
@@ -50,11 +50,11 @@ export default function ProductTour() {
           }
         },
         {
-          element: 'a.nav-item[href="/messages"], a.tab-item[href="/messages"]',
+          element: isMobile ? 'a.tab-item[href="/messages"]' : 'a.nav-item[href="/messages"]',
           popover: {
             title: 'Direct Inbox',
             description: 'Chat directly with service providers, haggle prices, and negotiate safely without leaving the app.',
-            side: 'right',
+            side: isMobile ? 'top' : 'right',
             align: 'end'
           }
         },
