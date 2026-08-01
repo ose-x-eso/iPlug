@@ -23,39 +23,21 @@ export default function ProductTour() {
           }
         },
         {
-          element: isMobile ? '#tour-map' : '.desktop-only a[href="/"]',
+          element: 'a[href="/"]', // Works on both MobileTabBar and DesktopSidebar
           popover: {
-            title: isMobile ? 'The Map' : 'Home Feed',
+            title: 'Home Feed',
             description: 'Discover people, services, and events exactly where they are on the live map.',
             side: 'bottom',
             align: 'start'
           }
         },
         {
-          element: '#tour-post', // Mobile bottom nav post button
+          element: isMobile ? '.tab-action-btn' : '.new-plug-btn', // Works on both MobileTabBar and DesktopSidebar
           popover: {
             title: 'Post a Plug',
             description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered.',
-            side: 'top',
-            align: 'center'
-          }
-        },
-        {
-          element: '#tour-post-desktop', // Desktop post button
-          popover: {
-            title: 'Post a Plug',
-            description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered.',
-            side: 'bottom',
-            align: 'end'
-          }
-        },
-        {
-          element: '#tour-login', // Get Started button for logged out users
-          popover: {
-            title: 'Get Started',
-            description: 'Sign in to chat with providers, leave reviews, and post your own plugs!',
-            side: 'bottom',
-            align: 'end'
+            side: isMobile ? 'top' : 'bottom',
+            align: isMobile ? 'center' : 'end'
           }
         }
       ];
