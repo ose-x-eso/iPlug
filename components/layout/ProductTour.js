@@ -23,6 +23,15 @@ export default function ProductTour() {
           }
         },
         {
+          element: isMobile ? '#tour-map' : 'a.nav-item[href="/map"]',
+          popover: {
+            title: 'The Map',
+            description: 'Discover people, services, and events exactly where they are on the live map.',
+            side: isMobile ? 'bottom' : 'right',
+            align: 'start'
+          }
+        },
+        {
           element: isMobile ? 'a.tab-item[href="/"]' : 'a.nav-item[href="/"]',
           popover: {
             title: 'Home Feed',
