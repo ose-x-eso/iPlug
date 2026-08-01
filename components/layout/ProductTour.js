@@ -23,21 +23,48 @@ export default function ProductTour() {
           }
         },
         {
-          element: 'a[href="/"]', // Works on both MobileTabBar and DesktopSidebar
+          element: 'a.nav-item[href="/"], a.tab-item[href="/"]',
           popover: {
             title: 'Home Feed',
-            description: 'Discover people, services, and events exactly where they are on the live map.',
-            side: 'bottom',
+            description: 'This is your dashboard. Discover trending shops, local services, and events right around you.',
+            side: 'right',
             align: 'start'
           }
         },
         {
-          element: isMobile ? '.tab-action-btn' : '.new-plug-btn', // Works on both MobileTabBar and DesktopSidebar
+          element: 'a.nav-item[href="/search"], a.tab-item[href="/search"]',
+          popover: {
+            title: 'Hyperlocal Search',
+            description: 'Looking for a specific skill, shop, or place? Search instantly and find who is closest to you.',
+            side: 'right',
+            align: 'center'
+          }
+        },
+        {
+          element: isMobile ? '.tab-action-btn' : '.new-plug-btn',
           popover: {
             title: 'Post a Plug',
-            description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered.',
-            side: isMobile ? 'top' : 'bottom',
+            description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered by locals.',
+            side: isMobile ? 'top' : 'right',
             align: isMobile ? 'center' : 'end'
+          }
+        },
+        {
+          element: 'a.nav-item[href="/messages"], a.tab-item[href="/messages"]',
+          popover: {
+            title: 'Direct Inbox',
+            description: 'Chat directly with service providers, haggle prices, and negotiate safely without leaving the app.',
+            side: 'right',
+            align: 'end'
+          }
+        },
+        {
+          element: undefined,
+          popover: {
+            title: 'You\'re All Set! 🎉',
+            description: 'Your local economy is now at your fingertips. Go ahead and explore what your city has to offer.',
+            side: 'bottom',
+            align: 'center'
           }
         }
       ];
