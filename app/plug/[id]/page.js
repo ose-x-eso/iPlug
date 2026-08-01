@@ -6,6 +6,7 @@ import BackButton from '@/components/layout/BackButton';
 import RecentlyViewedTracker from '@/components/feed/RecentlyViewedTracker';
 import PlugDetailActions from '@/components/feed/PlugDetailActions';
 import PlugShareActions from '@/components/feed/PlugShareActions';
+import ReportPlugButton from '@/components/feed/ReportPlugButton';
 import { Package, MapPin, Star, Tag, LinkIcon, Phone, Mail, MessageSquare } from 'lucide-react';
 
 export async function generateMetadata(props) {
@@ -256,13 +257,7 @@ export default async function PlugDetailsPage(props) {
                       </div>
                       
                       <PlugShareActions plugTitle={plug.title} isOwner={false} />
-                      
-                      <button 
-                        onClick={() => alert('Report submitted to admins. Thank you for keeping iPlug Hub safe.')}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.5rem', fontWeight: '600', color: '#ef4444', background: 'transparent', border: '1px dashed #ef4444', borderRadius: 'var(--radius-md)', cursor: 'pointer', marginTop: '1rem', fontSize: '0.9rem' }}
-                      >
-                        <AlertCircle size={16} /> Report this Plug
-                      </button>
+                      <ReportPlugButton />
                     </div>
                   ) : (
                     <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
