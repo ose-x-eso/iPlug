@@ -45,9 +45,7 @@ import PostHogProvider from '@/components/analytics/PostHogProvider';
 import PwaInstallPrompt from '@/components/layout/PwaInstallPrompt';
 import { Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/next';
-import dynamic from 'next/dynamic';
-
-const ProductTour = dynamic(() => import('@/components/layout/ProductTour'), { ssr: false });
+import ProductTour from '@/components/layout/ProductTour';
 
 export default function RootLayout({ children }) {
   return (
