@@ -6,6 +6,7 @@ import AppShell from "@/components/layout/AppShell";
 import EditPlugModal from './EditPlugModal';
 import { Mailbox, Pencil, Package, Wrench, ShoppingBag, Building, Sparkles, Megaphone, MapPin, Globe, AlertCircle, Target } from 'lucide-react';
 import OnboardingModal from '@/components/onboarding/OnboardingModal';
+import ProductTour from '@/components/layout/ProductTour';
 
 export default function DashboardFeed({ user, initialPlugs = [], initialProfiles = [] }) {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
     <AppShell initialUser={user}>
       <div className="dashboard-container">
         {user && <OnboardingModal userProfile={currentUserProfile} />}
+        {user && <ProductTour />}
       
       <main className="dashboard-main">
         
