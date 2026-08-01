@@ -12,9 +12,9 @@ export default function ProductTour() {
     if (!hasSeenTour) {
       const isMobile = window.innerWidth <= 768;
       
-      const steps = [
+      const rawSteps = [
         {
-          element: isMobile ? '#tour-map' : 'body',
+          element: undefined,
           popover: {
             title: 'Welcome to iPlug Hub! 👋',
             description: 'Your city in your pocket. Let\'s show you around the hyperlocal marketplace.',
@@ -25,14 +25,14 @@ export default function ProductTour() {
         {
           element: isMobile ? '#tour-map' : '.desktop-only a[href="/"]',
           popover: {
-            title: 'The Map',
+            title: isMobile ? 'The Map' : 'Home Feed',
             description: 'Discover people, services, and events exactly where they are on the live map.',
             side: 'bottom',
             align: 'start'
           }
         },
         {
-          element: isMobile ? '#tour-post' : '#tour-post-desktop',
+          element: '#tour-post', // Mobile bottom nav post button
           popover: {
             title: 'Post a Plug',
             description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered.',
@@ -41,21 +41,36 @@ export default function ProductTour() {
           }
         },
         {
-          element: isMobile ? '#tour-inbox' : '#tour-inbox-desktop',
+          element: '#tour-post-desktop', // Desktop post button
           popover: {
-            title: 'Direct Chat',
-            description: 'Message providers directly to negotiate. No middlemen.',
-            side: 'top',
+            title: 'Post a Plug',
+            description: 'Got a skill, shop, or service? Tap here to list yourself on the map and get discovered.',
+            side: 'bottom',
+            align: 'end'
+          }
+        },
+        {
+          element: '#tour-login', // Get Started button for logged out users
+          popover: {
+            title: 'Get Started',
+            description: 'Sign in to chat with providers, leave reviews, and post your own plugs!',
+            side: 'bottom',
             align: 'end'
           }
         }
       ];
 
+      // Only include steps where the element actually exists in the DOM right now, 
+      // OR where there is no element (like the welcome step)
+      const validSteps = rawSteps.filter(step => 
+        !step.element || document.querySelector(step.element) !== null
+      );
+
       const driverObj = driver({
         showProgress: true,
         allowClose: false,
         overlayColor: 'rgba(0, 0, 0, 0.7)',
-        steps: steps.filter(step => step.element !== null),
+        steps: validSteps,
         onDestroyStarted: () => {
           if (!driverObj.hasNextStep() || window.confirm("Are you sure you want to skip the tour?")) {
             driverObj.destroy();

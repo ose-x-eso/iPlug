@@ -255,6 +255,7 @@ export default function Navbar() {
           </div>
           ) : (
             <button 
+              id="tour-login"
               className="btn btn-primary btn-sm"
               onClick={() => setIsAuthOpen(true)}
             >
