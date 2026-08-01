@@ -8,6 +8,7 @@ import { Globe, Search, MessageSquare, Star, CheckCircle2, ChevronRight, Zap, Ch
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 import './landing.css';
 
@@ -54,19 +55,25 @@ export default function LandingPage() {
       <section className="hero">
         <div className="hero-background">
           {HERO_IMAGES.map((imgSrc, index) => (
-            <motion.img 
+            <motion.div 
               key={imgSrc}
-              src={imgSrc} 
-              alt={`Hero Background ${index + 1}`} 
-              className="hero-bg-img"
+              className="hero-bg-img-container"
               initial={{ opacity: 0, scale: 1.05 }}
               animate={{ 
                 opacity: index === currentSlide ? 0.6 : 0, 
                 scale: index === currentSlide ? 1 : 1.05 
               }}
               transition={{ duration: 2, ease: "easeInOut" }}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: index === currentSlide ? 1 : 0 }}
-            />
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: index === currentSlide ? 1 : 0 }}
+            >
+              <Image 
+                src={imgSrc} 
+                alt={`Hero Background ${index + 1}`} 
+                fill
+                priority={index === 0}
+                style={{ objectFit: 'cover' }}
+              />
+            </motion.div>
           ))}
           <div className="hero-overlay"></div>
         </div>
@@ -138,8 +145,8 @@ export default function LandingPage() {
               <h3>Locality Awareness</h3>
               <p>Moving to a new city? iPlug instantly reveals the hidden spots, trusted locals, and the social pulse of your new neighborhood the moment you arrive.</p>
             </div>
-            <div className="bento-visual map-visual">
-               <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop" alt="Map View" />
+            <div className="bento-visual map-visual" style={{ position: 'relative' }}>
+               <Image src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=800&auto=format&fit=crop" alt="Map View" fill style={{ objectFit: 'cover' }} />
             </div>
           </motion.div>
 
