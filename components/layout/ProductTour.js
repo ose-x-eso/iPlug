@@ -60,27 +60,27 @@ export default function ProductTour() {
         }
       ];
 
-      // Only include steps where the element actually exists in the DOM right now, 
-      // OR where there is no element (like the welcome step)
-      const validSteps = rawSteps.filter(step => 
-        !step.element || document.querySelector(step.element) !== null
-      );
-
-      const driverObj = driver({
-        showProgress: true,
-        allowClose: false,
-        overlayColor: 'rgba(0, 0, 0, 0.7)',
-        steps: validSteps,
-        onDestroyStarted: () => {
-          if (!driverObj.hasNextStep() || window.confirm("Are you sure you want to skip the tour?")) {
-            driverObj.destroy();
-            localStorage.setItem('iplug_tour_seen', 'true');
-          }
-        }
-      });
-
       // Start the tour after a short delay so the DOM has time to render
       setTimeout(() => {
+        // Only include steps where the element actually exists in the DOM right now, 
+        // OR where there is no element (like the welcome step)
+        const validSteps = rawSteps.filter(step => 
+          !step.element || document.querySelector(step.element) !== null
+        );
+
+        const driverObj = driver({
+          showProgress: true,
+          allowClose: false,
+          overlayColor: 'rgba(0, 0, 0, 0.7)',
+          steps: validSteps,
+          onDestroyStarted: () => {
+            if (!driverObj.hasNextStep() || window.confirm("Are you sure you want to skip the tour?")) {
+              driverObj.destroy();
+              localStorage.setItem('iplug_tour_seen', 'true');
+            }
+          }
+        });
+
         driverObj.drive();
       }, 1000);
     }
