@@ -255,6 +255,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
 
       {/* Messages Area */}
       <div className="chat-messages-area" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ background: 'var(--warning-subtle)', color: 'var(--warning)', padding: '0.75rem', borderRadius: 'var(--radius-md)', fontSize: '0.75rem', textAlign: 'center', marginBottom: '1rem', border: '1px solid var(--warning)' }}>
+          <strong>Safety Warning:</strong> iPlug Hub never asks for payment outside the platform. Meet in public places and never send money before a service is rendered.
+        </div>
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
             <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}><Hand size={16} className="inline-icon" /></span>

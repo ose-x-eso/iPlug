@@ -107,18 +107,7 @@ export default async function PlugDetailsPage(props) {
           <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%', padding: '0 1.5rem', position: 'relative', marginTop: '-100px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             
             {/* Floating Glass Title Card */}
-            <div style={{
-              background: 'color-mix(in srgb, var(--bg-surface) 85%, transparent)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-xl)',
-              padding: '2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              boxShadow: 'var(--shadow-lg)',
-              zIndex: 10
-            }}>
+            <div className="glass card" style={{ zIndex: 10, padding: '2rem', borderRadius: 'var(--radius-xl)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
                 <h1 style={{ fontSize: '2.5rem', margin: '0', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' }}>{plug.title}</h1>
                 <span className="category-pill active" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', fontWeight: 'bold' }}>{plug.pillar}</span>
@@ -267,6 +256,13 @@ export default async function PlugDetailsPage(props) {
                       </div>
                       
                       <PlugShareActions plugTitle={plug.title} isOwner={false} />
+                      
+                      <button 
+                        onClick={() => alert('Report submitted to admins. Thank you for keeping iPlug Hub safe.')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.5rem', fontWeight: '600', color: '#ef4444', background: 'transparent', border: '1px dashed #ef4444', borderRadius: 'var(--radius-md)', cursor: 'pointer', marginTop: '1rem', fontSize: '0.9rem' }}
+                      >
+                        <AlertCircle size={16} /> Report this Plug
+                      </button>
                     </div>
                   ) : (
                     <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

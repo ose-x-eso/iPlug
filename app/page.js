@@ -13,11 +13,13 @@ export default async function Home() {
       const { data: plugs } = await supabase
         .from('plugs')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50);
 
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('*');
+        .select('*')
+        .limit(50);
 
       const safeUser = JSON.parse(JSON.stringify(user));
       const safePlugs = JSON.parse(JSON.stringify(plugs || []));

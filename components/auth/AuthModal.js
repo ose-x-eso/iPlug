@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, signUp, sendPasswordResetEmail } from '@/app/actions/auth';
 import { Eye, EyeOff } from 'lucide-react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import Logo from '../layout/Logo';
 
 export default function AuthModal({ isOpen, onClose }) {
@@ -14,6 +15,9 @@ export default function AuthModal({ isOpen, onClose }) {
   const [successMsg, setSuccessMsg] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -46,12 +50,23 @@ export default function AuthModal({ isOpen, onClose }) {
     const formData = new FormData(e.target);
     let result;
 
+    // If CAPTCHA is configured, enforce it
+    if (turnstileSiteKey && !captchaToken && !isForgotPassword) {
+      setErrorMsg("Please complete the security check.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       if (isForgotPassword) {
         result = await sendPasswordResetEmail(formData);
       } else if (isLogin) {
+        // Pass the token to the server action
+        formData.append('cf-turnstile-response', captchaToken || '');
         result = await login(formData);
       } else {
+        // Pass the token to the server action
+        formData.append('cf-turnstile-response', captchaToken || '');
         result = await signUp(formData);
       }
     } catch (err) {
@@ -228,7 +243,18 @@ export default function AuthModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              <button type="submit" className="btn btn-primary btn-full" disabled={isLoading} style={{ marginTop: '0.5rem' }}>
+              {turnstileSiteKey && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem', marginBottom: '0.5rem' }}>
+                  <Turnstile 
+                    siteKey={turnstileSiteKey} 
+                    onSuccess={(token) => setCaptchaToken(token)}
+                    onError={() => setErrorMsg("Security check failed. Please try again.")}
+                    onExpire={() => setCaptchaToken(null)}
+                  />
+                </div>
+              )}
+
+              <button type="submit" className="btn btn-primary btn-full" disabled={isLoading || (turnstileSiteKey && !captchaToken)} style={{ marginTop: '0.5rem' }}>
                 {isLoading ? 'Loading...' : isLogin ? 'Log In' : 'Sign Up'}
               </button>
             </>
@@ -255,6 +281,11 @@ export default function AuthModal({ isOpen, onClose }) {
           )}
         </form>
 
+        {!isForgotPassword && (
+          <p style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+            By continuing, you agree to iPlug Hub's <a href="#" style={{ textDecoration: 'underline' }}>Terms of Service</a> and <a href="#" style={{ textDecoration: 'underline' }}>Privacy Policy</a>. iPlug Hub is a discovery platform and is not a party to any transactions.
+          </p>
+        )}
       </div>
     </div>
   );

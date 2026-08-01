@@ -33,12 +33,13 @@ export default function MobileBottomNav({ user, unreadCount, onOpenCreate, onOpe
       {/* Floating Action Buttons */}
       <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', margin: '0 -0.5rem' }}>
 
-        <button className="bottom-nav-item create-fab" onClick={onOpenCreate}>
+        <button id="tour-post" className="bottom-nav-item create-fab" onClick={onOpenCreate} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'transparent', border: 'none', color: 'inherit' }}>
           <div className="fab-icon"><Plus size={16} className="inline-icon" /></div>
+          <span className="bottom-nav-label" style={{ marginTop: '4px' }}>Post</span>
         </button>
       </div>
 
-      <Link href="/messages" className={`bottom-nav-item ${pathname === '/messages' || pathname?.startsWith('/messages/') ? 'active' : ''}`} style={{ position: 'relative' }}>
+      <Link id="tour-inbox" href="/messages" className={`bottom-nav-item ${pathname === '/messages' || pathname?.startsWith('/messages/') ? 'active' : ''}`} style={{ position: 'relative' }}>
         <span className="bottom-nav-icon"><Inbox size={16} className="inline-icon" /></span>
         <span className="bottom-nav-label">Inbox</span>
         {unreadCount > 0 && (

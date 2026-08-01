@@ -9,10 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.4",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.5",
     "@vercel/analytics": "^2.0.1",
     "browser-image-compression": "^2.0.2",
+    "driver.js": "^1.8.0",
     "framer-motion": "^12.42.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.24.0",

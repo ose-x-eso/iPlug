@@ -184,13 +184,14 @@ export default function Navbar() {
 
               
               <button 
+                id="tour-post-desktop"
                 className="btn btn-primary btn-sm desktop-only"
                 onClick={() => setIsCreateOpen(true)}
               >
                 + List a Plug
               </button>
               
-              <Link href="/messages" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
+              <Link id="tour-inbox-desktop" href="/messages" className="btn btn-secondary desktop-only" style={{ textDecoration: 'none', position: 'relative' }}>
                 <Inbox size={16} className="inline-icon" /> Inbox
                 {unreadCount > 0 && (
                   <span style={{

@@ -30,17 +30,23 @@ export default function MobileTopNav({ unreadNotificationsCount }) {
         <Logo size={24} showText={true} />
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <Link href="/map" style={{ color: 'var(--text-secondary)' }} title="Map">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Link id="tour-map" href="/map" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', gap: '2px' }} title="Map">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+          <span style={{ fontSize: '0.65rem', fontWeight: 500 }}>Map</span>
         </Link>
-        <Link href="/my-plugs" style={{ color: 'var(--text-secondary)' }}>
+        <Link href="/my-plugs" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', gap: '2px' }}>
           <Package size={20} />
+          <span style={{ fontSize: '0.65rem', fontWeight: 500 }}>Plugs</span>
         </Link>
-        <Link href="/settings" style={{ color: 'var(--text-secondary)' }}>
+        <Link href="/settings" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'var(--text-secondary)', textDecoration: 'none', gap: '2px' }}>
           <Settings size={20} />
+          <span style={{ fontSize: '0.65rem', fontWeight: 500 }}>Settings</span>
         </Link>
-        <NotificationsDropdown unreadCount={unreadNotificationsCount} />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+          <NotificationsDropdown unreadCount={unreadNotificationsCount} />
+          <span style={{ fontSize: '0.65rem', fontWeight: 500, color: 'var(--text-secondary)' }}>Alerts</span>
+        </div>
       </div>
     </header>
   );

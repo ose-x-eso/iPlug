@@ -5,15 +5,7 @@
    
    60-30-10 Strategy:
      60% → Warm Ivory / Deep Void (backgrounds)
-     30% → Warm surfaces, cards, structural (elevated)
-     10% → Tangerine→Coral GRADIENT accent (CTAs only)
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
-
-/* ============================================================
-   Tokens
-   ============================================================ */
 
 :root {
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -54,19 +46,12 @@
   --max-width: 1200px;
 
   /* ---- Simplified Single Accent Color ---- */
-  --gradient-accent: #2563eb;
-  --gradient-accent-hover: #1d4ed8;
-  --gradient-accent-subtle: rgba(37, 99, 235, 0.08);
-  --accent-primary: #2563eb;
-  --accent-secondary: #1d4ed8;
+  --gradient-accent: #FF6B35;
+  --gradient-accent-hover: #E85A2A;
+  --gradient-accent-subtle: rgba(255, 107, 53, 0.08);
+  --accent-primary: #FF6B35;
+  --accent-secondary: #E85A2A;
 }
-
-/* ============================================================
-   LIGHT MODE
-   60%: #EDEBE7 true greige
-   30%: #FDFCFA off-white cards, #DBD7D0 greige borders
-   10%: Gradient CTAs
-   ============================================================ */
 
 [data-theme="light"],
 :root {
@@ -81,10 +66,10 @@
   --bg-input-focus: #ffffff;
   --bg-section-alt: #e2e8f0;
 
-  --accent-flat: #2563eb;
-  --accent-text: #1d4ed8;
-  --accent-subtle: rgba(37, 99, 235, 0.07);
-  --accent-medium: rgba(37, 99, 235, 0.14);
+  --accent-flat: #FF6B35;
+  --accent-text: #E85A2A;
+  --accent-subtle: rgba(255, 107, 53, 0.07);
+  --accent-medium: rgba(255, 107, 53, 0.14);
 
   --text-heading: #1A1A1F;
   --text-body: #44444D;
@@ -128,13 +113,6 @@
   --overlay: rgba(26, 26, 31, 0.45);
 }
 
-/* ============================================================
-   DARK MODE
-   60%: #161412 dark greige (warm charcoal)
-   30%: #1F1C19 warm dark surfaces
-   10%: Gradient CTAs (brighter)
-   ============================================================ */
-
 [data-theme="dark"] {
   /* 60% — Ultra Premium Dark (Vercel/Lovable style) */
   --bg-base: #09090B;
@@ -149,11 +127,11 @@
   --bg-input-focus: #18181B;
   --bg-section-alt: #0C0C0E;
 
-  /* Vibrant Accent - Electric Blue */
-  --accent-flat: #2563eb;
-  --accent-text: #60a5fa;
-  --accent-subtle: rgba(37, 99, 235, 0.1);
-  --accent-medium: rgba(37, 99, 235, 0.2);
+  /* Vibrant Accent - Orange */
+  --accent-flat: #FF6B35;
+  --accent-text: #FF8C66;
+  --accent-subtle: rgba(255, 107, 53, 0.1);
+  --accent-medium: rgba(255, 107, 53, 0.2);
 
   /* Crisp, high-contrast text */
   --text-heading: #FFFFFF;
@@ -165,7 +143,7 @@
   /* Subtle sleek borders */
   --border: #27272A;
   --border-strong: #3F3F46;
-  --border-accent: rgba(37, 99, 235, 0.3);
+  --border-accent: rgba(255, 107, 53, 0.3);
   --divider: #18181B;
 
   /* Premium glowing shadows */
@@ -174,8 +152,8 @@
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.7);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.8);
   --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.9);
-  --shadow-glow: 0 4px 30px rgba(37, 99, 235, 0.15);
-  --shadow-glow-lg: 0 8px 50px rgba(37, 99, 235, 0.25);
+  --shadow-glow: 0 4px 30px rgba(255, 107, 53, 0.15);
+  --shadow-glow-lg: 0 8px 50px rgba(255, 107, 53, 0.25);
 
   --success: #10B981;
   --success-subtle: rgba(16, 185, 129, 0.15);
@@ -191,17 +169,13 @@
   --pill-text-active: #09090B;
   --pill-border: #27272A;
 
-  --badge-bg: rgba(37, 99, 235, 0.15);
-  --badge-text: #60a5fa;
+  --badge-bg: rgba(255, 107, 53, 0.15);
+  --badge-text: #FF8C66;
 
   --chat-received-bg: #18181B;
 
   --overlay: rgba(0, 0, 0, 0.8);
 }
-
-/* ============================================================
-   Reset
-   ============================================================ */
 
 *,
 *::before,
@@ -304,10 +278,6 @@ ol {
   border-radius: var(--radius-full);
 }
 
-/* ============================================================
-   GRADIENT CTA BUTTONS — The 10% Accent
-   ============================================================ */
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -326,7 +296,6 @@ ol {
   transform: scale(0.96);
 }
 
-/* PRIMARY — Gradient accent. THE standout element */
 .btn-primary {
   background: var(--gradient-accent);
   color: var(--text-on-accent);
@@ -359,7 +328,6 @@ ol {
   z-index: 1;
 }
 
-/* SECONDARY */
 .btn-secondary {
   background: var(--bg-surface);
   color: var(--text-body);
@@ -373,7 +341,6 @@ ol {
   box-shadow: var(--shadow-sm);
 }
 
-/* GHOST */
 .btn-ghost {
   background: transparent;
   color: var(--text-muted);
@@ -405,10 +372,6 @@ ol {
   border-radius: var(--radius-full);
 }
 
-/* ============================================================
-   Cards — 30% Structural
-   ============================================================ */
-
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -426,10 +389,6 @@ ol {
 .card-body {
   padding: var(--space-lg);
 }
-
-/* ============================================================
-   Inputs
-   ============================================================ */
 
 .input-field {
   width: 100%;
@@ -451,10 +410,6 @@ ol {
   border-color: var(--accent-flat);
   box-shadow: 0 0 0 3px var(--accent-subtle);
 }
-
-/* ============================================================
-   Badges & Pills
-   ============================================================ */
 
 .badge {
   display: inline-flex;
@@ -501,9 +456,6 @@ ol {
   border-color: transparent;
 }
 
-/* ============================================================
-   Loading Animations
-   ============================================================ */
 .loader-pulse {
   width: 40px;
   height: 40px;
@@ -529,7 +481,6 @@ ol {
   }
 }
 
-/* Reset autofill backgrounds */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
@@ -538,10 +489,6 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: var(--text-heading) !important;
   transition: background-color 5000s ease-in-out 0s;
 }
-
-/* ============================================================
-   Typography
-   ============================================================ */
 
 .skeleton {
   background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-surface-hover) 50%, var(--bg-input) 75%);
@@ -559,10 +506,6 @@ input:-webkit-autofill:active {
     background-position: -200% 0;
   }
 }
-
-/* ============================================================
-   Animations
-   ============================================================ */
 
 @keyframes fadeUp {
   from {
@@ -646,7 +589,6 @@ input:-webkit-autofill:active {
   animation-delay: 500ms;
 }
 
-/* Micro-animations */
 .hover-scale {
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -672,9 +614,6 @@ input:-webkit-autofill:active {
   border-color: var(--accent-flat);
 }
 
-/* ============================================================
-   Layout Padding Fixes for Mobile Tab Bar
-   ============================================================ */
 .dashboard-main {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px) !important;
 }
@@ -695,10 +634,6 @@ input:-webkit-autofill:active {
   }
 }
 
-/* ============================================================
-   Utilities
-   ============================================================ */
-
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -717,7 +652,6 @@ input:-webkit-autofill:active {
   border: 0;
 }
 
-/* ---- Glassmorphism ---- */
 .glass {
   background: var(--bg-nav);
   backdrop-filter: blur(24px) saturate(180%);
@@ -733,17 +667,12 @@ input:-webkit-autofill:active {
   box-shadow: var(--shadow-lg);
 }
 
-/* ---- Gradient Text ---- */
 .gradient-text {
   background: var(--gradient-accent);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-/* ============================================================
-   LANDING PAGE
-   ============================================================ */
 
 .landing {
   min-height: 100dvh;
