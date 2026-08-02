@@ -14,7 +14,17 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   const [isPending, startTransition] = useTransition();
   const [showMenu, setShowMenu] = useState(false);
   const [hideDistance, setHideDistance] = useState(false);
+  
+  // New States for Media
+  const [attachmentFile, setAttachmentFile] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
   const supabase = createClient();
 
   const displayName = otherUser?.username || otherUser?.full_name || otherUser?.email?.split('@')[0] || "User";
@@ -112,35 +122,132 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     }
   }, [messages, currentUser.id, otherUser.id]);
 
+  const uploadToStorage = async (file, pathPrefix = 'files') => {
+    const fileExt = file.name.split('.').pop() || 'webm';
+    const fileName = `${pathPrefix}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${currentUser.id}/${fileName}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('chat_attachments')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('chat_attachments')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioFile = new File([audioBlob], 'voice_note.webm', { type: 'audio/webm' });
+        
+        setIsUploading(true);
+        try {
+          const voice_note_url = await uploadToStorage(audioFile, 'voice');
+          
+          const formData = new FormData();
+          formData.append('receiver_id', otherUser.id);
+          formData.append('content', '');
+          formData.append('voice_note_url', voice_note_url);
+
+          const result = await sendMessage(formData);
+          if (result?.error) alert("Failed to send voice note: " + result.error);
+        } catch (err) {
+          console.error("Voice note upload error:", err);
+          alert("Could not upload voice note.");
+        } finally {
+          setIsUploading(false);
+        }
+        
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      // Simple timer
+      const timer = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+      mediaRecorderRef.current.timer = timer;
+
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Microphone access denied or unavailable.");
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      clearInterval(mediaRecorderRef.current.timer);
+      setIsRecording(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const content = form.content.value;
+    const content = form.content?.value || '';
     
-    if (!content.trim()) return;
+    if (!content.trim() && !attachmentFile) return;
 
     setIsSending(true);
-
-    const formData = new FormData();
-    formData.append('receiver_id', otherUser.id);
-    formData.append('content', content);
-
-    // Clear input immediately for better UX
-    form.reset();
+    setIsUploading(true);
+    setShowAttachments(false);
 
     startTransition(async () => {
       try {
+        const formData = new FormData();
+        formData.append('receiver_id', otherUser.id);
+        formData.append('content', content);
+
+        if (attachmentFile) {
+          const file_url = await uploadToStorage(attachmentFile, 'file');
+          formData.append('file_url', file_url);
+          formData.append('file_name', attachmentFile.name);
+          formData.append('file_type', attachmentFile.type.startsWith('image/') ? 'image' : 'document');
+        }
+
         const result = await sendMessage(formData);
         
         if (result?.error) {
           alert("Failed to send: " + result.error);
+        } else {
+          form.reset();
+          setAttachmentFile(null);
         }
       } catch (err) {
         console.error("Message send error:", err);
       } finally {
         setIsSending(false);
+        setIsUploading(false);
       }
     });
+  };
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
   return (
@@ -271,11 +378,23 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                 <div style={{ 
                   background: isMine ? 'linear-gradient(45deg, var(--accent-primary), var(--accent-secondary))' : 'var(--bg-input)', 
                   color: isMine ? 'white' : 'var(--text-heading)',
-                  padding: '0.75rem 1rem', 
+                  padding: (msg.file_url && msg.file_type === 'image') ? '0.25rem' : '0.75rem 1rem', 
                   borderRadius: isMine ? '1rem 1rem 0 1rem' : '1rem 1rem 1rem 0',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  overflow: 'hidden'
                 }}>
-                  {msg.content}
+                  {msg.file_url && msg.file_type === 'image' && (
+                    <img src={msg.file_url} alt="Attachment" style={{ width: '100%', maxWidth: '300px', borderRadius: '0.75rem', display: 'block', marginBottom: msg.content ? '0.5rem' : 0 }} />
+                  )}
+                  {msg.file_url && msg.file_type === 'document' && (
+                    <a href={msg.file_url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none', background: 'rgba(0,0,0,0.1)', padding: '0.5rem', borderRadius: '0.5rem', marginBottom: msg.content ? '0.5rem' : 0 }}>
+                      📄 <span>{msg.file_name || 'Document'}</span>
+                    </a>
+                  )}
+                  {msg.voice_note_url && (
+                    <audio controls src={msg.voice_note_url} style={{ width: '200px', height: '40px', outline: 'none' }} />
+                  )}
+                  {msg.content && <div style={{ padding: (msg.file_url && msg.file_type === 'image') ? '0 0.5rem 0.5rem 0.5rem' : 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.content}</div>}
                 </div>
                 <div style={{ 
                   fontSize: '0.65rem', 
@@ -312,6 +431,20 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       {/* Input Area */}
       <div style={{ padding: '0.75rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px)) 1rem', borderTop: '1px solid var(--border)', background: 'var(--bg-card)', position: 'relative' }}>
         
+        {/* Hidden File Input */}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          style={{ display: 'none' }} 
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              setAttachmentFile(e.target.files[0]);
+              setShowAttachments(false);
+            }
+          }}
+          accept="image/*,application/pdf,.doc,.docx"
+        />
+
         {/* Attachment Menu Popup */}
         {showAttachments && (
           <div style={{
@@ -324,24 +457,21 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             borderRadius: '1rem',
             padding: '0.5rem',
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(2, 1fr)',
             gap: '1rem',
             boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
             zIndex: 100,
-            width: '240px'
+            width: '200px'
           }}>
             {[
-              { icon: '📷', label: 'Photo/Video', color: '#ec4899' },
-              { icon: <MapPin size={16} className="inline-icon" />, label: 'Location', color: '#10b981' },
-              { icon: '📄', label: 'Document', color: '#8b5cf6' },
-              { icon: <User size={16} className="inline-icon" />, label: 'Contact', color: '#6366f1' }
+              { icon: '📷', label: 'Photo/Video', color: '#ec4899', action: () => fileInputRef.current?.click() },
+              { icon: '📄', label: 'Document', color: '#8b5cf6', action: () => fileInputRef.current?.click() },
+              { icon: <MapPin size={16} className="inline-icon" />, label: 'Location', color: '#10b981', action: () => alert("Location coming soon!") },
+              { icon: <User size={16} className="inline-icon" />, label: 'Contact', color: '#6366f1', action: () => alert("Contact coming soon!") }
             ].map((item, idx) => (
               <div 
                 key={idx}
-                onClick={() => {
-                  alert(`${item.label} attachment is coming soon!`);
-                  setShowAttachments(false);
-                }}
+                onClick={item.action}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -374,6 +504,15 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           </div>
         )}
 
+        {attachmentFile && (
+          <div style={{ padding: '0.5rem', background: 'var(--bg-input)', borderRadius: '0.5rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {attachmentFile.type.startsWith('image/') ? '📷' : '📄'} {attachmentFile.name}
+            </span>
+            <button type="button" onClick={() => setAttachmentFile(null)} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}>✕</button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }} autoComplete="off">
           <input type="hidden" name="receiver_id" value={otherUser?.id} />
           
@@ -400,31 +539,56 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
             +
           </button>
 
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', padding: '0 0.5rem 0 1rem' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', padding: '0 0.5rem 0 1rem', opacity: isUploading ? 0.5 : 1 }}>
             <input 
               type="text" 
               name="content"
-              placeholder="Type a message..." 
-              disabled={isSending}
+              placeholder={isRecording ? `Recording... ${formatTime(recordingTime)}` : "Type a message..."}
+              disabled={isSending || isUploading || isRecording}
               autoComplete="off"
-              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: 'var(--text-heading)', outline: 'none' }}
+              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: isRecording ? '#ef4444' : 'var(--text-heading)', outline: 'none', fontWeight: isRecording ? 'bold' : 'normal' }}
             />
             
             {/* Camera inside input bar */}
-            <button type="button" onClick={() => alert("Camera coming soon!")} style={{ padding: '0.5rem', color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isSending || isUploading || isRecording} style={{ padding: '0.5rem', color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             </button>
           </div>
           
           {/* Microphone next to Send / in input bar area */}
-          <button type="button" onClick={() => alert("Voice note coming soon!")} style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', background: 'var(--bg-input)', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+          <button 
+            type="button" 
+            onMouseDown={handleStartRecording}
+            onMouseUp={handleStopRecording}
+            onMouseLeave={handleStopRecording}
+            onTouchStart={handleStartRecording}
+            onTouchEnd={handleStopRecording}
+            disabled={isSending || isUploading}
+            style={{ 
+              width: '40px', 
+              height: '40px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              color: isRecording ? 'white' : 'var(--text-muted)', 
+              background: isRecording ? '#ef4444' : 'var(--bg-input)', 
+              borderRadius: '50%', 
+              border: 'none', 
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            {isUploading ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="spin-animation"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"></line></svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+            )}
           </button>
 
           <button 
             type="submit" 
-            disabled={isSending}
-            style={{ padding: '0.75rem 1.25rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--accent-flat)', color: 'white', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center' }}
+            disabled={isSending || isUploading}
+            style={{ padding: '0.75rem 1.25rem', borderRadius: 'var(--radius-full)', border: 'none', background: 'var(--accent-flat)', color: 'white', fontWeight: 'bold', cursor: (isSending || isUploading) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </button>

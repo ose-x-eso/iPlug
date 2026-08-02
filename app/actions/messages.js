@@ -12,15 +12,25 @@ export async function sendMessage(formData) {
 
   const receiver_id = formData.get('receiver_id')
   const content = formData.get('content')
+  const file_url = formData.get('file_url')
+  const file_name = formData.get('file_name')
+  const file_type = formData.get('file_type')
+  const voice_note_url = formData.get('voice_note_url')
 
-  if (!content || content.trim() === '') return { error: 'Message is empty' }
+  if ((!content || content.trim() === '') && !file_url && !voice_note_url) {
+    return { error: 'Message is empty' }
+  }
 
   const { error } = await supabase
     .from('messages')
     .insert({
       sender_id: user.id,
       receiver_id,
-      content
+      content: content || '',
+      file_url,
+      file_name,
+      file_type,
+      voice_note_url
     })
 
   if (error) {
@@ -35,7 +45,12 @@ export async function sendMessage(formData) {
       .single()
 
     const senderName = senderProfile?.username || senderProfile?.full_name || 'Someone'
-    const preview = content.trim()
+    let preview = content.trim()
+    if (!preview) {
+      if (voice_note_url) preview = 'Sent a voice note 🎤'
+      else if (file_url) preview = file_type === 'image' ? 'Sent a photo 📷' : 'Sent an attachment 📎'
+      else preview = 'Sent a message'
+    }
     const truncated = preview.length > 80 ? `${preview.substring(0, 80)}...` : preview
 
     await createNotification(
