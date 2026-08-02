@@ -84,10 +84,6 @@ export default async function PlugDetailsPage(props) {
         {/* DESKTOP & MOBILE LAYOUT COMBINED */}
         <main className="dashboard-main" style={{ padding: '0 0 4rem 0', display: 'flex', flexDirection: 'column' }}>
           
-          {/* Back Button Overlay */}
-          <div style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 50 }}>
-            <BackButton label="Back" />
-          </div>
 
           {/* Hero Header Image */}
           <div style={{ 
