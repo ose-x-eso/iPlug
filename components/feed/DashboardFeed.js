@@ -60,7 +60,7 @@ export default function DashboardFeed({ user, initialPlugs = [], initialProfiles
     <AppShell initialUser={user}>
       <div className="dashboard-container">
         {user && <OnboardingModal userProfile={currentUserProfile} />}
-        {user && <ProductTour />}
+        {user && currentUserProfile?.has_completed_onboarding !== false && <ProductTour />}
       
       <main className="dashboard-main">
         
