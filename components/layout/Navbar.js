@@ -68,6 +68,9 @@ export default function Navbar() {
     // Listen for auth changes
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      if (_event === 'SIGNED_IN' || _event === 'SIGNED_OUT') {
+        router.refresh();
+      }
     });
 
     // Listen for new incoming messages to update the badge!
