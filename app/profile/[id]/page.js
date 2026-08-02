@@ -251,11 +251,6 @@ export default async function ProfilePage(props) {
 
         {/* MOBILE LAYOUT */}
         <main className="dashboard-main mobile-profile-main mobile-only" style={{ paddingTop: 0, paddingLeft: 0, paddingRight: 0, paddingBottom: '90px', flexDirection: 'column' }}>
-          {!isOwner && (
-            <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 50 }}>
-              <BackButton label="Back" />
-            </div>
-          )}
           {/* Cover Photo / Header */}
           <div style={{ 
             height: '220px', 

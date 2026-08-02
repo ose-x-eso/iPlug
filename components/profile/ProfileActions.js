@@ -71,18 +71,53 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
       {profile?.phone_number && profile?.phone_visible !== false && (
         <a 
           href={`tel:${profile.phone_number}`}
-          className="native-btn-outline"
-          style={{ flex: '1 1 auto', minWidth: '100px', textDecoration: 'none' }}
+          className="btn"
+          style={{ 
+            flex: '1 1 auto', 
+            minWidth: '100px', 
+            textDecoration: 'none',
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '0.5rem', 
+            padding: '1rem', 
+            fontWeight: 'bold', 
+            fontSize: '1.05rem',
+            background: 'var(--bg-surface)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-full)',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+            transition: 'all 0.2s ease'
+          }}
         >
-          <Phone size={16} className="inline-icon" /> Call
+          <Phone size={18} className="inline-icon" style={{ color: 'var(--accent)' }} /> Call
         </a>
       )}
       <Link 
         href={`/messages/${profileId}`}
-        className="native-btn-primary"
-        style={{ flex: '1 1 auto', minWidth: '100px', textDecoration: 'none' }}
+        className="btn"
+        style={{ 
+          flex: '1 1 auto', 
+          minWidth: '100px', 
+          textDecoration: 'none',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '0.5rem', 
+          padding: '1rem', 
+          fontWeight: 'bold', 
+          fontSize: '1.05rem',
+          background: 'linear-gradient(135deg, var(--accent-flat), #6e27ff)',
+          color: 'white',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 'var(--radius-full)',
+          boxShadow: '0 8px 20px rgba(var(--accent-rgb), 0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+          textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+          transition: 'all 0.2s ease'
+        }}
       >
-        <MessageSquare size={16} className="inline-icon" /> Message
+        <MessageSquare size={18} className="inline-icon" /> Message
       </Link>
       <button 
         onClick={handleShare}
