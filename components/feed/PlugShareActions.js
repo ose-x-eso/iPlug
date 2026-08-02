@@ -33,27 +33,31 @@ export default function PlugShareActions({ plugTitle, isOwner }) {
     }
   };
 
-  const handleWhatsAppShare = () => {
-    const text = `${getShareText()} ${getShareUrl()}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
-      <button 
-        onClick={handleWhatsAppShare}
-        className="btn"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: 'bold', backgroundColor: '#25D366', color: 'white', border: 'none', borderRadius: 'var(--radius-md)' }}
-      >
-        <Share2 size={18} /> WhatsApp
-      </button>
+    <div style={{ display: 'flex', width: '100%', marginTop: '1rem' }}>
       <button 
         onClick={handleShare}
-        className="btn btn-secondary"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: 'bold', borderRadius: 'var(--radius-md)' }}
+        className="btn"
+        style={{ 
+          flex: 1,
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '0.5rem', 
+          padding: '1rem', 
+          fontWeight: 'bold', 
+          fontSize: '1.05rem',
+          background: 'linear-gradient(135deg, #111111, #2a2a2a)',
+          color: 'white',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 'var(--radius-full)',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+          cursor: 'pointer',
+          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+          transition: 'all 0.2s ease'
+        }}
       >
-        <Share2 size={18} /> Share Options
+        <Share2 size={20} /> {isOwner ? 'Share Hustle' : 'Share Profile'}
       </button>
     </div>
   );

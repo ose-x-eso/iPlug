@@ -141,18 +141,67 @@ export default function SettingsForm({ initialProfile }) {
           placeholder="+234..." 
           className="native-input"
         />
-      </div>
-
-      <div className="native-input-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '-0.5rem', marginBottom: '1.5rem' }}>
-        <input 
-          type="checkbox" 
-          name="phone_visible" 
-          id="phone_visible"
-          defaultChecked={initialProfile?.phone_visible ?? false}
-          style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--accent)' }}
-        />
-        <label htmlFor="phone_visible" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
-          Display phone number on my public profile
+      <style>{`
+        #phone_visible:checked + .toggle-slider {
+          background-color: var(--accent) !important;
+        }
+        #phone_visible:checked + .toggle-slider > span {
+          transform: translateX(20px) !important;
+        }
+      `}</style>
+      <div 
+        className="native-input-group" 
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          padding: '1.25rem',
+          marginTop: '-0.5rem', 
+          marginBottom: '1.5rem',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-lg)'
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <span style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-primary)' }}>Allow direct calls</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Let customers call your line directly from your profile.</span>
+        </div>
+        <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+          <input 
+            type="checkbox" 
+            name="phone_visible" 
+            id="phone_visible"
+            defaultChecked={initialProfile?.phone_visible ?? false}
+            style={{ opacity: 0, width: 0, height: 0 }}
+          />
+          <span 
+            className="toggle-slider"
+            style={{
+              position: 'absolute',
+              cursor: 'pointer',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundColor: initialProfile?.phone_visible ? 'var(--accent)' : 'var(--bg-input)',
+              border: '1px solid var(--border)',
+              transition: '.4s',
+              borderRadius: '24px'
+            }}
+          >
+            <span 
+              style={{
+                position: 'absolute',
+                content: '""',
+                height: '18px',
+                width: '18px',
+                left: '2px',
+                bottom: '2px',
+                backgroundColor: 'white',
+                transition: '.4s',
+                borderRadius: '50%',
+                transform: initialProfile?.phone_visible ? 'translateX(20px)' : 'translateX(0)'
+              }}
+            />
+          </span>
         </label>
       </div>
 

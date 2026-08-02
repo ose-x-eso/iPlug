@@ -35,28 +35,32 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
     }
   };
 
-  const handleWhatsAppShare = () => {
-    const text = `${getShareText()} ${getShareUrl()}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(whatsappUrl, '_blank');
-  };
-
   if (isOwner) {
     return (
-      <div style={{ display: 'flex', gap: '0.5rem', width: '100%', marginTop: '0.5rem' }}>
-        <button 
-          onClick={handleWhatsAppShare}
-          className="native-btn-primary"
-          style={{ flex: '1', backgroundColor: '#25D366', color: 'white', border: 'none' }}
-        >
-          <Handshake size={16} className="inline-icon" /> Share Hustle to WhatsApp
-        </button>
+      <div style={{ display: 'flex', width: '100%', marginTop: '0.5rem' }}>
         <button 
           onClick={handleShare}
-          className="native-btn-outline"
-          style={{ flex: '1', border: '1px solid var(--border)' }}
+          className="btn"
+          style={{ 
+            flex: 1,
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '0.5rem', 
+            padding: '1rem', 
+            fontWeight: 'bold', 
+            fontSize: '1.05rem',
+            background: 'linear-gradient(135deg, #111111, #2a2a2a)',
+            color: 'white',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 'var(--radius-full)',
+            boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+            cursor: 'pointer',
+            textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+            transition: 'all 0.2s ease'
+          }}
         >
-          More Sharing Options
+          <Handshake size={20} /> Share Hustle
         </button>
       </div>
     );
@@ -64,7 +68,7 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
 
   return (
     <>
-      {profile?.phone_number && (
+      {profile?.phone_number && profile?.phone_visible !== false && (
         <a 
           href={`tel:${profile.phone_number}`}
           className="native-btn-outline"
@@ -81,11 +85,29 @@ export default function ProfileActions({ profile, isOwner, profileId, user }) {
         <MessageSquare size={16} className="inline-icon" /> Message
       </Link>
       <button 
-        onClick={handleWhatsAppShare}
-        className="native-btn-outline"
-        style={{ flex: '1 1 auto', minWidth: '150px', border: '1px solid #25D366', color: '#25D366', backgroundColor: 'transparent' }}
+        onClick={handleShare}
+        className="btn"
+        style={{ 
+          flex: '1 1 100%',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '0.5rem', 
+          padding: '1rem', 
+          fontWeight: 'bold', 
+          fontSize: '1.05rem',
+          background: 'linear-gradient(135deg, #111111, #2a2a2a)',
+          color: 'white',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: 'var(--radius-full)',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+          cursor: 'pointer',
+          textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+          marginTop: '0.5rem',
+          transition: 'all 0.2s ease'
+        }}
       >
-        <Handshake size={16} className="inline-icon" /> Share to WhatsApp
+        <Handshake size={20} /> Share Profile
       </button>
     </>
   );
