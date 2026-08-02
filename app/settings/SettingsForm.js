@@ -141,6 +141,7 @@ export default function SettingsForm({ initialProfile }) {
           placeholder="+234..." 
           className="native-input"
         />
+      </div>
       <style>{`
         #phone_visible:checked + .toggle-slider {
           background-color: var(--accent) !important;
