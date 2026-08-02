@@ -182,8 +182,69 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
               </div>
             ) : (
               <>
-                {filteredProfiles.length > 0 && (
+                {filteredPlugs.length > 0 && (
                   <div style={{ gridColumn: '1 / -1', marginBottom: '0.5rem' }}>
+                    <h3 className="native-section-title" style={{ marginLeft: 0 }}>Plugs</h3>
+                  </div>
+                )}
+                
+                {filteredPlugs.map(plug => {
+                  const plugOwner = initialProfiles.find(p => p.id === plug.provider_id);
+                  const isRequesting = plugOwner?.is_requesting_skill;
+                  
+                  return (
+                  <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none' }}>
+                    <div className="feed-card" style={{ position: 'relative' }}>
+                      <div className="feed-card-image" style={{ 
+                        background: 'var(--bg-surface-raised)',
+                        backgroundImage: `url(${plug.image_url || 'https://images.unsplash.com/photo-1555636222-cae831e670b3?auto=format&fit=crop&q=80&w=400'})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        borderRadius: 'var(--radius-lg)'
+                      }}>
+                        {isRequesting && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '12px',
+                            right: '12px',
+                            background: 'rgba(239, 68, 68, 0.9)',
+                            backdropFilter: 'blur(8px)',
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            fontSize: '0.75rem',
+                            fontWeight: 'bold',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+                            animation: 'pulse 2s infinite'
+                          }}>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'white' }}></span>
+                            Needs a plug
+                          </div>
+                        )}
+                      </div>
+                      <div className="feed-card-content">
+                        <div className="feed-card-header">
+                          <h3 className="feed-card-title">{plug.title}</h3>
+                          <span className="feed-card-price" style={{ whiteSpace: 'nowrap' }}>{plug.price}</span>
+                        </div>
+                        <p className="feed-card-desc">{plug.description?.slice(0, 80)}{plug.description?.length > 80 ? '...' : ''}</p>
+                        <div className="feed-card-footer" style={{ marginTop: '0.75rem' }}>
+                          <span className="feed-card-category" style={{ padding: '0.25rem 0.75rem', background: 'var(--bg-input)', borderRadius: 'var(--radius-full)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>{plug.category}</span>
+                          <span className="feed-card-rating" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent)', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            {plug.rating || '5.0'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                )})}
+
+                {filteredProfiles.length > 0 && (
+                  <div style={{ gridColumn: '1 / -1', marginBottom: '0.5rem', marginTop: filteredPlugs.length > 0 ? '1.5rem' : '0' }}>
                     <h3 className="native-section-title" style={{ marginLeft: 0 }}>People</h3>
                     <div className="native-card">
                       {filteredProfiles.map(profile => (
@@ -232,45 +293,8 @@ export default function SearchPageClient({ user, initialPlugs = [], initialProfi
                     </div>
                   </div>
                 )}
-
-                {filteredPlugs.length > 0 && filteredProfiles.length > 0 && (
-                  <div style={{ gridColumn: '1 / -1', marginBottom: '0.5rem', marginTop: '1.5rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', color: 'var(--text-faint)' }}>Plugs</h3>
-                  </div>
-                )}
                 
-                {filteredPlugs.map(plug => {
-                  const plugOwner = initialProfiles.find(p => p.id === plug.provider_id);
-                  const isRequesting = plugOwner?.is_requesting_skill;
-                  
-                  return (
-                  <Link href={`/plug/${plug.id}`} key={plug.id} style={{ textDecoration: 'none' }}>
-                    <div className="feed-card" style={{ position: 'relative' }}>
-                      <div className="feed-card-image" style={{ 
-                        background: 'var(--bg-surface-raised)',
-                        backgroundImage: plug.image_url?.startsWith('http') ? `url(${plug.image_url})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}>
-                        {!plug.image_url?.startsWith('http') && <Package size={48} color="var(--text-muted)" />}
-                        {isRequesting && (
-                          <div style={{ position: 'absolute', top: '0.5rem', left: '0.5rem', background: 'var(--danger)', color: 'white', padding: '0.25rem 0.5rem', borderRadius: 'var(--radius-full)', fontSize: '0.7rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem', animation: 'pulse 2s infinite', boxShadow: '0 2px 8px var(--danger-subtle)' }}>
-                            <Target size={12} /> Seeking Skill
-                          </div>
-                        )}
-                      </div>
-                      <div className="feed-card-content">
-                        <div className="feed-card-header">
-                          <h3>{plug.title}</h3>
-                        </div>
-                        <p className="feed-card-desc">{plug.description}</p>
-                        <div className="feed-card-meta">
-                          <span><MapPin size={16} className="inline-icon" /> {plug.address || 'Location unknown'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                )})}
+
               </>
             )}
 
