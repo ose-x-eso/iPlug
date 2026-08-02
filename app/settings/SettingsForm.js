@@ -144,7 +144,8 @@ export default function SettingsForm({ initialProfile }) {
       </div>
       <style>{`
         #phone_visible:checked + .toggle-slider {
-          background-color: var(--accent) !important;
+          background-color: #34C759 !important;
+          border-color: #34C759 !important;
         }
         #phone_visible:checked + .toggle-slider > span {
           transform: translateX(20px) !important;
@@ -182,13 +183,14 @@ export default function SettingsForm({ initialProfile }) {
               position: 'absolute',
               cursor: 'pointer',
               top: 0, left: 0, right: 0, bottom: 0,
-              backgroundColor: initialProfile?.phone_visible ? 'var(--accent)' : 'var(--bg-input)',
+              backgroundColor: '#555', /* explicit default off color */
               border: '1px solid var(--border)',
               transition: '.4s',
               borderRadius: '24px'
             }}
           >
             <span 
+              className="toggle-knob"
               style={{
                 position: 'absolute',
                 content: '""',
@@ -199,7 +201,7 @@ export default function SettingsForm({ initialProfile }) {
                 backgroundColor: 'white',
                 transition: '.4s',
                 borderRadius: '50%',
-                transform: initialProfile?.phone_visible ? 'translateX(20px)' : 'translateX(0)'
+                transform: 'translateX(0)'
               }}
             />
           </span>
