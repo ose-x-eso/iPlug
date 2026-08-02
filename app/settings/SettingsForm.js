@@ -143,6 +143,19 @@ export default function SettingsForm({ initialProfile }) {
         />
       </div>
 
+      <div className="native-input-group" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '-0.5rem', marginBottom: '1.5rem' }}>
+        <input 
+          type="checkbox" 
+          name="phone_visible" 
+          id="phone_visible"
+          defaultChecked={initialProfile?.phone_visible ?? false}
+          style={{ width: '1.25rem', height: '1.25rem', accentColor: 'var(--accent)' }}
+        />
+        <label htmlFor="phone_visible" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
+          Display phone number on my public profile
+        </label>
+      </div>
+
       <div className="native-input-group">
         <label className="native-input-label">Email Address</label>
         <input 

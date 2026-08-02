@@ -177,8 +177,8 @@ export default function AuthModal({ isOpen, onClose }) {
               </div>
               <div className="auth-form-grid">
                 <div className="input-group">
-                  <label>Phone Number</label>
-                  <input type="tel" name="phoneNumber" required placeholder="+234..." autoComplete="tel" className="input-field" />
+                  <label>Phone Number (Optional)</label>
+                  <input type="tel" name="phoneNumber" placeholder="+234... (Optional)" autoComplete="tel" className="input-field" />
                 </div>
                 <div className="input-group">
                   <label>Email Address</label>

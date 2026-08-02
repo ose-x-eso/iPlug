@@ -236,7 +236,7 @@ export default async function PlugDetailsPage(props) {
                       </Link>
                       
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        {profile?.phone_number && (
+                        {(profile?.phone_number && profile?.phone_visible) && (
                           <a 
                             href={`tel:${profile.phone_number}`}
                             className="btn btn-secondary"
@@ -249,7 +249,7 @@ export default async function PlugDetailsPage(props) {
                           <a 
                             href={`mailto:${profile.email}`}
                             className="btn btn-secondary"
-                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: '600', gridColumn: !profile?.phone_number ? '1 / span 2' : 'auto' }}
+                            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none', padding: '0.75rem', fontWeight: '600', gridColumn: !(profile?.phone_number && profile?.phone_visible) ? '1 / span 2' : 'auto' }}
                           >
                             <Mail size={18} /> Email
                           </a>

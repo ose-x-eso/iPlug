@@ -14,6 +14,7 @@ export async function updateProfile(formData) {
 
   const fullName = formData.get('full_name')
   const phoneNumber = formData.get('phone_number')
+  const phoneVisible = formData.get('phone_visible') === 'on'
   const username = formData.get('username')?.toLowerCase();
 
   // Check username uniqueness
@@ -34,6 +35,7 @@ export async function updateProfile(formData) {
     .update({
       full_name: fullName,
       phone_number: phoneNumber,
+      phone_visible: phoneVisible,
       username: username,
     })
     .eq('id', user.id)
