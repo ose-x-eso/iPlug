@@ -18,11 +18,13 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   // New States for Media
   const [attachmentFile, setAttachmentFile] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
+  const pendingTextRef = useRef('');
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const supabase = createClient();
@@ -140,73 +142,117 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     return data.publicUrl;
   };
 
-  const handleStartRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
+  const handleMicClick = async () => {
+    if (isUploading || isSending) return;
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
+    if (!isRecording && !isPaused) {
+      // Start fresh recording
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        audioChunksRef.current = [];
 
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const audioFile = new File([audioBlob], 'voice_note.webm', { type: 'audio/webm' });
-        
-        setIsUploading(true);
-        try {
-          const voice_note_url = await uploadToStorage(audioFile, 'voice');
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const audioFile = new File([audioBlob], 'voice_note.webm', { type: 'audio/webm' });
           
-          const formData = new FormData();
-          formData.append('receiver_id', otherUser.id);
-          formData.append('content', '');
-          formData.append('voice_note_url', voice_note_url);
+          setIsUploading(true);
+          try {
+            const voice_note_url = await uploadToStorage(audioFile, 'voice');
+            
+            const formData = new FormData();
+            formData.append('receiver_id', otherUser.id);
+            formData.append('content', pendingTextRef.current);
+            formData.append('voice_note_url', voice_note_url);
 
-          const result = await sendMessage(formData);
-          if (result?.error) alert("Failed to send voice note: " + result.error);
-        } catch (err) {
-          console.error("Voice note upload error:", err);
-          alert("Could not upload voice note.");
-        } finally {
-          setIsUploading(false);
-        }
-        
-        // Stop all tracks
-        stream.getTracks().forEach(track => track.stop());
-      };
+            const result = await sendMessage(formData);
+            if (result?.error) alert("Failed to send voice note: " + result.error);
+            else pendingTextRef.current = '';
+          } catch (err) {
+            console.error("Voice note upload error:", err);
+            alert("Could not upload voice note.");
+          } finally {
+            setIsUploading(false);
+          }
+          
+          // Stop all tracks
+          stream.getTracks().forEach(track => track.stop());
+        };
 
-      mediaRecorder.start();
-      setIsRecording(true);
-      setRecordingTime(0);
+        mediaRecorder.start();
+        setIsRecording(true);
+        setIsPaused(false);
+        setRecordingTime(0);
 
-      // Simple timer
-      const timer = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-      mediaRecorderRef.current.timer = timer;
+        // Simple timer
+        const timer = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+        mediaRecorderRef.current.timer = timer;
 
-    } catch (err) {
-      console.error("Error accessing microphone:", err);
-      alert("Microphone access denied or unavailable.");
+      } catch (err) {
+        console.error("Error accessing microphone:", err);
+        alert("Microphone access denied or unavailable.");
+      }
+    } else if (isRecording && !isPaused) {
+      // Pause recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.pause();
+        clearInterval(mediaRecorderRef.current.timer);
+        setIsPaused(true);
+      }
+    } else if (isRecording && isPaused) {
+      // Resume recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+        mediaRecorderRef.current.resume();
+        const timer = setInterval(() => {
+          setRecordingTime(prev => prev + 1);
+        }, 1000);
+        mediaRecorderRef.current.timer = timer;
+        setIsPaused(false);
+      }
     }
   };
 
-  const handleStopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
+  const handleCancelRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.onstop = () => {
+        mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+      };
+      if (mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
       clearInterval(mediaRecorderRef.current.timer);
-      setIsRecording(false);
     }
+    setIsRecording(false);
+    setIsPaused(false);
+    setRecordingTime(0);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const content = form.content?.value || '';
+    
+    if (isRecording || isPaused) {
+      // It's a voice note being sent
+      pendingTextRef.current = content; // stash text content for the voice note upload callback
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+        clearInterval(mediaRecorderRef.current.timer);
+      }
+      setIsRecording(false);
+      setIsPaused(false);
+      form.reset();
+      return;
+    }
     
     if (!content.trim() && !attachmentFile) return;
 
@@ -540,29 +586,36 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           </button>
 
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-input)', padding: '0 0.5rem 0 1rem', opacity: isUploading ? 0.5 : 1 }}>
-            <input 
-              type="text" 
-              name="content"
-              placeholder={isRecording ? `Recording... ${formatTime(recordingTime)}` : "Type a message..."}
-              disabled={isSending || isUploading || isRecording}
-              autoComplete="off"
-              style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: isRecording ? '#ef4444' : 'var(--text-heading)', outline: 'none', fontWeight: isRecording ? 'bold' : 'normal' }}
-            />
+            {(isRecording || isPaused) ? (
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0', color: isPaused ? 'var(--text-muted)' : '#ef4444', fontWeight: 'bold' }}>
+                <span className={!isPaused ? 'pulse-animation' : ''}>
+                  {isPaused ? 'Paused' : 'Recording'}... {formatTime(recordingTime)}
+                </span>
+                <button type="button" onClick={handleCancelRecording} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0 0.5rem' }}>✕ Cancel</button>
+              </div>
+            ) : (
+              <input 
+                type="text" 
+                name="content"
+                placeholder="Type a message..."
+                disabled={isSending || isUploading}
+                autoComplete="off"
+                style={{ flex: 1, padding: '0.75rem 0', border: 'none', background: 'transparent', color: 'var(--text-heading)', outline: 'none' }}
+              />
+            )}
             
             {/* Camera inside input bar */}
-            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isSending || isUploading || isRecording} style={{ padding: '0.5rem', color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-            </button>
+            {!(isRecording || isPaused) && (
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isSending || isUploading} style={{ padding: '0.5rem', color: 'var(--text-muted)', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+              </button>
+            )}
           </div>
           
           {/* Microphone next to Send / in input bar area */}
           <button 
             type="button" 
-            onMouseDown={handleStartRecording}
-            onMouseUp={handleStopRecording}
-            onMouseLeave={handleStopRecording}
-            onTouchStart={handleStartRecording}
-            onTouchEnd={handleStopRecording}
+            onClick={handleMicClick}
             disabled={isSending || isUploading}
             style={{ 
               width: '40px', 
@@ -571,7 +624,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               alignItems: 'center', 
               justifyContent: 'center', 
               color: isRecording ? 'white' : 'var(--text-muted)', 
-              background: isRecording ? '#ef4444' : 'var(--bg-input)', 
+              background: isRecording ? (isPaused ? 'var(--text-muted)' : '#ef4444') : 'var(--bg-input)', 
               borderRadius: '50%', 
               border: 'none', 
               cursor: 'pointer',
@@ -580,6 +633,8 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           >
             {isUploading ? (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="spin-animation"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"></line></svg>
+            ) : isRecording && !isPaused ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
             ) : (
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
             )}
