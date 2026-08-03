@@ -130,3 +130,53 @@ export async function markAllUnreadAsDelivered() {
 
   return { success: true, updated: data?.length || 0 }
 }
+
+export async function deleteMessagesForMe(messageIds) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  if (!Array.isArray(messageIds) || messageIds.length === 0) return { error: 'No messages provided' }
+
+  // We need to determine for each message if the user is the sender or receiver
+  // and update the appropriate column.
+  const { data: msgs, error: fetchError } = await supabase
+    .from('messages')
+    .select('id, sender_id, receiver_id')
+    .in('id', messageIds)
+
+  if (fetchError) return { error: fetchError.message }
+
+  const senderIds = msgs.filter(m => m.sender_id === user.id).map(m => m.id)
+  const receiverIds = msgs.filter(m => m.receiver_id === user.id).map(m => m.id)
+
+  if (senderIds.length > 0) {
+    await supabase.from('messages').update({ deleted_by_sender: true }).in('id', senderIds)
+  }
+  if (receiverIds.length > 0) {
+    await supabase.from('messages').update({ deleted_by_receiver: true }).in('id', receiverIds)
+  }
+
+  revalidatePath('/messages', 'layout')
+  return { success: true }
+}
+
+export async function deleteMessagesForEveryone(messageIds) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  if (!Array.isArray(messageIds) || messageIds.length === 0) return { error: 'No messages provided' }
+
+  // A user can ONLY delete for everyone if they are the sender
+  const { error } = await supabase
+    .from('messages')
+    .update({ is_deleted_for_everyone: true })
+    .in('id', messageIds)
+    .eq('sender_id', user.id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/messages', 'layout')
+  return { success: true }
+}

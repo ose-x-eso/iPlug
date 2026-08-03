@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { sendMessage, markMessagesAsRead } from '@/app/actions/messages';
+import { sendMessage, markMessagesAsRead, deleteMessagesForMe, deleteMessagesForEveryone } from '@/app/actions/messages';
 import Link from 'next/link';
 import { useTransition } from 'react';
-import { Hand, MapPin, Phone, User, MoreVertical, AlertCircle, Shield, Ban } from 'lucide-react';
+import { Hand, MapPin, Phone, User, MoreVertical, AlertCircle, Shield, Ban, Trash2, X } from 'lucide-react';
 
 export default function ChatWindow({ initialMessages, currentUser, otherUser }) {
   const [messages, setMessages] = useState(initialMessages || []);
@@ -14,6 +14,10 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   const [isPending, startTransition] = useTransition();
   const [showMenu, setShowMenu] = useState(false);
   const [hideDistance, setHideDistance] = useState(false);
+  
+  // Selection Mode State
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedMessages, setSelectedMessages] = useState(new Set());
   
   // New States for Media
   const [attachmentFile, setAttachmentFile] = useState(null);
@@ -102,15 +106,12 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentUser.id, otherUser.id]);
+  }, [currentUser?.id, otherUser?.id, supabase]);
 
   // Mark messages as read when they come in or when the window opens
   useEffect(() => {
-    const unreadMessages = messages.filter(
-      (msg) => msg.receiver_id === currentUser.id && !msg.is_read
-    );
-
-    if (unreadMessages.length > 0) {
+    const hasUnread = messages.some(m => !m.is_read && m.receiver_id === currentUser.id);
+    if (hasUnread) {
       markMessagesAsRead(otherUser.id);
       
       // Update local state so they appear read immediately
@@ -286,11 +287,27 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
         }
       } catch (err) {
         console.error("Message send error:", err);
-      } finally {
-        setIsSending(false);
-        setIsUploading(false);
+    const formData = new FormData();
+    formData.append('receiver_id', otherUser.id);
+    if (content.trim()) formData.append('content', content);
+    if (file) formData.append('attachment', file);
+
+    try {
+      const result = await sendMessage(formData);
+      if (result?.error) {
+        alert("Failed to send: " + result.error);
+      } else {
+        if (result?.notification_error) {
+          alert("Message sent, but notification failed: " + result.notification_error);
+        }
+        form.reset();
+        setAttachmentFile(null);
       }
-    });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const formatTime = (seconds) => {
@@ -302,149 +319,169 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   return (
     <div className="chat-window-container" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100dvh', width: '100%', background: 'var(--bg-page)', overflow: 'hidden' }}>
       
-      {/* Chat Header */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        padding: '0.75rem 1rem', 
-        borderBottom: '1px solid var(--border)', 
-        background: 'var(--bg-nav)', 
-        backdropFilter: 'blur(12px)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 50
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      {/* Chat Header OR Selection Header */}
+      {isSelectionMode ? (
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          padding: '0.75rem 1rem', 
+          borderBottom: '1px solid var(--border)', 
+          background: 'var(--bg-nav)', 
+          backdropFilter: 'blur(12px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              onClick={() => { setIsSelectionMode(false); setSelectedMessages(new Set()); }}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', display: 'flex' }}
+            >
+              <X size={24} />
+            </button>
+            <span style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--text-heading)' }}>
+              {selectedMessages.size}
+            </span>
+          </div>
           <button 
-            onClick={() => window.history.back()} 
-            style={{ 
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-heading)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              cursor: 'pointer',
-              padding: '0.5rem',
-              marginLeft: '-0.5rem'
-            }}
+            onClick={handleDeleteMessages}
+            style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex' }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <Trash2 size={24} />
           </button>
-
-          <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ 
-              width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold'
-            }}>
-              {otherUser.avatar_url ? (
-                <img src={otherUser.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-              ) : (
-                displayName.charAt(0).toUpperCase()
-              )}
-            </div>
-            <div>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-heading)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                {displayName}
-              </h3>
-              {!hideDistance && otherUser.distance_str && (
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '2px' }}>
-                  <MapPin size={12} /> {otherUser.distance_str}
-                </p>
-              )}
-            </div>
-          </Link>
         </div>
-        
-        {/* Call Icons */}
-        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-heading)', position: 'relative' }}>
-          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Video call coming soon!")}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-          </button>
-          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => alert("Voice call coming soon!")}>
-            <Phone size={22} />
-          </button>
-          <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => setShowMenu(!showMenu)}>
-            <MoreVertical size={22} />
-          </button>
-          
-          {showMenu && (
-            <div style={{ 
-              position: 'absolute', 
-              top: '100%', 
-              right: 0, 
-              marginTop: '0.5rem', 
-              background: 'var(--bg-card)', 
-              border: '1px solid var(--border)', 
-              borderRadius: 'var(--radius-md)', 
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              minWidth: '200px',
-              zIndex: 100,
-              overflow: 'hidden'
-            }}>
-              <button 
-                onClick={() => { alert("Customize Chat settings coming soon!"); setShowMenu(false); }}
-                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                className="hover-bg-input"
-              >
-                <Shield size={16} /> Customize Chat
-              </button>
-              <button 
-                onClick={() => { alert(`Blocked ${displayName}`); setShowMenu(false); }}
-                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                className="hover-bg-input"
-              >
-                <Ban size={16} /> Block User
-              </button>
-              <button 
-                onClick={() => { alert(`Reported ${displayName} to admins.`); setShowMenu(false); }}
-                style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                className="hover-bg-input"
-              >
-                <AlertCircle size={16} /> Report User
-              </button>
-            </div>
-          )}
+      ) : (
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          padding: '0.75rem 1rem', 
+          borderBottom: '1px solid var(--border)', 
+          background: 'var(--bg-nav)', 
+          backdropFilter: 'blur(12px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button 
+              onClick={() => window.history.back()} 
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-heading)', display: 'flex', cursor: 'pointer', padding: '0.5rem', marginLeft: '-0.5rem' }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+            <Link href={`/profile/${otherUser.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>
+                {otherUser.avatar_url ? (
+                  <img src={otherUser.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  displayName.charAt(0).toUpperCase()
+                )}
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-heading)' }}>{displayName}</h3>
+                {!hideDistance && otherUser.distance_str && <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}><MapPin size={12} className="inline-icon" /> {otherUser.distance_str}</p>}
+              </div>
+            </Link>
+          </div>
+          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-heading)' }}>
+            <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => setShowMenu(!showMenu)}><MoreVertical size={22} /></button>
+            {showMenu && (
+              <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', zIndex: 100 }}>
+                <button onClick={() => { setIsSelectionMode(true); setShowMenu(false); }} style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}>Select Messages</button>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Messages Area */}
       <div className="chat-messages-area" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ background: 'var(--warning-subtle)', color: 'var(--warning)', padding: '0.75rem', borderRadius: 'var(--radius-md)', fontSize: '0.75rem', textAlign: 'center', marginBottom: '1rem', border: '1px solid var(--warning)' }}>
-          <strong>Safety Warning:</strong> iPlug Hub never asks for payment outside the platform. Meet in public places and never send money before a service is rendered.
-        </div>
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
             <span style={{ fontSize: '2rem', display: 'block', marginBottom: '0.5rem' }}><Hand size={16} className="inline-icon" /></span>
             <p>Send a message to start the conversation!</p>
           </div>
         ) : (
-          messages.map((msg) => {
+          messages.filter(m => !(m.sender_id === currentUser.id && m.deleted_by_sender) && !(m.receiver_id === currentUser.id && m.deleted_by_receiver)).map((msg) => {
             const isMine = msg.sender_id === currentUser.id;
+            const isSelected = selectedMessages.has(msg.id);
             return (
-              <div className="chat-message-bubble" key={msg.id} style={{ alignSelf: isMine ? 'flex-end' : 'flex-start', maxWidth: '75%' }}>
-                <div style={{ 
-                  background: isMine ? 'linear-gradient(45deg, var(--accent-primary), var(--accent-secondary))' : 'var(--bg-input)', 
-                  color: isMine ? 'white' : 'var(--text-heading)',
-                  padding: (msg.file_url && msg.file_type === 'image') ? '0.25rem' : '0.75rem 1rem', 
-                  borderRadius: isMine ? '1rem 1rem 0 1rem' : '1rem 1rem 1rem 0',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  overflow: 'hidden'
+              <div 
+                className="chat-message-bubble" 
+                key={msg.id} 
+                onClick={(e) => handleMessageClick(e, msg.id)}
+                onTouchStart={() => handleTouchStart(msg.id)}
+                onTouchEnd={handleTouchEnd}
+                onContextMenu={(e) => { e.preventDefault(); handleMessageLongPress(msg.id); }}
+                style={{ 
+                  alignSelf: isMine ? 'flex-end' : 'flex-start', 
+                  maxWidth: '75%',
+                  cursor: isSelectionMode ? 'pointer' : 'default',
+                  opacity: isSelectionMode && !isSelected ? 0.6 : 1,
+                  transform: isSelected ? 'scale(0.98)' : 'scale(1)',
+                  transition: 'transform 0.1s, opacity 0.2s',
+                  position: 'relative'
                 }}>
-                  {msg.file_url && msg.file_type === 'image' && (
-                    <img src={msg.file_url} alt="Attachment" style={{ width: '100%', maxWidth: '300px', borderRadius: '0.75rem', display: 'block', marginBottom: msg.content ? '0.5rem' : 0 }} />
-                  )}
-                  {msg.file_url && msg.file_type === 'document' && (
-                    <a href={msg.file_url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none', background: 'rgba(0,0,0,0.1)', padding: '0.5rem', borderRadius: '0.5rem', marginBottom: msg.content ? '0.5rem' : 0 }}>
-                      📄 <span>{msg.file_name || 'Document'}</span>
-                    </a>
-                  )}
-                  {msg.voice_note_url && (
-                    <audio controls src={msg.voice_note_url} style={{ width: '200px', height: '40px', outline: 'none' }} />
-                  )}
-                  {msg.content && <div style={{ padding: (msg.file_url && msg.file_type === 'image') ? '0 0.5rem 0.5rem 0.5rem' : 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.content}</div>}
-                </div>
+                
+                {isSelectionMode && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    [isMine ? 'right' : 'left']: '105%',
+                    transform: 'translateY(-50%)',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    border: '2px solid var(--border)',
+                    background: isSelected ? 'var(--accent-primary)' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {isSelected && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                  </div>
+                )}
+
+                {msg.is_deleted_for_everyone ? (
+                  <div style={{ 
+                    background: 'var(--bg-input)', 
+                    color: 'var(--text-muted)',
+                    padding: '0.75rem 1rem', 
+                    borderRadius: isMine ? '1rem 1rem 0 1rem' : '1rem 1rem 1rem 0',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    fontStyle: 'italic',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <Ban size={14} /> This message was deleted
+                  </div>
+                ) : (
+                  <div style={{ 
+                    background: isMine ? 'linear-gradient(45deg, var(--accent-primary), var(--accent-secondary))' : 'var(--bg-input)', 
+                    color: isMine ? 'white' : 'var(--text-heading)',
+                    padding: (msg.file_url && msg.file_type === 'image') ? '0.25rem' : '0.75rem 1rem', 
+                    borderRadius: isMine ? '1rem 1rem 0 1rem' : '1rem 1rem 1rem 0',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    overflow: 'hidden'
+                  }}>
+                    {msg.file_url && msg.file_type === 'image' && (
+                      <img src={msg.file_url} alt="Attachment" style={{ width: '100%', maxWidth: '300px', borderRadius: '0.75rem', display: 'block', marginBottom: msg.content ? '0.5rem' : 0 }} />
+                    )}
+                    {msg.file_url && msg.file_type === 'document' && (
+                      <a href={msg.file_url} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none', background: 'rgba(0,0,0,0.1)', padding: '0.5rem', borderRadius: '0.5rem', marginBottom: msg.content ? '0.5rem' : 0 }}>
+                        📄 <span>{msg.file_name || 'Document'}</span>
+                      </a>
+                    )}
+                    {msg.voice_note_url && (
+                      <audio controls src={msg.voice_note_url} style={{ width: '200px', height: '40px', outline: 'none' }} />
+                    )}
+                    {msg.content && <div style={{ padding: (msg.file_url && msg.file_type === 'image') ? '0 0.5rem 0.5rem 0.5rem' : 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.content}</div>}
+                  </div>
+                )}
+                
                 <div style={{ 
                   fontSize: '0.65rem', 
                   marginTop: '0.25rem', 
@@ -458,7 +495,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                   <span suppressHydrationWarning>
                     {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
                   </span>
-                  {isMine && (
+                  {isMine && !msg.is_deleted_for_everyone && (
                       <span style={{ 
                         color: msg.is_read ? '#60a5fa' : 'rgba(255,255,255,0.7)',
                         fontSize: '0.8rem',
