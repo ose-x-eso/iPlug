@@ -17,16 +17,28 @@ export async function GET(request) {
     const mode = searchParams.get('mode'); // e.g. ?mode=admin
 
     if (mode === 'admin') {
-      // Test the admin client dispatch pathway exactly as messages.js does it
       try {
+        const supabaseAdmin = createAdminClient();
+        
+        // Test admin client access
+        const { data, error } = await supabaseAdmin.from('profiles').select('id').limit(1);
+        
+        if (error) {
+           return NextResponse.json({ 
+             error: 'Admin Client Failed', 
+             details: error,
+             keyPrefix: process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 10) : 'missing'
+           }, { status: 500 });
+        }
+
         await dispatchExternalNotifications(user.id, {
           type: 'TEST',
           message: 'Admin Dispatch Test Successful!',
           link: '/notifications'
         });
-        return NextResponse.json({ success: true, message: 'Admin dispatch fired' });
+        return NextResponse.json({ success: true, message: 'Admin dispatch fired successfully!' });
       } catch (err) {
-        return NextResponse.json({ error: 'Admin dispatch failed', details: err.message }, { status: 500 });
+        return NextResponse.json({ error: 'Admin dispatch crashed', details: err.message }, { status: 500 });
       }
     }
 
