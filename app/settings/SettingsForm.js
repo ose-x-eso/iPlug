@@ -30,9 +30,8 @@ export default function SettingsForm({ initialProfile }) {
       navigator.serviceWorker.register('/sw.js')
         .then(reg => {
           console.log('Service Worker registered');
-          // If they already granted permission and it's enabled in DB
           if (Notification.permission === 'granted' && initialProfile?.push_notifications_enabled) {
-            setPushStatus('Push Enabled ✓');
+            setPushStatus('Push Enabled ✓ (Click to Reset/Test)');
           }
         })
         .catch(err => console.error('SW registration failed', err));
@@ -45,13 +44,19 @@ export default function SettingsForm({ initialProfile }) {
       setPushStatus('Requesting permission...');
       const permission = await Notification.requestPermission();
       if (permission !== 'granted') {
-        setPushStatus('Permission denied');
+        setPushStatus('Permission denied by browser');
         return;
       }
       
       const registration = await navigator.serviceWorker.ready;
-      setPushStatus('Generating connection...');
+      setPushStatus('Generating new connection...');
       
+      // Unsubscribe existing to force a fresh token from Google/Apple
+      const existingSub = await registration.pushManager.getSubscription();
+      if (existingSub) {
+        await existingSub.unsubscribe();
+      }
+
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!vapidPublicKey) {
         setPushStatus('VAPID public key missing. Check .env.local');
