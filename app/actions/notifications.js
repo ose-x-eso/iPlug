@@ -23,9 +23,11 @@ export async function createNotification(userId, type, message, options = {}) {
 
   if (HIGH_PRIORITY_TYPES.has(type)) {
     try {
-      await dispatchExternalNotifications(userId, { type, message, link });
+      const dispatchResult = await dispatchExternalNotifications(userId, { type, message, link });
+      return { success: true, dispatchResult }; // return dispatch info
     } catch (err) {
       console.error('External notification dispatch failed:', err);
+      return { success: true, dispatchError: err.message };
     }
   }
 
