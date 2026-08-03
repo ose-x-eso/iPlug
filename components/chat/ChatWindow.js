@@ -239,69 +239,38 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSending || isUploading) return;
+
     const form = e.target;
     const content = form.content?.value || '';
-    
-    if (isRecording || isPaused) {
-      // It's a voice note being sent
-      pendingTextRef.current = content; // stash text content for the voice note upload callback
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop();
-        clearInterval(mediaRecorderRef.current.timer);
-      }
-      setIsRecording(false);
-      setIsPaused(false);
-      form.reset();
-      return;
-    }
-    
-    if (!content.trim() && !attachmentFile) return;
+    const file = attachmentFile;
+
+    // Must have content, file, OR a recording
+    if (!content.trim() && !file && !audioChunksRef.current.length) return;
 
     setIsSending(true);
-    setIsUploading(true);
-    setShowAttachments(false);
-
-    startTransition(async () => {
-      try {
-        const formData = new FormData();
-        formData.append('receiver_id', otherUser.id);
-        formData.append('content', content);
-
-        if (attachmentFile) {
-          const file_url = await uploadToStorage(attachmentFile, 'file');
-          formData.append('file_url', file_url);
-          formData.append('file_name', attachmentFile.name);
-          formData.append('file_type', attachmentFile.type.startsWith('image/') ? 'image' : 'document');
-        }
-
-        const result = await sendMessage(formData);
-        
-        if (result?.error) {
-          alert("Failed to send: " + result.error);
-        } else {
-          if (result?.notification_error) {
-             alert("Message sent, but notification failed: " + result.notification_error);
-          }
-          form.reset();
-          setAttachmentFile(null);
-        }
-      } catch (err) {
-        console.error("Message send error:", err);
     const formData = new FormData();
     formData.append('receiver_id', otherUser.id);
     if (content.trim()) formData.append('content', content);
     if (file) formData.append('attachment', file);
 
     try {
+      if (audioChunksRef.current.length > 0) {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        formData.append('voice_note', audioBlob, 'voice_note.webm');
+      }
+
       const result = await sendMessage(formData);
+      
       if (result?.error) {
         alert("Failed to send: " + result.error);
       } else {
         if (result?.notification_error) {
-          alert("Message sent, but notification failed: " + result.notification_error);
+           alert("Message sent, but notification failed: " + result.notification_error);
         }
         form.reset();
         setAttachmentFile(null);
+        handleCancelRecording(); // reset audio
       }
     } catch (err) {
       console.error(err);
@@ -385,11 +354,47 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
               </div>
             </Link>
           </div>
-          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-heading)' }}>
+          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', color: 'var(--text-heading)', position: 'relative' }}>
             <button style={{ color: 'inherit', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }} onClick={() => setShowMenu(!showMenu)}><MoreVertical size={22} /></button>
             {showMenu && (
-              <div style={{ position: 'absolute', top: '100%', right: 0, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', zIndex: 100 }}>
-                <button onClick={() => { setIsSelectionMode(true); setShowMenu(false); }} style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}>Select Messages</button>
+              <div style={{ 
+                position: 'absolute', 
+                top: '100%', 
+                right: 0, 
+                marginTop: '0.5rem', 
+                background: 'var(--bg-page, #111)', 
+                border: '1px solid var(--border)', 
+                borderRadius: 'var(--radius-md)', 
+                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                minWidth: '200px',
+                zIndex: 100,
+                overflow: 'hidden'
+              }}>
+                <button 
+                  onClick={() => { setIsSelectionMode(true); setShowMenu(false); }}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg> 
+                  Select Messages
+                </button>
+                <button 
+                  onClick={() => { alert("Customize Chat settings coming soon!"); setShowMenu(false); }}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <Shield size={16} /> Customize Chat
+                </button>
+                <button 
+                  onClick={() => { alert(`Blocked ${displayName}`); setShowMenu(false); }}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', cursor: 'pointer', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <Ban size={16} /> Block User
+                </button>
+                <button 
+                  onClick={() => { alert(`Reported ${displayName} to admins.`); setShowMenu(false); }}
+                  style={{ width: '100%', textAlign: 'left', padding: '0.75rem 1rem', background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <AlertCircle size={16} /> Report User
+                </button>
               </div>
             )}
           </div>
@@ -422,7 +427,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
                   opacity: isSelectionMode && !isSelected ? 0.6 : 1,
                   transform: isSelected ? 'scale(0.98)' : 'scale(1)',
                   transition: 'transform 0.1s, opacity 0.2s',
-                  position: 'relative'
+                  position: 'relative',
+                  WebkitTouchCallout: 'none',
+                  userSelect: isSelectionMode ? 'none' : 'auto'
                 }}>
                 
                 {isSelectionMode && (
