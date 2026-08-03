@@ -150,8 +150,11 @@ export async function deleteMessagesForMe(messageIds) {
   const senderIds = msgs.filter(m => m.sender_id === user.id).map(m => m.id)
   const receiverIds = msgs.filter(m => m.receiver_id === user.id).map(m => m.id)
 
-  const { createAdminClient } = await import('@/utils/supabase/server');
-  const supabaseAdmin = createAdminClient();
+  const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   if (senderIds.length > 0) {
     const { error } = await supabaseAdmin.from('messages').update({ deleted_by_sender: true }).in('id', senderIds)
@@ -173,8 +176,11 @@ export async function deleteMessagesForEveryone(messageIds) {
 
   if (!Array.isArray(messageIds) || messageIds.length === 0) return { error: 'No messages provided' }
 
-  const { createAdminClient } = await import('@/utils/supabase/server');
-  const supabaseAdmin = createAdminClient();
+  const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   // A user can ONLY delete for everyone if they are the sender
   const { error } = await supabaseAdmin
