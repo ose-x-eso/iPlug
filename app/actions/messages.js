@@ -150,11 +150,16 @@ export async function deleteMessagesForMe(messageIds) {
   const senderIds = msgs.filter(m => m.sender_id === user.id).map(m => m.id)
   const receiverIds = msgs.filter(m => m.receiver_id === user.id).map(m => m.id)
 
+  const { createAdminClient } = await import('@/utils/supabase/server');
+  const supabaseAdmin = createAdminClient();
+
   if (senderIds.length > 0) {
-    await supabase.from('messages').update({ deleted_by_sender: true }).in('id', senderIds)
+    const { error } = await supabaseAdmin.from('messages').update({ deleted_by_sender: true }).in('id', senderIds)
+    if (error) console.error("Error deleting as sender:", error)
   }
   if (receiverIds.length > 0) {
-    await supabase.from('messages').update({ deleted_by_receiver: true }).in('id', receiverIds)
+    const { error } = await supabaseAdmin.from('messages').update({ deleted_by_receiver: true }).in('id', receiverIds)
+    if (error) console.error("Error deleting as receiver:", error)
   }
 
   revalidatePath('/messages', 'layout')
@@ -168,8 +173,11 @@ export async function deleteMessagesForEveryone(messageIds) {
 
   if (!Array.isArray(messageIds) || messageIds.length === 0) return { error: 'No messages provided' }
 
+  const { createAdminClient } = await import('@/utils/supabase/server');
+  const supabaseAdmin = createAdminClient();
+
   // A user can ONLY delete for everyone if they are the sender
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('messages')
     .update({ is_deleted_for_everyone: true })
     .in('id', messageIds)
