@@ -125,6 +125,69 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     }
   }, [messages, currentUser.id, otherUser.id]);
 
+  // Selection Logic
+  const toggleSelection = (id) => {
+    setSelectedMessages(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        if (next.size === 0) setIsSelectionMode(false);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleMessageClick = (e, id) => {
+    if (isSelectionMode) {
+      e.preventDefault();
+      toggleSelection(id);
+    }
+  };
+
+  const handleMessageLongPress = (id) => {
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+      toggleSelection(id);
+    }
+  };
+
+  const handleDeleteMessages = async () => {
+    const ids = Array.from(selectedMessages);
+    if (ids.length === 0) return;
+
+    // Check if user is sender of all selected messages
+    const allSelectedAreMine = ids.every(id => {
+      const msg = messages.find(m => m.id === id);
+      return msg && msg.sender_id === currentUser.id;
+    });
+
+    const type = window.prompt(`Type "me" to Delete for Me${allSelectedAreMine ? ', or "everyone" to Delete for Everyone' : ''}:`);
+    
+    if (type === 'me') {
+      setMessages(prev => prev.filter(m => !ids.includes(m.id)));
+      deleteMessagesForMe(ids).catch(err => console.error(err));
+    } else if (type === 'everyone' && allSelectedAreMine) {
+      setMessages(prev => prev.map(m => ids.includes(m.id) ? { ...m, is_deleted_for_everyone: true } : m));
+      deleteMessagesForEveryone(ids).catch(err => console.error(err));
+    } else {
+      return; // cancelled or invalid
+    }
+    
+    setIsSelectionMode(false);
+    setSelectedMessages(new Set());
+  };
+
+  // Timer logic for long press
+  const pressTimer = useRef(null);
+  const handleTouchStart = (id) => {
+    pressTimer.current = setTimeout(() => handleMessageLongPress(id), 500);
+  };
+  const handleTouchEnd = () => {
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+  };
+
   const uploadToStorage = async (file, pathPrefix = 'files') => {
     const fileExt = file.name.split('.').pop() || 'webm';
     const fileName = `${pathPrefix}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
