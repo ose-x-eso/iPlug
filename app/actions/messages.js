@@ -53,12 +53,18 @@ export async function sendMessage(formData) {
     }
     const truncated = preview.length > 80 ? `${preview.substring(0, 80)}...` : preview
 
-    await createNotification(
+    const notifResult = await createNotification(
       receiver_id,
       'NEW_MESSAGE',
       `${senderName}: ${truncated}`,
       { link: `/messages/${user.id}` }
     )
+    
+    if (notifResult?.error) {
+      // If notification fails, still return success but attach the error for debugging
+      revalidatePath('/messages', 'layout')
+      return { success: true, notification_error: notifResult.error }
+    }
   }
 
   revalidatePath('/messages', 'layout')

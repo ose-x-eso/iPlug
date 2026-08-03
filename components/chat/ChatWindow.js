@@ -278,6 +278,9 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
         if (result?.error) {
           alert("Failed to send: " + result.error);
         } else {
+          if (result?.notification_error) {
+             alert("Message sent, but notification failed: " + result.notification_error);
+          }
           form.reset();
           setAttachmentFile(null);
         }
