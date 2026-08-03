@@ -18,6 +18,7 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
   // Selection Mode State
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState(new Set());
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   
   // New States for Media
   const [attachmentFile, setAttachmentFile] = useState(null);
@@ -153,9 +154,18 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
     }
   };
 
-  const handleDeleteMessages = async () => {
+  const handleDeleteMessages = () => {
+    if (selectedMessages.size > 0) {
+      setShowDeleteModal(true);
+    }
+  };
+
+  const confirmDelete = async (type) => {
     const ids = Array.from(selectedMessages);
-    if (ids.length === 0) return;
+    if (ids.length === 0) {
+      setShowDeleteModal(false);
+      return;
+    }
 
     // Check if user is sender of all selected messages
     const allSelectedAreMine = ids.every(id => {
@@ -163,20 +173,22 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
       return msg && msg.sender_id === currentUser.id;
     });
 
-    const type = window.prompt(`Type "me" to Delete for Me${allSelectedAreMine ? ', or "everyone" to Delete for Everyone' : ''}:`);
-    
+    if (type === 'everyone' && !allSelectedAreMine) {
+      setShowDeleteModal(false);
+      return; // Fallback security check
+    }
+
     if (type === 'me') {
       setMessages(prev => prev.filter(m => !ids.includes(m.id)));
       deleteMessagesForMe(ids).catch(err => console.error(err));
-    } else if (type === 'everyone' && allSelectedAreMine) {
+    } else if (type === 'everyone') {
       setMessages(prev => prev.map(m => ids.includes(m.id) ? { ...m, is_deleted_for_everyone: true } : m));
       deleteMessagesForEveryone(ids).catch(err => console.error(err));
-    } else {
-      return; // cancelled or invalid
     }
     
     setIsSelectionMode(false);
     setSelectedMessages(new Set());
+    setShowDeleteModal(false);
   };
 
   // Timer logic for long press
@@ -759,6 +771,58 @@ export default function ChatWindow({ initialMessages, currentUser, otherUser }) 
           </button>
         </form>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            background: 'var(--bg-card)',
+            borderRadius: '1rem',
+            width: '100%',
+            maxWidth: '350px',
+            overflow: 'hidden',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ padding: '1.25rem 1rem', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
+              <h3 style={{ margin: 0, color: 'var(--text-heading)', fontSize: '1.1rem' }}>Delete message{selectedMessages.size > 1 ? 's' : ''}?</h3>
+            </div>
+            
+            <button 
+              onClick={() => confirmDelete('me')}
+              style={{ padding: '1rem', background: 'transparent', border: 'none', borderBottom: '1px solid var(--border)', color: '#ef4444', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer' }}
+            >
+              Delete for me
+            </button>
+            
+            {Array.from(selectedMessages).every(id => messages.find(m => m.id === id)?.sender_id === currentUser.id) && (
+              <button 
+                onClick={() => confirmDelete('everyone')}
+                style={{ padding: '1rem', background: 'transparent', border: 'none', borderBottom: '1px solid var(--border)', color: '#ef4444', fontSize: '1rem', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Delete for everyone
+              </button>
+            )}
+            
+            <button 
+              onClick={() => setShowDeleteModal(false)}
+              style={{ padding: '1rem', background: 'transparent', border: 'none', color: 'var(--text-heading)', fontSize: '1rem', cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
